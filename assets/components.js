@@ -188,5 +188,27 @@
     }
   });
 
+  /* Entrance reveal: [data-reveal] fades and rises once, when motion is welcome. */
+  function setUpReveal(root = document) {
+    if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches || !('IntersectionObserver' in window)) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: '0px 0px -10% 0px' }
+    );
+    root.querySelectorAll('[data-reveal]:not(.is-revealed)').forEach((element) => {
+      element.classList.add('reveal-pending');
+      observer.observe(element);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setUpReveal());
+  else setUpReveal();
+  document.addEventListener('shopify:section:load', (event) => setUpReveal(event.target));
+
   window.Crumbline = Object.freeze({ EVENTS, fetchSections, toast, cart });
 })();
