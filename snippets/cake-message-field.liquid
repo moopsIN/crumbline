@@ -1,0 +1,129 @@
+{% doc %}
+  "Message on cake" text field with a live character counter, added to the
+  order as the `Message on cake` line item property.
+
+  @param {string} id - Unique id for the input, e.g. `section.id`
+  @param {number} [max_length] - Character limit (default 40)
+  @param {string} [form_id] - Form the input belongs to, when rendered outside it
+  @param {string} [label] - Override the visible label
+
+  @example
+  {% render 'cake-message-field', id: section.id, max_length: 40 %}
+{% enddoc %}
+
+{%- liquid
+  assign limit = max_length | default: 40
+  assign input_id = 'CakeMessage-' | append: id
+  if label == blank
+    assign label = 'products.message.label' | t
+  endif
+-%}
+
+<char-counter class="cake-message" data-limit="{{ limit }}">
+  <label class="cake-message__label" for="{{ input_id }}">{{ label | escape }}</label>
+  <div class="cake-message__field">
+    <input
+      type="text"
+      id="{{ input_id }}"
+      name="properties[{{ 'products.message.property' | t }}]"
+      maxlength="{{ limit }}"
+      autocomplete="off"
+      aria-describedby="{{ input_id }}-hint"
+      {% if form_id != blank %}
+        form="{{ form_id }}"
+      {% endif %}
+    >
+    <span class="cake-message__counter mono" aria-hidden="true" data-counter>0/{{ limit }}</span>
+  </div>
+  <p class="cake-message__hint" id="{{ input_id }}-hint">{{ 'products.message.hint' | t: count: limit }}</p>
+  <p class="visually-hidden" aria-live="polite" data-live></p>
+</char-counter>
+
+{% stylesheet %}
+  @layer components {
+    .cake-message {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .cake-message__label {
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      font-weight: var(--font-display-weight);
+    }
+
+    .cake-message__field {
+      position: relative;
+    }
+
+    .cake-message__field input {
+      inline-size: 100%;
+      min-block-size: 54px;
+      padding: 0.8rem 4.75rem 0.8rem 1.2rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-surface-alt);
+      color: var(--color-ink);
+      font-family: var(--font-display);
+      font-style: italic;
+      transition:
+        box-shadow var(--dur-base),
+        background-color var(--dur-base);
+    }
+
+    .cake-message__field input:focus {
+      background-color: var(--color-surface);
+      box-shadow: var(--shadow-hard), 0 0 0 6px var(--color-accent);
+    }
+
+    .cake-message__counter {
+      position: absolute;
+      inset-inline-end: 1.2rem;
+      inset-block-start: 50%;
+      translate: 0 -50%;
+      color: var(--color-ink-muted);
+    }
+
+    .cake-message__counter.is-near {
+      color: var(--color-warning);
+      font-weight: var(--font-mono-weight-medium);
+    }
+
+    .cake-message__hint {
+      margin: 0;
+      color: var(--color-ink-muted);
+      font-size: 0.9rem;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('char-counter')) {
+    customElements.define(
+      'char-counter',
+      class extends HTMLElement {
+        #timer = 0;
+
+        connectedCallback() {
+          this.input = this.querySelector('input');
+          this.counter = this.querySelector('[data-counter]');
+          this.live = this.querySelector('[data-live]');
+          this.limit = Number(this.dataset.limit);
+          this.input.addEventListener('input', () => this.#update());
+          this.#update(false);
+        }
+
+        #update(announce = true) {
+          const left = this.limit - this.input.value.length;
+          this.counter.textContent = `${this.input.value.length}/${this.limit}`;
+          this.counter.classList.toggle('is-near', left <= 5);
+          if (!announce || left > 5) return;
+          clearTimeout(this.#timer);
+          this.#timer = setTimeout(() => {
+            this.live.textContent = `${left}`;
+          }, 600);
+        }
+      }
+    );
+  }
+{% endjavascript %}
