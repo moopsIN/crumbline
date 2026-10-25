@@ -255,19 +255,22 @@
       "whatsapp_intro": "Hi {{ shop }}! I'd like a custom cake:"
     }
   },
-  "404": {
-    "title": "404",
-    "not_found": "Page not found.",
-    "back_to_shopping": "Back to shopping"
-  },
   "blog": {
-    "article_comments": "Comments",
-    "article_metadata_html": "{{ date }} by {{ author }}",
-    "comment_form_body": "Comment",
-    "comment_form_email": "Email",
-    "comment_form_name": "Name",
-    "comment_form_submit": "Post",
-    "comment_form_title": "Add a comment"
+    "tags": "Filter posts",
+    "all": "All posts",
+    "empty": "No posts yet",
+    "more": "More posts",
+    "comments": {
+      "zero": "Comments",
+      "one": "1 comment",
+      "other": "{{ count }} comments"
+    },
+    "comment_title": "Leave a comment",
+    "comment": "Comment",
+    "post": "Post comment",
+    "comment_moderated": "Thanks! Your comment will appear once it's approved.",
+    "comment_posted": "Thanks! Your comment is live.",
+    "moderation_note": "Comments are checked before they appear."
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
@@ -283,9 +286,27 @@
   },
   "search": {
     "title": "Search",
-    "placeholder": "Search articles, pages, or products",
+    "label": "Search the shop",
+    "placeholder": "Search cakes, pages and posts",
     "submit": "Search",
-    "no_results_html": "No results found for {{ terms }}",
-    "results_for_html": "{{ count }} results found for {{ terms }}"
+    "results_count": {
+      "zero": "No results for “{{ terms }}”",
+      "one": "1 result for “{{ terms }}”",
+      "other": "{{ count }} results for “{{ terms }}”"
+    },
+    "page": "Page",
+    "article": "Blog post",
+    "collection": "Collection",
+    "empty_title": "Nothing found",
+    "empty_text": "Try another word, or browse all our cakes.",
+    "suggestions": "Suggestions",
+    "view_all": "See all results for “{{ terms }}”",
+    "no_suggestions": "No suggestions for “{{ terms }}”."
+  },
+  "not_found": {
+    "title": "This page wandered off",
+    "text": "It may have moved, or the link is wrong. Try a search, or head back to the cakes.",
+    "cta": "Browse cakes",
+    "stamp": "Page not found"
   }
 }

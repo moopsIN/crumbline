@@ -125,6 +125,11 @@
       "cart_type_page": "Show a message (cart page)",
       "lead_time_reminder": "Show notice reminder",
       "lead_time_reminder_info": "Reminds customers how much notice the cakes in their basket need."
+    },
+    "search": {
+      "name": "Search",
+      "predictive": "Show suggestions as you type",
+      "predictive_info": "Opens a search box with product, collection, page and post suggestions."
     }
   },
   "sections": {
@@ -448,6 +453,25 @@
       "name": "Custom cake enquiry",
       "flavours_setting": "Flavours to offer",
       "flavours_info": "Comma-separated. Customers can tick any."
+    },
+    "main_search": {
+      "name": "Search results"
+    },
+    "predictive_search": {
+      "name": "Predictive search results"
+    },
+    "main_blog": {
+      "name": "Blog posts"
+    },
+    "main_article": {
+      "name": "Blog post",
+      "show_author": "Show author"
+    },
+    "main_page": {
+      "name": "Page content"
+    },
+    "main_404": {
+      "name": "Page not found"
     }
   },
   "blocks": {

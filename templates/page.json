@@ -10,8 +10,11 @@
 {
   "sections": {
     "main": {
-      "type": "page",
-      "settings": {}
+      "type": "main-page",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      }
     }
   },
   "order": [
