@@ -472,6 +472,31 @@
     },
     "main_404": {
       "name": "Page not found"
+    },
+    "main_login": {
+      "name": "Login"
+    },
+    "main_register": {
+      "name": "Register"
+    },
+    "main_account": {
+      "name": "Account"
+    },
+    "main_order": {
+      "name": "Order"
+    },
+    "main_addresses": {
+      "name": "Addresses"
+    },
+    "main_activate_account": {
+      "name": "Activate account"
+    },
+    "main_reset_password": {
+      "name": "Reset password"
+    },
+    "main_password": {
+      "name": "Password page",
+      "show_newsletter": "Show email sign-up"
     }
   },
   "blocks": {

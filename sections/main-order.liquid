@@ -1,0 +1,268 @@
+{% comment %}
+  Order detail: status, line items with the customer's choices (date,
+  fulfilment, message), totals and addresses.
+{% endcomment %}
+
+<div class="main-order full-width page-pad" {% render 'section-attributes' %}>
+  <div class="page-width customer customer--wide">
+    <div class="customer__head">
+      <a href="{{ routes.account_url }}" class="customer__logout">{{ 'customers.order.back' | t }}</a>
+      <h1 class="customer__title">{{ 'customers.order.title' | t: name: order.name }}</h1>
+      <p>{{ order.created_at | time_tag: format: 'date_at_time' }}</p>
+      {%- if order.cancelled -%}
+        {%- assign cancelled_on = order.cancelled_at | date: format: 'date' -%}
+        <p class="form-status form-status--error">{{ 'customers.order.cancelled' | t: date: cancelled_on }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="customer__grid">
+      <section aria-labelledby="OrderItems">
+        <h2 id="OrderItems" class="visually-hidden">{{ 'customers.order.items' | t }}</h2>
+        <ul class="customer__lines" role="list">
+          {%- for line in order.line_items -%}
+            <li class="customer__line">
+              <div>
+                <p class="customer__line-title">{{ line.title | escape }} × {{ line.quantity }}</p>
+                {%- capture props -%}
+                  {%- for property in line.properties -%}
+                    {%- assign first_char = property.first | slice: 0 -%}
+                    {%- if property.last != blank and first_char != '_' -%}
+                      <div><dt>{{ property.first | escape }}</dt><dd>{{ property.last | escape }}</dd></div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endcapture -%}
+                {%- if props != blank -%}<dl class="customer__props">{{ props }}</dl>{%- endif -%}
+                {%- if line.fulfillment -%}
+                  {%- assign fulfilled_on = line.fulfillment.created_at | date: format: 'date' -%}
+                  <p class="customer__meta">{{ 'customers.order.fulfilled' | t: date: fulfilled_on }}</p>
+                {%- endif -%}
+              </div>
+              <span>{{ line.final_line_price | money }}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+        <dl class="customer__totals">
+          <div><dt>{{ 'cart.subtotal' | t }}</dt><dd>{{ order.line_items_subtotal_price | money }}</dd></div>
+          {%- for discount in order.cart_level_discount_applications -%}
+            <div><dt>{{ discount.title | escape }}</dt><dd>−{{ discount.total_allocated_amount | money }}</dd></div>
+          {%- endfor -%}
+          {%- for shipping_method in order.shipping_methods -%}
+            <div><dt>{{ shipping_method.title | escape }}</dt><dd>{{ shipping_method.price | money }}</dd></div>
+          {%- endfor -%}
+          {%- for tax_line in order.tax_lines -%}
+            <div><dt>{{ tax_line.title | escape }} ({{ tax_line.rate_percentage }}%)</dt><dd>{{ tax_line.price | money }}</dd></div>
+          {%- endfor -%}
+          <div class="customer__total"><dt>{{ 'customers.order.total' | t }}</dt><dd>{{ order.total_price | money_with_currency }}</dd></div>
+        </dl>
+      </section>
+
+      <div class="customer__aside">
+        <section class="customer__card" aria-labelledby="OrderBilling">
+          <h2 id="OrderBilling" class="customer__subtitle">{{ 'customers.order.billing' | t }}</h2>
+          <p class="customer__meta">{{ order.financial_status_label }}</p>
+          <address>{{ order.billing_address | format_address }}</address>
+        </section>
+        {%- if order.shipping_address -%}
+          <section class="customer__card" aria-labelledby="OrderShipping">
+            <h2 id="OrderShipping" class="customer__subtitle">{{ 'customers.order.shipping' | t }}</h2>
+            <p class="customer__meta">{{ order.fulfillment_status_label }}</p>
+            <address>{{ order.shipping_address | format_address }}</address>
+          </section>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .customer {
+      display: grid;
+      gap: var(--space-m);
+    }
+
+    .customer__title {
+      font-size: var(--step-3);
+      text-align: center;
+    }
+
+    .customer__links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .customer__links a {
+      text-decoration: underline 1px;
+      text-underline-offset: 4px;
+    }
+
+    .customer__subtitle {
+      font-size: var(--step-1);
+    }
+
+    .customer--wide .customer__title {
+      text-align: start;
+    }
+
+    .customer__head {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .customer__head p {
+      margin: 0;
+      color: var(--color-ink-muted);
+    }
+
+    .customer__logout {
+      justify-self: start;
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .customer__grid {
+      display: grid;
+      gap: var(--space-l);
+    }
+
+    .customer__lines {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .customer__line {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-block: 1rem;
+      border-block-end: var(--border-divider);
+    }
+
+    .customer__line-title {
+      margin: 0;
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .customer__props {
+      display: grid;
+      gap: 0.15rem;
+      margin: 0.35rem 0 0;
+      font-size: 0.85rem;
+    }
+
+    .customer__props div,
+    .customer__totals div {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .customer__props dt::after {
+      content: ':';
+    }
+
+    .customer__props dt {
+      color: var(--color-ink-muted);
+    }
+
+    .customer__props dd,
+    .customer__totals dd {
+      margin: 0;
+    }
+
+    .customer__totals {
+      display: grid;
+      gap: 0.4rem;
+      margin: 1rem 0 0;
+    }
+
+    .customer__totals div {
+      justify-content: space-between;
+    }
+
+    .customer__total {
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+    }
+
+    .customer__meta {
+      margin: 0;
+      color: var(--color-ink-muted);
+      font-size: 0.85rem;
+    }
+
+    .customer__aside {
+      display: grid;
+      align-content: start;
+      gap: 1rem;
+    }
+
+    .customer__card {
+      display: grid;
+      gap: 0.5rem;
+      padding: 1.25rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-surface);
+    }
+
+    .customer__card address {
+      font-style: normal;
+    }
+
+    @media (min-width: 56.25rem) {
+      .customer__grid {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelector('[data-focus-on-load]')?.focus();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.main_order.name",
+  "class": "customer-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ]
+}
+{% endschema %}

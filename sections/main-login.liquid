@@ -1,0 +1,147 @@
+{% comment %}
+  Customer login with a password-recovery form that opens via #recover
+  (works without JS), and guest checkout when the store allows it.
+{% endcomment %}
+
+<div class="main-login full-width page-pad" {% render 'section-attributes' %}>
+  <div class="page-width customer">
+    <h1 class="customer__title">{{ 'customers.login.title' | t }}</h1>
+
+    <div class="customer__panel customer__panel--login">
+      {%- form 'customer_login', class: 'form-card' -%}
+      {%- if form.errors -%}
+        <div class="form-status form-status--error" role="alert" tabindex="-1" data-focus-on-load>{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+      <div class="form-field">
+        <label for="LoginEmail">{{ 'forms.email' | t }}</label>
+        <input id="LoginEmail" type="email" name="customer[email]" autocomplete="email" required>
+      </div>
+      <div class="form-field">
+        <label for="LoginPassword">{{ 'customers.password' | t }}</label>
+        <input id="LoginPassword" type="password" name="customer[password]" autocomplete="current-password" required>
+      </div>
+        <div class="customer__links">
+          <a href="#recover">{{ 'customers.login.forgot' | t }}</a>
+          <a href="{{ routes.account_register_url }}">{{ 'customers.login.create' | t }}</a>
+        </div>
+        {%- assign sign_in = 'customers.login.submit' | t -%}
+        {% render 'button', label: sign_in, type: 'submit', icon: 'arrow-right' %}
+      {%- endform -%}
+    </div>
+
+    <div class="customer__panel customer__panel--recover" id="recover" tabindex="-1">
+      {%- form 'recover_customer_password', class: 'form-card' -%}
+        <h2 class="customer__subtitle">{{ 'customers.recover.title' | t }}</h2>
+        {%- if form.posted_successfully? -%}
+          <p class="form-status form-status--success" role="status" tabindex="-1" data-focus-on-load>{{ 'customers.recover.success' | t }}</p>
+        {%- endif -%}
+      {%- if form.errors -%}
+        <div class="form-status form-status--error" role="alert" tabindex="-1" data-focus-on-load>{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+        <p>{{ 'customers.recover.text' | t }}</p>
+      <div class="form-field">
+        <label for="RecoverEmail">{{ 'forms.email' | t }}</label>
+        <input id="RecoverEmail" type="email" name="email" autocomplete="email" required>
+      </div>
+        <div class="customer__links"><a href="#">{{ 'customers.recover.cancel' | t }}</a></div>
+        {%- assign send_label = 'customers.recover.submit' | t -%}
+        {% render 'button', label: send_label, type: 'submit' %}
+      {%- endform -%}
+    </div>
+
+    {%- if shop.checkout.guest_login -%}
+      {%- form 'guest_login', class: 'form-card' -%}
+        <h2 class="customer__subtitle">{{ 'customers.login.guest_title' | t }}</h2>
+        {%- assign guest_label = 'customers.login.guest' | t -%}
+        {% render 'button', label: guest_label, type: 'submit', style: 'secondary' %}
+      {%- endform -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .customer {
+      display: grid;
+      gap: var(--space-m);
+    }
+
+    .customer__title {
+      font-size: var(--step-3);
+      text-align: center;
+    }
+
+    .customer__links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .customer__links a {
+      text-decoration: underline 1px;
+      text-underline-offset: 4px;
+    }
+
+    .customer__subtitle {
+      font-size: var(--step-1);
+    }
+
+    .customer__panel--recover,
+    .main-login:has(#recover:target) .customer__panel--login {
+      display: none;
+    }
+
+    .main-login:has(#recover:target) .customer__panel--recover {
+      display: block;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelector('[data-focus-on-load]')?.focus();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.main_login.name",
+  "class": "customer-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ]
+}
+{% endschema %}

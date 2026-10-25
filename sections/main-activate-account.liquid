@@ -1,0 +1,114 @@
+{% comment %}
+  Activate an account invited by the store: set a password.
+{% endcomment %}
+
+<div class="main-activate full-width page-pad" {% render 'section-attributes' %}>
+  <div class="page-width customer">
+    <h1 class="customer__title">{{ 'customers.activate.title' | t }}</h1>
+    {%- form 'activate_customer_password', class: 'form-card' -%}
+      {%- if form.errors -%}
+        <div class="form-status form-status--error" role="alert" tabindex="-1" data-focus-on-load>{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+      <p>{{ 'customers.activate.text' | t }}</p>
+      <div class="form-field">
+        <label for="ActivatePassword">{{ 'customers.password' | t }}</label>
+        <input id="ActivatePassword" type="password" name="customer[password]" autocomplete="new-password" required>
+      </div>
+      <div class="form-field">
+        <label for="ActivateConfirm">{{ 'customers.password_confirm' | t }}</label>
+        <input id="ActivateConfirm" type="password" name="customer[password_confirmation]" autocomplete="new-password" required>
+      </div>
+      {%- assign activate_label = 'customers.activate.submit' | t -%}
+      {% render 'button', label: activate_label, type: 'submit' %}
+      <button type="submit" name="decline" class="customer__decline">{{ 'customers.activate.decline' | t }}</button>
+    {%- endform -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .customer {
+      display: grid;
+      gap: var(--space-m);
+    }
+
+    .customer__title {
+      font-size: var(--step-3);
+      text-align: center;
+    }
+
+    .customer__links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .customer__links a {
+      text-decoration: underline 1px;
+      text-underline-offset: 4px;
+    }
+
+    .customer__subtitle {
+      font-size: var(--step-1);
+    }
+
+    .customer__decline {
+      min-block-size: 44px;
+      border: 0;
+      background: none;
+      color: var(--color-ink-muted);
+      text-decoration: underline 1px;
+      text-underline-offset: 4px;
+      cursor: pointer;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelector('[data-focus-on-load]')?.focus();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.main_activate_account.name",
+  "class": "customer-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ]
+}
+{% endschema %}
