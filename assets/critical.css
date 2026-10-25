@@ -57,6 +57,7 @@
     --color-error: #B3261E;
     --color-allergen-warn-bg: #FFE1D1;
     --color-allergen-warn-fg: #9A3A10;
+    --color-on-highlight: #1B1714; /* text on butter/strawberry in every scheme */
 
     /* Motion (guide §3.5) */
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -266,7 +267,7 @@
 
   ::selection {
     background-color: var(--color-highlight);
-    color: #1B1714;
+    color: var(--color-on-highlight);
   }
 
   .mono {
