@@ -99,7 +99,7 @@ Crumbline works without any setup and gets better with a few product metafields.
 | `occasion` | List of single line text | `birthday`, `wedding` | Occasion filters |
 | `builder_eligible` | True or false | `true` | Lets the product appear in the cake builder |
 
-No metafields? You can use tags instead, for example `occasion:birthday` or `allergen:nuts`. A full setup guide will ship with v1.0.0.
+No metafields? You can use tags instead, for example `occasion:birthday` or `allergen:nuts`. Full guides will live in [`docs/`](./docs/) and ship by v1.0.0.
 
 ## Project structure
 
@@ -108,6 +108,7 @@ No metafields? You can use tags instead, for example `occasion:birthday` or `all
 ├── assets      # critical.css and the icon sprite only
 ├── blocks      # Theme blocks merchants can add, remove and reorder
 ├── config      # Global theme settings
+├── docs        # Merchant and developer guides (not part of the theme)
 ├── layout      # theme.liquid and password.liquid
 ├── locales     # Storefront and theme editor translations
 ├── sections    # Page sections, each with its own CSS and JS

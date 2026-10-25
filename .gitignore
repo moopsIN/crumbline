@@ -16,7 +16,7 @@ node_modules/
 release
 *.zip
 
-# docs
-docs/
+# private planning material (guide, plan, mockups, QA)
+planning/
 AGENTS.md 
 CLAUDE.md
