@@ -188,6 +188,25 @@
     }
   });
 
+  /* Dates written by Liquid use English names; show them in the page language. */
+  function localizeDates(root = document) {
+    const format = new Intl.DateTimeFormat(document.documentElement.lang || undefined, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+    root.querySelectorAll('time[data-localize-date]').forEach((time) => {
+      const date = new Date(`${time.getAttribute('datetime')}T00:00:00Z`);
+      if (!Number.isNaN(date.getTime())) time.textContent = format.format(date);
+    });
+    root.querySelectorAll('.date-pill').forEach((pill) => {
+      const date = new Date(`${pill.querySelector('[data-date]')?.dataset.date}T00:00:00Z`);
+      if (Number.isNaN(date.getTime())) return;
+      for (const part of ['weekday', 'day', 'month']) {
+        const el = pill.querySelector(`[data-part="${part}"]`);
+        if (el) el.textContent = date.toLocaleDateString(document.documentElement.lang || undefined, { [part]: part === 'day' ? 'numeric' : 'short', timeZone: 'UTC' }).replace('.', '');
+      }
+    });
+  }
+  document.addEventListener(EVENTS.cartUpdated, () => localizeDates());
+  document.addEventListener(EVENTS.variantChanged, () => localizeDates());
+
   /* Entrance reveal: [data-reveal] fades and rises once, when motion is welcome. */
   function setUpReveal(root = document) {
     if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches || !('IntersectionObserver' in window)) return;
@@ -206,8 +225,12 @@
       observer.observe(element);
     });
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setUpReveal());
-  else setUpReveal();
+  const onReady = () => {
+    setUpReveal();
+    localizeDates();
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', onReady);
+  else onReady();
   document.addEventListener('shopify:section:load', (event) => setUpReveal(event.target));
 
   window.Crumbline = Object.freeze({ EVENTS, fetchSections, toast, cart });

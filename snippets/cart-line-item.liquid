@@ -48,7 +48,7 @@
           <dt>{{ property.first | escape }}</dt>
           <dd>
             {%- if property.first == date_key -%}
-              <time datetime="{{ property.last }}">{{ property.last | date: '%a %-d %b %Y' }}</time>
+              <time datetime="{{ property.last }}" data-localize-date>{{ property.last | date: '%a %-d %b %Y' }}</time>
             {%- else -%}
               {{ property.last | escape }}
             {%- endif -%}

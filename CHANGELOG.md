@@ -4,6 +4,21 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.10.0] — 2026-10-25
+
+Phase 10: localisation.
+
+### Added
+- Spanish translations for the storefront and the theme editor.
+- Dates in the cart and the pickup date picker show in the shopper's language.
+- Page titles for tag-filtered and paginated pages are translated.
+
+### Fixed
+- A long label in the mobile bottom navigation no longer pushes the bar past the screen edge on small phones.
+
+### Removed
+- Unused translation keys left over from Skeleton.
+
 ## [0.9.0] — 2026-10-25
 
 Phase 9: remaining templates.

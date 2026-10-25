@@ -603,27 +603,5 @@
       "direction_row": "Row",
       "gap": "Space between"
     }
-  },
-  "general": {
-    "404": "Not found",
-    "article": "Article",
-    "blog": "Blog",
-    "cart": "Cart",
-    "collection": "Collection",
-    "collections_grid": "Collections grid",
-    "page": "Page",
-    "password": "Password",
-    "product": "Product",
-    "search": "Search"
-  },
-  "labels": {
-    "grid_gap": "Grid spacing",
-    "grid_item_width": "Grid item width"
-  },
-  "options": {
-    "size": {
-      "large": "Large",
-      "small": "Small"
-    }
   }
 }
