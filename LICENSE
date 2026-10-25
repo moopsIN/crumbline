@@ -1,7 +1,6 @@
 MIT License
 
 Copyright (c) 2026 Moops Design
-Copyright (c) Shopify Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,3 +19,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Crumbline is built on Shopify's Skeleton theme. Portions of this software are
+Copyright (c) 2018-present Shopify Inc. and are licensed under the terms in
+LICENSE.md, which permit their use only to develop themes that integrate or
+interoperate with Shopify software or services.
