@@ -1,0 +1,423 @@
+{% comment %}
+  "What's the occasion?" chips (Cute speech-bubble faces). Link mode: each
+  chip opens a collection. Filter mode: chips filter the product grid of the
+  featured collection section placed right after this one, by occasion
+  (crumbline.occasion metafield or occasion:* tags); without JS they link to
+  their collection instead.
+{% endcomment %}
+
+{%- assign filter_mode = false -%}
+{%- if section.settings.mode == 'filter' -%}{%- assign filter_mode = true -%}{%- endif -%}
+
+<occasion-chips
+  class="occasions full-width"
+  data-mode="{{ section.settings.mode }}"
+  data-count-label="{{ 'sections.occasions.count' | t: number: '__COUNT__' }}"
+  {% render 'section-attributes' %}
+>
+  <div class="occasions__inner">
+    {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
+    <ul class="occasions__list" role="list">
+      {%- if filter_mode -%}
+        <li>
+          <a href="{{ routes.all_products_collection_url }}" class="occasion" data-occasion="" data-selected>
+            <span class="occasion__face" style="--face: var(--color-highlight);">{% render 'icon', name: 'cake' %}</span>
+            <span class="occasion__label">{{ 'sections.occasions.all' | t }}</span>
+          </a>
+        </li>
+      {%- endif -%}
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign colour = block.settings.color
+          if colour == 'butter'
+            assign face = 'var(--color-highlight)'
+          elsif colour == 'strawberry'
+            assign face = 'var(--color-highlight-2)'
+          else
+            assign face = 'var(--color-pastel-' | append: colour | append: ')'
+          endif
+          assign url = block.settings.collection.url | default: routes.all_products_collection_url
+          assign key = block.settings.tag | default: block.settings.label | handleize
+        -%}
+        <li {{ block.shopify_attributes }}>
+          <a href="{{ url }}" class="occasion" data-occasion="{{ key }}">
+            <span class="occasion__face" style="--face: {{ face }};">
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 140 | image_tag: loading: 'lazy', alt: '' }}
+              {%- else -%}
+                {% render 'icon', name: block.settings.icon %}
+              {%- endif -%}
+            </span>
+            <span class="occasion__label">{{ block.settings.label | escape }}</span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+    <p class="visually-hidden" aria-live="polite" data-occasion-status></p>
+  </div>
+</occasion-chips>
+
+{% stylesheet %}
+  @layer components {
+    .occasions {
+      display: block;
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1)) 0;
+    }
+
+    .occasions__inner {
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .occasions__list {
+      display: flex;
+      gap: 0.6rem;
+      margin: 0 calc(var(--gutter) * -1) 1rem;
+      padding: 0.5rem var(--gutter) 1rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      list-style: none;
+    }
+
+    .occasions__list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .occasion {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.55rem;
+      min-inline-size: 76px;
+      padding: 0.4rem;
+      color: var(--color-ink-muted);
+      font-size: 0.88rem;
+      font-weight: var(--font-body-weight-bold);
+      text-decoration: none;
+      scroll-snap-align: start;
+    }
+
+    .occasion__face {
+      display: grid;
+      place-items: center;
+      inline-size: 68px;
+      block-size: 68px;
+      overflow: hidden;
+      border: var(--border-width) solid transparent;
+      border-radius: 50% 50% 50% 14%;
+      background-color: var(--face);
+      color: var(--color-on-highlight);
+      transition:
+        transform 500ms var(--ease-bounce),
+        border-color var(--dur-base),
+        box-shadow var(--dur-base);
+    }
+
+    .occasion__face .icon {
+      inline-size: 1.8rem;
+      block-size: 1.8rem;
+    }
+
+    .occasion__face img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+
+    .occasion:hover .occasion__face {
+      transform: translateY(-4px) rotate(-8deg);
+    }
+
+    .occasion:is([aria-pressed='true'], [data-selected]:not([aria-pressed])) {
+      color: var(--color-ink);
+    }
+
+    .occasion:is([aria-pressed='true'], [data-selected]:not([aria-pressed])) .occasion__face {
+      border-color: var(--color-ink);
+      box-shadow: var(--shadow-hard);
+      transform: scale(1.08) rotate(-4deg);
+    }
+
+    .occasion:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .occasion:focus-visible .occasion__face {
+      outline: 3px solid var(--color-ink);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 6px var(--color-accent);
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('occasion-chips')) {
+    customElements.define(
+      'occasion-chips',
+      class extends HTMLElement {
+        connectedCallback() {
+          if (this.dataset.mode !== 'filter' || !this.#grid()) return;
+          /* With a grid to filter, the chips become toggle buttons; without JS they stay links. */
+          this.querySelectorAll('[data-occasion]').forEach((chip) => {
+            chip.setAttribute('role', 'button');
+            chip.setAttribute('aria-pressed', String(chip.hasAttribute('data-selected')));
+          });
+          this.addEventListener('click', this.#onClick);
+          this.addEventListener('keydown', (event) => {
+            if (event.key === ' ' && event.target.matches('[data-occasion]')) {
+              event.preventDefault();
+              event.target.click();
+            }
+          });
+        }
+
+        /* The product grid of the next section on the page. */
+        #grid() {
+          const next = this.closest('.shopify-section')?.nextElementSibling;
+          return next?.querySelector('[data-occasion-grid]');
+        }
+
+        #onClick = (event) => {
+          const chip = event.target.closest('[data-occasion]');
+          const grid = this.#grid();
+          if (!chip || !grid) return;
+          event.preventDefault();
+          const key = chip.dataset.occasion;
+          this.querySelectorAll('[data-occasion]').forEach((item) => item.setAttribute('aria-pressed', String(item === chip)));
+          let shown = 0;
+          grid.querySelectorAll(':scope > li > [data-occasions]').forEach((card) => {
+            const match = !key || card.dataset.occasions.split(/\s+/).includes(key);
+            card.closest('li').hidden = !match;
+            if (match) shown += 1;
+          });
+          this.querySelector('[data-occasion-status]').textContent = this.dataset.countLabel.replace('__COUNT__', shown);
+        };
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.occasions.name",
+  "class": "occasions-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.shared.eyebrow",
+      "default": "Shop"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.shared.heading",
+      "info": "t:sections.shared.heading_info",
+      "default": "What's the <em>occasion?</em>"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:sections.shared.text",
+      "default": "Pick a moment and we'll show you the right bakes."
+    },
+    {
+      "type": "select",
+      "id": "mode",
+      "label": "t:sections.occasions.mode",
+      "info": "t:sections.occasions.mode_info",
+      "options": [
+        {
+          "value": "filter",
+          "label": "t:sections.occasions.mode_filter"
+        },
+        {
+          "value": "link",
+          "label": "t:sections.occasions.mode_link"
+        }
+      ],
+      "default": "filter"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "occasion",
+      "name": "t:sections.occasions.occasion",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.occasions.label",
+          "default": "Birthday"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "t:sections.occasions.tag",
+          "info": "t:sections.occasions.tag_info"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.occasions.collection",
+          "info": "t:sections.occasions.collection_info"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:sections.bottom_nav.icon",
+          "options": [
+            {
+              "value": "cake",
+              "label": "t:sections.bottom_nav.icon_cake"
+            },
+            {
+              "value": "shop",
+              "label": "t:sections.bottom_nav.icon_shop"
+            },
+            {
+              "value": "basket",
+              "label": "t:sections.bottom_nav.icon_basket"
+            },
+            {
+              "value": "calendar",
+              "label": "t:sections.bottom_nav.icon_calendar"
+            },
+            {
+              "value": "check",
+              "label": "t:blocks.chip.icon_check"
+            }
+          ],
+          "default": "cake"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.occasions.image",
+          "info": "t:sections.occasions.image_info"
+        },
+        {
+          "type": "select",
+          "id": "color",
+          "label": "t:sections.shared.card_colour",
+          "options": [
+            {
+              "value": "1",
+              "label": "t:sections.shared.colour_sky"
+            },
+            {
+              "value": "2",
+              "label": "t:sections.shared.colour_lavender"
+            },
+            {
+              "value": "3",
+              "label": "t:sections.shared.colour_apricot"
+            },
+            {
+              "value": "4",
+              "label": "t:sections.shared.colour_pistachio"
+            },
+            {
+              "value": "5",
+              "label": "t:sections.shared.colour_latte"
+            },
+            {
+              "value": "butter",
+              "label": "t:sections.shared.colour_butter"
+            },
+            {
+              "value": "strawberry",
+              "label": "t:sections.shared.colour_strawberry"
+            }
+          ],
+          "default": "butter"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.occasions.name",
+      "blocks": [
+        {
+          "type": "occasion",
+          "settings": {
+            "label": "Birthday",
+            "tag": "birthday",
+            "icon": "cake",
+            "color": "strawberry"
+          }
+        },
+        {
+          "type": "occasion",
+          "settings": {
+            "label": "Wedding",
+            "tag": "wedding",
+            "icon": "check",
+            "color": "2"
+          }
+        },
+        {
+          "type": "occasion",
+          "settings": {
+            "label": "Just because",
+            "tag": "just-because",
+            "icon": "shop",
+            "color": "4"
+          }
+        },
+        {
+          "type": "occasion",
+          "settings": {
+            "label": "Say sorry",
+            "tag": "sorry",
+            "icon": "basket",
+            "color": "3"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
