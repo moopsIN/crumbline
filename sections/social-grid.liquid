@@ -11,6 +11,11 @@
   assign colours = 'strawberry,butter,1,2,3,4' | split: ','
 -%}
 
+{%- comment -%} Captions use the hand font, which only loads where it's used (D-28). {%- endcomment -%}
+{% style %}
+  {{ settings.type_hand_font | font_face: font_display: 'swap' }}
+{% endstyle %}
+
 <div class="social-grid full-width" {% render 'section-attributes' %}>
   <div class="social-grid__inner">
     {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
