@@ -137,7 +137,19 @@
       "padding_none": "None",
       "padding_small": "Small",
       "padding_default": "Default",
-      "padding_large": "Large"
+      "padding_large": "Large",
+      "eyebrow": "Label above heading",
+      "heading": "Heading",
+      "heading_info": "Make a word italic to give it the accent colour.",
+      "text": "Intro text",
+      "card_colour": "Colour",
+      "colour_sky": "Sky",
+      "colour_lavender": "Lavender",
+      "colour_apricot": "Apricot",
+      "colour_pistachio": "Pistachio",
+      "colour_latte": "Latte",
+      "colour_butter": "Butter",
+      "colour_strawberry": "Strawberry"
     },
     "custom_section": {
       "name": "Custom section",
@@ -281,6 +293,141 @@
     },
     "main_cart": {
       "name": "Cart"
+    },
+    "hero": {
+      "name": "Hero",
+      "media": "Image",
+      "image": "Image",
+      "image_info": "Portrait photos of tall cakes work best. Use a cut-out PNG with 'Fit: whole image' for the market-stall look.",
+      "media_style": "Frame",
+      "image_fit": "Fit",
+      "fit_cover": "Fill the frame",
+      "fit_contain": "Whole image",
+      "stamp_text": "Stamp badge text",
+      "stamp_text_info": "Up to 40 characters. Leave blank to hide.",
+      "ticket_product": "\"Today's bake\" product",
+      "ticket_product_info": "Shows a small ticket linking to this product.",
+      "ticket_label": "Ticket label",
+      "bubble_1": "Speech bubble 1",
+      "bubble_2": "Speech bubble 2",
+      "bubble_info": "Shown only when Theme settings → Decorations is on."
+    },
+    "hero_collage": {
+      "name": "Hero collage",
+      "button_label": "Button label",
+      "button_link": "Button link",
+      "button_2_label": "Second button label",
+      "button_2_link": "Second button link",
+      "piece": "Cut-out photo",
+      "piece_image": "Image",
+      "piece_image_info": "A transparent PNG of a single bake works best.",
+      "position": "Position",
+      "top_left": "Top left",
+      "top_right": "Top right",
+      "bottom_left": "Bottom left",
+      "bottom_right": "Bottom right",
+      "center": "Centre",
+      "size": "Size"
+    },
+    "marquee": {
+      "name": "Scrolling text",
+      "separator": "Separator",
+      "sep_star": "Star",
+      "sep_sparkle": "Sparkle",
+      "sep_dot": "Dot",
+      "sep_heart": "Heart",
+      "speed": "Time for one loop",
+      "speed_info": "Higher is slower.",
+      "tilt": "Tilt the band",
+      "item": "Phrase",
+      "item_text": "Text"
+    },
+    "occasions": {
+      "name": "Occasions",
+      "mode": "What chips do",
+      "mode_info": "Filter needs a Featured collection section placed directly below.",
+      "mode_filter": "Filter the products below",
+      "mode_link": "Open a collection",
+      "occasion": "Occasion",
+      "label": "Label",
+      "tag": "Occasion key",
+      "tag_info": "Matches the product's Occasions metafield or occasion:… tag, e.g. birthday. Defaults to the label.",
+      "collection": "Collection",
+      "collection_info": "Opened in link mode, and without JavaScript.",
+      "image": "Image (optional)",
+      "image_info": "Replaces the icon."
+    },
+    "featured_collection": {
+      "name": "Featured collection",
+      "collection": "Collection",
+      "products_to_show": "Products to show",
+      "show_view_all": "Show \"View all\" button"
+    },
+    "visit": {
+      "name": "Find us",
+      "location": "Location",
+      "tag": "Label",
+      "location_name": "Name",
+      "note": "Note",
+      "map_link": "Directions link",
+      "map_link_info": "Paste a Google Maps or Apple Maps link.",
+      "stamp_text": "Stamp text",
+      "call": "Call us card"
+    },
+    "story": {
+      "name": "Our story",
+      "text": "Text",
+      "image": "Image",
+      "point": "Numbered point",
+      "point_title": "Title",
+      "person": "Team member",
+      "person_image": "Photo",
+      "person_name": "Name",
+      "person_role": "Role"
+    },
+    "reviews": {
+      "name": "Reviews",
+      "chat_title": "Chat window title",
+      "review": "Review",
+      "quote": "Quote",
+      "author": "Name",
+      "context": "Context",
+      "context_info": "E.g. \"Birthday order\".",
+      "reply": "This is our reply",
+      "reply_info": "Shows on the right as the shop's message."
+    },
+    "social_grid": {
+      "name": "Social photo wall",
+      "handle": "Handle",
+      "handle_info": "E.g. @yourbakery",
+      "button_label": "Button label",
+      "button_info": "Links to Instagram in Theme settings → Social media.",
+      "post": "Photo",
+      "image": "Image",
+      "caption": "Caption",
+      "caption_info": "Handwritten style; keep it short.",
+      "link": "Link to post"
+    },
+    "newsletter": {
+      "name": "Newsletter",
+      "consent": "Small print"
+    },
+    "rich_text": {
+      "name": "Rich text"
+    },
+    "image_with_text": {
+      "name": "Image with text",
+      "position": "Image position",
+      "left": "Left",
+      "right": "Right"
+    },
+    "faq": {
+      "name": "FAQ",
+      "question": "Question",
+      "answer": "Answer"
+    },
+    "cta_banner": {
+      "name": "Call to action"
     }
   },
   "blocks": {

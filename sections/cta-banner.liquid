@@ -1,0 +1,174 @@
+{% comment %}
+  A bold call to action band: heading, text, one or two buttons and an
+  optional rotating stamp badge. Ink band by default.
+{% endcomment %}
+
+<div class="cta-banner full-width" {% render 'section-attributes' %}>
+  <div class="cta-banner__inner" data-reveal>
+    <div class="cta-banner__copy">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="cta-banner__title">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <p class="cta-banner__text">{{ section.settings.text | escape }}</p>
+      {%- endif -%}
+      <div class="cta-banner__actions">
+        {%- if section.settings.button_label != blank -%}
+          {% render 'button', label: section.settings.button_label, url: section.settings.button_link, icon: 'arrow-right' %}
+        {%- endif -%}
+        {%- if section.settings.button_2_label != blank -%}
+          {% render 'button', label: section.settings.button_2_label, url: section.settings.button_2_link, style: 'secondary' %}
+        {%- endif -%}
+      </div>
+    </div>
+    {%- if section.settings.stamp_text != blank -%}
+      {% render 'stamp-badge', text: section.settings.stamp_text, id: section.id, class: 'cta-banner__stamp' %}
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .cta-banner {
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+    }
+
+    .cta-banner__inner {
+      display: grid;
+      gap: var(--space-l);
+      align-items: center;
+      justify-items: center;
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+      text-align: center;
+    }
+
+    .cta-banner__title {
+      font-size: var(--step-3);
+    }
+
+    .cta-banner__text {
+      max-inline-size: 40ch;
+      margin: 1rem auto 0;
+      color: var(--color-ink-muted);
+      font-size: var(--step-1);
+    }
+
+    .cta-banner__actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.9rem;
+      margin-block-start: 1.75rem;
+    }
+
+    @media (min-width: 56.25rem) {
+      .cta-banner__inner {
+        grid-template-columns: 1fr auto;
+        justify-items: start;
+        text-align: start;
+      }
+
+      .cta-banner__text {
+        margin-inline: 0;
+      }
+
+      .cta-banner__actions {
+        justify-content: flex-start;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.cta_banner.name",
+  "class": "cta-banner-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.shared.heading",
+      "info": "t:sections.shared.heading_info",
+      "default": "Planning a <em>celebration?</em>"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:sections.shared.text",
+      "default": "Tell us about it and we'll bake something just for the day."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.hero_collage.button_label",
+      "default": "Ask about a custom cake"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.hero_collage.button_link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "t:sections.hero_collage.button_2_label"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "t:sections.hero_collage.button_2_link"
+    },
+    {
+      "type": "text",
+      "id": "stamp_text",
+      "label": "t:sections.hero.stamp_text",
+      "info": "t:sections.hero.stamp_text_info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.cta_banner.name"
+    }
+  ]
+}
+{% endschema %}

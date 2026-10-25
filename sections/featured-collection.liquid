@@ -1,0 +1,199 @@
+{% comment %}
+  A collection's products as Cute product cards, with an optional "View all"
+  button. The grid is marked as a target for the occasions section placed
+  directly above it. With no collection chosen, placeholder cards show in
+  the theme editor only.
+{% endcomment %}
+
+{%- liquid
+  assign collection = section.settings.collection
+  assign limit = section.settings.products_to_show
+-%}
+
+{%- if collection != blank or request.design_mode -%}
+  <div class="featured-collection full-width" {% render 'section-attributes' %}>
+    <div class="featured-collection__inner" style="--cols-mobile: {{ section.settings.columns_mobile }}; --cols-desktop: {{ section.settings.columns_desktop }};">
+      {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
+      <ul class="featured-collection__grid" role="list" data-occasion-grid>
+        {%- if collection != blank -%}
+          {%- for product in collection.products limit: limit -%}
+            <li data-reveal>
+              {% render 'product-card', product: product, index: forloop.index, sizes: '(min-width: 1240px) 380px, (min-width: 900px) 30vw, 50vw' %}
+            </li>
+          {%- endfor -%}
+        {%- else -%}
+          {%- for i in (1..limit) -%}
+            <li>{% render 'product-card', index: i %}</li>
+          {%- endfor -%}
+        {%- endif -%}
+      </ul>
+      {%- if section.settings.show_view_all and collection != blank and collection.products_count > limit -%}
+        <div class="featured-collection__footer">
+          {%- assign view_label = 'sections.featured_collection.view_all' | t -%}
+          {% render 'button', label: view_label, url: collection.url, style: 'secondary', icon: 'arrow-right' %}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .featured-collection {
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+    }
+
+    .featured-collection__inner {
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .featured-collection__grid {
+      display: grid;
+      grid-template-columns: repeat(var(--cols-mobile, 2), minmax(0, 1fr));
+      gap: 0.75rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .featured-collection__footer {
+      display: flex;
+      justify-content: center;
+      margin-block-start: var(--space-l);
+    }
+
+    @media (min-width: 45rem) {
+      .featured-collection__grid {
+        grid-template-columns: repeat(min(var(--cols-desktop, 3), 3), minmax(0, 1fr));
+        gap: clamp(0.9rem, 0.6rem + 1vw, 1.4rem);
+      }
+    }
+
+    @media (min-width: 56.25rem) {
+      .featured-collection__grid {
+        grid-template-columns: repeat(var(--cols-desktop, 3), minmax(0, 1fr));
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.featured_collection.name",
+  "class": "featured-collection-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.shared.eyebrow",
+      "default": "Fresh this week"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.shared.heading",
+      "info": "t:sections.shared.heading_info",
+      "default": "Bakes we <em>love</em>"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:sections.shared.text"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:sections.featured_collection.collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "t:sections.featured_collection.products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "t:sections.featured_collection.show_view_all",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.layout"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "t:sections.main_collection.columns_mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:sections.main_collection.columns_1"
+        },
+        {
+          "value": "2",
+          "label": "t:sections.main_collection.columns_2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "t:sections.main_collection.columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.featured_collection.name"
+    }
+  ]
+}
+{% endschema %}

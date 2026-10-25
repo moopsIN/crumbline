@@ -59,6 +59,8 @@
     --color-allergen-warn-fg: #9A3A10;
     --color-awning-light: #FFFDF9; /* awning stripes stay light on every scheme */
     --color-on-highlight: #1B1714; /* text on butter/strawberry in every scheme */
+    --color-on-ink: #F4ECDF; /* text on always-dark cards in every scheme */
+    --color-on-ink-muted: #D8CCC0;
 
     /* Motion (guide §3.5) */
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -357,6 +359,20 @@
   }
 
   .skip-link:focus-visible {
+    translate: 0 0;
+  }
+
+  /* Set by components.js only when motion is welcome, so content is never hidden without JS. */
+  .reveal-pending {
+    opacity: 0;
+    translate: 0 16px;
+    transition:
+      opacity var(--dur-slow) var(--ease-out),
+      translate var(--dur-slow) var(--ease-out);
+  }
+
+  .reveal-pending.is-revealed {
+    opacity: 1;
     translate: 0 0;
   }
 

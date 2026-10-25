@@ -1,0 +1,121 @@
+{% comment %}
+  A centred (or left) column of theme blocks: heading, text, buttons, chips.
+{% endcomment %}
+
+<div class="rich-text full-width" {% render 'section-attributes' %}>
+  <div class="rich-text__inner rich-text__inner--{{ section.settings.alignment }}" data-reveal>
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .rich-text {
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+    }
+
+    .rich-text__inner {
+      display: grid;
+      gap: var(--space-s);
+      max-inline-size: 46rem;
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .rich-text__inner--center {
+      justify-items: center;
+      text-align: center;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.rich_text.name",
+  "class": "rich-text-section",
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "t:blocks.shared.alignment",
+      "options": [
+        {
+          "value": "start",
+          "label": "t:blocks.shared.align_start"
+        },
+        {
+          "value": "center",
+          "label": "t:blocks.shared.align_center"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.rich_text.name",
+      "blocks": [
+        {
+          "type": "heading",
+          "settings": {
+            "heading": "Made by hand, <em>every time</em>",
+            "level": "h2",
+            "size": "large",
+            "alignment": "center"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "text": "<p>Share what makes your bakes different.</p>",
+            "style": "lead",
+            "alignment": "center"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

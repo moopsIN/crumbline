@@ -24,17 +24,15 @@
 
 {%- if ring_text != blank -%}
   <div class="stamp-badge {{ class }}">
-    <svg class="stamp-badge__svg" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
-      <circle class="stamp-badge__disc" cx="60" cy="60" r="60"/>
-      <g class="stamp-badge__ring">
-        <path id="{{ path_id }}" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" fill="none"/>
-        <text class="stamp-badge__text">
-          <textPath href="#{{ path_id }}" textLength="272" lengthAdjust="spacing">{{ ring_text | escape }} ✦</textPath>
-        </text>
-      </g>
-      <circle class="stamp-badge__core" cx="60" cy="60" r="27"/>
+    <span class="stamp-badge__disc" aria-hidden="true"></span>
+    {%- comment -%} The ring is its own <svg>, rotated with a CSS transform so the compositor animates it (rotating an SVG <g> repaints every frame). {%- endcomment -%}
+    <svg class="stamp-badge__ring" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+      <path id="{{ path_id }}" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" fill="none"/>
+      <text class="stamp-badge__text">
+        <textPath href="#{{ path_id }}" textLength="272" lengthAdjust="spacing">{{ ring_text | escape }} ✦</textPath>
+      </text>
     </svg>
-    <span class="stamp-badge__icon">{% render 'icon', name: center_icon %}</span>
+    <span class="stamp-badge__core" aria-hidden="true">{% render 'icon', name: center_icon %}</span>
     <span class="visually-hidden">{{ text | strip | truncate: 40, "" | escape }}</span>
   </div>
 {%- endif -%}
@@ -43,25 +41,30 @@
   @layer components {
     .stamp-badge {
       position: relative;
+      display: grid;
+      place-items: center;
       inline-size: clamp(92px, 26cqi, 124px);
       aspect-ratio: 1;
       rotate: 12deg;
     }
 
-    .stamp-badge__svg {
-      inline-size: 100%;
-      block-size: 100%;
-      overflow: visible;
+    .stamp-badge__disc,
+    .stamp-badge__ring,
+    .stamp-badge__core {
+      grid-area: 1 / 1;
     }
 
     .stamp-badge__disc {
-      fill: var(--color-ink);
+      inline-size: 100%;
+      block-size: 100%;
+      border-radius: 50%;
+      background-color: var(--color-ink);
     }
 
-    .stamp-badge__core {
-      fill: var(--color-accent);
-      stroke: var(--color-bg);
-      stroke-width: 2;
+    .stamp-badge__ring {
+      inline-size: 100%;
+      block-size: 100%;
+      overflow: visible;
     }
 
     .stamp-badge__text {
@@ -71,32 +74,32 @@
       letter-spacing: 1.6px;
     }
 
-    .stamp-badge__ring {
-      transform-origin: 60px 60px;
-    }
-
-    .stamp-badge__icon {
-      position: absolute;
-      inset: 0;
+    .stamp-badge__core {
       display: grid;
       place-items: center;
+      inline-size: 45%;
+      block-size: 45%;
+      border: var(--border-width) solid var(--color-bg);
+      border-radius: 50%;
+      background-color: var(--color-accent);
       color: var(--color-on-highlight);
     }
 
-    .stamp-badge__icon .icon {
-      inline-size: 28%;
-      block-size: 28%;
+    .stamp-badge__core .icon {
+      inline-size: 55%;
+      block-size: 55%;
     }
 
     @media (prefers-reduced-motion: no-preference) {
       .stamp-badge__ring {
+        will-change: transform;
         animation: stamp-spin 14s linear infinite;
       }
     }
 
     @keyframes stamp-spin {
       to {
-        rotate: 1turn;
+        transform: rotate(1turn);
       }
     }
   }

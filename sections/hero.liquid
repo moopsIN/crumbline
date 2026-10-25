@@ -1,0 +1,353 @@
+{% comment %}
+  Homepage hero (Cute): copy built from theme blocks on one side, and on the
+  other a single photo in a plain or market-stall awning frame (the LCP
+  image), with an optional rotating stamp badge, a "Today's bake" ticket
+  linking to a product, and two speech bubbles (shown only when Theme
+  settings → Decorations is on).
+{% endcomment %}
+
+{%- liquid
+  assign product = section.settings.ticket_product
+  assign bubble_1 = section.settings.bubble_1
+  assign bubble_2 = section.settings.bubble_2
+-%}
+
+<div class="hero full-width" {% render 'section-attributes' %}>
+  <div class="hero__inner">
+    <div class="hero__copy">
+      {% content_for 'blocks' %}
+    </div>
+
+    <div class="hero__media">
+      {% render 'media-frame',
+        image: section.settings.image,
+        style: section.settings.media_style,
+        sunburst: section.settings.sunburst,
+        fit: section.settings.image_fit,
+        focus: 'center',
+        sizes: '(min-width: 900px) 500px, 92vw',
+        priority: true
+      %}
+
+      {%- if section.settings.stamp_text != blank -%}
+        {% render 'stamp-badge', text: section.settings.stamp_text, id: section.id, class: 'hero__stamp' %}
+      {%- endif -%}
+
+      {%- if product != blank -%}
+        <a href="{{ product.url }}" class="hero__ticket">
+          <span class="hero__ticket-kicker mono">{{ section.settings.ticket_label | escape }}</span>
+          <strong class="hero__ticket-title">{{ product.title | escape }}</strong>
+          <span class="hero__ticket-price mono">{{ product.price | money }} <span aria-hidden="true">→</span></span>
+        </a>
+      {%- endif -%}
+
+      {% render 'speech-bubble', text: bubble_1, hand: true, class: 'hero__bubble hero__bubble--one' %}
+      {% render 'speech-bubble', text: bubble_2, tail: 'end', class: 'hero__bubble hero__bubble--two' %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .hero {
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1) * 0.6);
+      overflow-x: clip;
+    }
+
+    .hero__inner {
+      display: grid;
+      gap: clamp(2rem, 1rem + 3vw, 4rem);
+      align-items: center;
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .hero__copy {
+      display: grid;
+      gap: var(--space-s);
+      max-inline-size: 40rem;
+    }
+
+    .hero__media {
+      position: relative;
+      justify-self: center;
+      inline-size: min(100%, 500px);
+      container-type: inline-size;
+    }
+
+    .hero__media .hero__stamp {
+      position: absolute;
+      z-index: 2;
+      inset-block-start: 0;
+      inset-inline-end: 0;
+    }
+
+    .hero__ticket {
+      position: absolute;
+      z-index: 2;
+      inset-inline-start: 0;
+      inset-block-end: 9%;
+      display: grid;
+      gap: 0.1rem;
+      padding: 0.8rem 1.3rem 0.85rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-s);
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+      text-decoration: none;
+      box-shadow: var(--shadow-hard);
+      rotate: -5deg;
+      transition:
+        rotate 500ms var(--ease-bounce),
+        translate 500ms var(--ease-bounce);
+    }
+
+    .hero__ticket:hover {
+      rotate: 0deg;
+      translate: 0 -4px;
+    }
+
+    .hero__ticket-kicker {
+      color: var(--color-ink-muted);
+    }
+
+    .hero__ticket-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      line-height: 1.15;
+    }
+
+    .hero__ticket-price {
+      color: var(--color-ink-muted);
+    }
+
+    .hero__bubble {
+      position: absolute;
+      z-index: 3;
+    }
+
+    .hero__bubble--one {
+      inset-block-start: 22%;
+      inset-inline-start: 2%;
+      rotate: -6deg;
+    }
+
+    .hero__bubble--two {
+      inset-block-end: 26%;
+      inset-inline-end: 0;
+      rotate: 4deg;
+    }
+
+    @media (min-width: 56.25rem) {
+      .hero__inner {
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.hero.name",
+  "class": "hero-section",
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.hero.media"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.hero.image",
+      "info": "t:sections.hero.image_info"
+    },
+    {
+      "type": "select",
+      "id": "media_style",
+      "label": "t:sections.hero.media_style",
+      "options": [
+        {
+          "value": "awning",
+          "label": "t:blocks.image.frame_awning"
+        },
+        {
+          "value": "plain",
+          "label": "t:blocks.image.frame_plain"
+        }
+      ],
+      "default": "awning"
+    },
+    {
+      "type": "checkbox",
+      "id": "sunburst",
+      "label": "t:blocks.image.sunburst",
+      "default": true,
+      "visible_if": "{{ section.settings.media_style == 'awning' }}"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "t:sections.hero.image_fit",
+      "options": [
+        {
+          "value": "cover",
+          "label": "t:sections.hero.fit_cover"
+        },
+        {
+          "value": "contain",
+          "label": "t:sections.hero.fit_contain"
+        }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "text",
+      "id": "stamp_text",
+      "label": "t:sections.hero.stamp_text",
+      "info": "t:sections.hero.stamp_text_info",
+      "default": "Baked fresh to order"
+    },
+    {
+      "type": "product",
+      "id": "ticket_product",
+      "label": "t:sections.hero.ticket_product",
+      "info": "t:sections.hero.ticket_product_info"
+    },
+    {
+      "type": "text",
+      "id": "ticket_label",
+      "label": "t:sections.hero.ticket_label",
+      "default": "Today's bake"
+    },
+    {
+      "type": "text",
+      "id": "bubble_1",
+      "label": "t:sections.hero.bubble_1",
+      "info": "t:sections.hero.bubble_info",
+      "default": "Fresh out of the oven!"
+    },
+    {
+      "type": "text",
+      "id": "bubble_2",
+      "label": "t:sections.hero.bubble_2"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.hero.name",
+      "blocks": [
+        {
+          "type": "heading",
+          "settings": {
+            "eyebrow": "Baked to order",
+            "heading": "Cakes baked <em>just for you</em>",
+            "level": "h1",
+            "size": "hero",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "text": "<p>Small-batch cakes for birthdays, weddings and ordinary Tuesdays. Pick a size, a flavour and a day.</p>",
+            "style": "lead",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "group",
+          "settings": {
+            "direction": "row",
+            "alignment": "flex-start",
+            "gap": "s"
+          },
+          "blocks": [
+            {
+              "type": "button",
+              "settings": {
+                "label": "Order a cake",
+                "link": "/collections/all",
+                "style": "primary",
+                "show_arrow": true
+              }
+            },
+            {
+              "type": "button",
+              "settings": {
+                "label": "Ask about a custom cake",
+                "link": "/pages/contact",
+                "style": "secondary",
+                "show_arrow": false
+              }
+            }
+          ]
+        },
+        {
+          "type": "chip-row",
+          "blocks": [
+            {
+              "type": "_chip",
+              "settings": {
+                "label": "Baked to order",
+                "icon": "cake",
+                "style": "label"
+              }
+            },
+            {
+              "type": "_chip",
+              "settings": {
+                "label": "Local pickup",
+                "icon": "pin",
+                "style": "label"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

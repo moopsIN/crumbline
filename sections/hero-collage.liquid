@@ -1,0 +1,313 @@
+{% comment %}
+  Optional hero (D-13): up to four cut-out photos arranged inside the market-
+  stall awning, with copy beside it. Best with transparent PNGs; used on the
+  demo store, not in the default homepage.
+{% endcomment %}
+
+{%- capture collage -%}
+  {%- for block in section.blocks -%}
+    {%- if block.settings.image != blank -%}
+      {%- assign loading = 'lazy' -%}
+      {%- if forloop.first -%}{%- assign loading = 'eager' -%}{%- endif -%}
+      <div class="collage__piece collage__piece--{{ block.settings.position }} collage__piece--{{ block.settings.size }}" {{ block.shopify_attributes }}>
+        {{ block.settings.image | image_url: width: 700 | image_tag: widths: '280, 420, 560, 700', sizes: '(min-width: 900px) 260px, 45vw', loading: loading, alt: block.settings.image.alt }}
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+<div class="hero-collage full-width" {% render 'section-attributes' %}>
+  <div class="hero-collage__inner">
+    <div class="hero-collage__copy">
+      {%- if section.settings.heading != blank -%}
+        <h1 class="hero-collage__title">{{ section.settings.heading }}</h1>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <p class="hero-collage__text">{{ section.settings.text | escape }}</p>
+      {%- endif -%}
+      <div class="hero-collage__ctas">
+        {%- if section.settings.button_label != blank -%}
+          {% render 'button', label: section.settings.button_label, url: section.settings.button_link, icon: 'arrow-right' %}
+        {%- endif -%}
+        {%- if section.settings.button_2_label != blank -%}
+          {% render 'button', label: section.settings.button_2_label, url: section.settings.button_2_link, style: 'secondary' %}
+        {%- endif -%}
+      </div>
+    </div>
+    <div class="hero-collage__media">
+      {% render 'media-frame', style: 'awning', sunburst: true, content: collage %}
+      {%- if section.settings.stamp_text != blank -%}
+        {% render 'stamp-badge', text: section.settings.stamp_text, id: section.id, class: 'hero-collage__stamp' %}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .hero-collage {
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1) * 0.6);
+      overflow-x: clip;
+    }
+
+    .hero-collage__inner {
+      display: grid;
+      gap: clamp(2rem, 1rem + 3vw, 4rem);
+      align-items: center;
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .hero-collage__copy {
+      display: grid;
+      gap: var(--space-s);
+      max-inline-size: 40rem;
+    }
+
+    .hero-collage__media {
+      position: relative;
+      justify-self: center;
+      inline-size: min(100%, 500px);
+      container-type: inline-size;
+    }
+
+    .hero-collage__media .hero-collage__stamp {
+      position: absolute;
+      z-index: 2;
+      inset-block-start: 0;
+      inset-inline-end: 0;
+    }
+
+    @media (min-width: 56.25rem) {
+      .hero-collage__inner {
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      }
+    }
+
+    .hero-collage__title {
+      font-size: var(--step-4);
+      line-height: 0.88;
+      letter-spacing: -0.045em;
+    }
+
+    .hero-collage__text {
+      max-inline-size: 36ch;
+      margin: 0;
+      color: var(--color-ink-muted);
+      font-size: var(--step-1);
+      line-height: 1.45;
+    }
+
+    .hero-collage__ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+    }
+
+    .collage__piece {
+      position: absolute;
+      inline-size: 46%;
+      filter: drop-shadow(4px 6px 0 rgb(27 23 20 / 0.2));
+    }
+
+    .collage__piece img {
+      inline-size: 100%;
+      block-size: auto;
+    }
+
+    .collage__piece--small {
+      inline-size: 34%;
+    }
+
+    .collage__piece--large {
+      inline-size: 62%;
+    }
+
+    .collage__piece--top-left {
+      inset-block-start: 6%;
+      inset-inline-start: 4%;
+      rotate: -6deg;
+    }
+
+    .collage__piece--top-right {
+      inset-block-start: 8%;
+      inset-inline-end: 4%;
+      rotate: 5deg;
+    }
+
+    .collage__piece--bottom-left {
+      inset-block-end: 6%;
+      inset-inline-start: 6%;
+      rotate: 4deg;
+    }
+
+    .collage__piece--bottom-right {
+      inset-block-end: 5%;
+      inset-inline-end: 5%;
+      rotate: -4deg;
+    }
+
+    .collage__piece--center {
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
+      translate: -50% -50%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.hero_collage.name",
+  "class": "hero-section",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.shared.heading",
+      "info": "t:sections.shared.heading_info",
+      "default": "Cakes baked <em>just for you</em>"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:sections.shared.text",
+      "default": "Small-batch cakes for birthdays, weddings and ordinary Tuesdays."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.hero_collage.button_label",
+      "default": "Order a cake"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.hero_collage.button_link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "t:sections.hero_collage.button_2_label"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "t:sections.hero_collage.button_2_link"
+    },
+    {
+      "type": "text",
+      "id": "stamp_text",
+      "label": "t:sections.hero.stamp_text",
+      "info": "t:sections.hero.stamp_text_info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "t:sections.hero_collage.piece",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.hero_collage.piece_image",
+          "info": "t:sections.hero_collage.piece_image_info"
+        },
+        {
+          "type": "select",
+          "id": "position",
+          "label": "t:sections.hero_collage.position",
+          "options": [
+            {
+              "value": "top-left",
+              "label": "t:sections.hero_collage.top_left"
+            },
+            {
+              "value": "top-right",
+              "label": "t:sections.hero_collage.top_right"
+            },
+            {
+              "value": "bottom-left",
+              "label": "t:sections.hero_collage.bottom_left"
+            },
+            {
+              "value": "bottom-right",
+              "label": "t:sections.hero_collage.bottom_right"
+            },
+            {
+              "value": "center",
+              "label": "t:sections.hero_collage.center"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "select",
+          "id": "size",
+          "label": "t:sections.hero_collage.size",
+          "options": [
+            {
+              "value": "small",
+              "label": "t:sections.shared.padding_small"
+            },
+            {
+              "value": "medium",
+              "label": "t:sections.shared.padding_default"
+            },
+            {
+              "value": "large",
+              "label": "t:sections.shared.padding_large"
+            }
+          ],
+          "default": "medium"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.hero_collage.name"
+    }
+  ]
+}
+{% endschema %}
