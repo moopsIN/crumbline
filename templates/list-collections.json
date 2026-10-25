@@ -10,8 +10,12 @@
 {
   "sections": {
     "main": {
-      "type": "collections",
-      "settings": {}
+      "type": "main-list-collections",
+      "settings": {
+        "heading": "Our cakes",
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      }
     }
   },
   "order": [

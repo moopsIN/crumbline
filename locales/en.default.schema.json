@@ -55,7 +55,16 @@
       "mobile_nav": "Mobile navigation",
       "mobile_nav_info": "The bottom bar shows on phones only. Edit its links in the header's Bottom navigation section.",
       "mobile_nav_bottom": "Bottom bar",
-      "mobile_nav_drawer": "Menu drawer"
+      "mobile_nav_drawer": "Menu drawer",
+      "cards_header": "Product cards",
+      "card_aspect": "Image shape",
+      "card_aspect_info": "Portrait suits tall, tiered cakes.",
+      "aspect_portrait": "Portrait (4:5)",
+      "aspect_tall": "Tall (3:4)",
+      "aspect_square": "Square (1:1)",
+      "aspect_landscape": "Landscape (4:3)",
+      "card_quick_add": "Quick add on cards",
+      "card_quick_add_info": "Shows an add button on cards for products with a single option. Turn off if your product pages ask for a pickup date or a message, so customers always visit the product page."
     },
     "buttons": {
       "name": "Buttons",
@@ -75,7 +84,12 @@
       "whatsapp_header": "WhatsApp",
       "whatsapp_number": "WhatsApp number",
       "whatsapp_number_info": "Include the country code, e.g. +91 98765 43210. Used for WhatsApp buttons across the store.",
-      "whatsapp_floating": "Show floating WhatsApp button"
+      "whatsapp_floating": "Show floating WhatsApp button",
+      "allergens_header": "Allergens",
+      "allergen_list": "Allergens you track",
+      "allergen_list_info": "Comma-separated. Only these show on products, from the allergens metafield or allergen:… tags.",
+      "allergen_highlight": "Highlight these allergens",
+      "allergen_highlight_info": "Comma-separated, e.g. Nuts. Shown in a warning colour."
     },
     "social": {
       "name": "Social media",
@@ -183,6 +197,32 @@
       "phone": "Phone",
       "email": "Email",
       "social_info": "Uses the links in Theme settings → Social media."
+    },
+    "collection_banner": {
+      "name": "Collection banner",
+      "eyebrow": "Label above title",
+      "show_description": "Show collection description",
+      "menu": "Collection links",
+      "menu_info": "Optional menu of related collections, shown as pills under the title.",
+      "show_image": "Show collection image",
+      "media_style": "Image frame"
+    },
+    "main_collection": {
+      "name": "Collection products",
+      "products_per_page": "Products per page",
+      "enable_filtering": "Show filters",
+      "enable_filtering_info": "Set up filters in Shopify admin under Search & Discovery (free app by Shopify).",
+      "enable_sorting": "Show sort",
+      "columns_mobile": "Columns on phones",
+      "columns_1": "1",
+      "columns_2": "2",
+      "columns_desktop": "Columns on desktop"
+    },
+    "list_collections": {
+      "name": "Collection list",
+      "heading": "Heading",
+      "collection_list": "Collections",
+      "collection_list_info": "Leave empty to show every collection."
     }
   },
   "blocks": {
