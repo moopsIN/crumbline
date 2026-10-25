@@ -1,0 +1,270 @@
+{% doc %}
+  The contents of the cart, shared by the cart page and the cart drawer:
+  line items, an optional order note (page only), a reminder of how much
+  notice the cakes need, the subtotal and the checkout button. An empty
+  cart shows a friendly empty state instead.
+
+  It is a plain form to /cart: quantity changes, "Update" and "Check out"
+  work without JavaScript. <cart-items> enhances quantity and remove with
+  the AJAX Cart API.
+
+  @param {string} context - `page` or `drawer`
+
+  @example
+  {% render 'cart-body', context: 'drawer' %}
+{% enddoc %}
+
+{%- liquid
+  assign max_notice = 0
+  for item in cart.items
+    assign notice = item.product.metafields.crumbline.lead_time_days.value | default: settings.lead_time_days | plus: 0
+    if notice > max_notice
+      assign max_notice = notice
+    endif
+  endfor
+  assign form_id = 'CartForm-' | append: context
+  assign line_heading = 'h3'
+  if context == 'page'
+    assign line_heading = 'h2'
+  endif
+-%}
+
+{%- if cart.item_count > 0 -%}
+  <form action="{{ routes.cart_url }}" method="post" id="{{ form_id }}" class="cart-body cart-body--{{ context }}" novalidate>
+    <cart-items class="cart-body__items">
+      <ul class="cart-body__lines" role="list">
+        {%- for item in cart.items -%}
+          {% render 'cart-line-item', item: item, index: forloop.index, id: context, heading_level: line_heading %}
+        {%- endfor -%}
+      </ul>
+    </cart-items>
+
+    {%- if context == 'page' -%}
+      <div class="cart-body__note">
+        <label for="CartNote">{{ 'cart.note' | t }}</label>
+        <textarea id="CartNote" name="note" rows="3">{{ cart.note }}</textarea>
+      </div>
+    {%- endif -%}
+
+    <div class="cart-body__summary">
+      {%- if settings.cart_lead_time_reminder and max_notice > 0 -%}
+        <p class="cart-body__reminder">
+          {% render 'icon', name: 'calendar' %}
+          <span>{{ 'cart.notice_reminder' | t: count: max_notice }}</span>
+        </p>
+      {%- endif -%}
+
+      {%- for discount in cart.cart_level_discount_applications -%}
+        <p class="cart-body__row cart-body__discount">
+          <span>{{ discount.title | escape }}</span>
+          <span>−{{ discount.total_allocated_amount | money }}</span>
+        </p>
+      {%- endfor -%}
+
+      <p class="cart-body__row cart-body__subtotal">
+        <span>{{ 'cart.subtotal' | t }}</span>
+        <span>{{ cart.total_price | money_with_currency }}</span>
+      </p>
+      <p class="cart-body__tax">
+        {%- if cart.taxes_included -%}
+          {{ 'cart.taxes_included' | t }}
+        {%- else -%}
+          {{ 'cart.taxes_excluded' | t }}
+        {%- endif -%}
+      </p>
+
+      <div class="cart-body__actions">
+        <button type="submit" name="update" class="cart-body__update no-js-only">{{ 'cart.update' | t }}</button>
+        {%- assign checkout_label = 'cart.checkout' | t -%}
+        {% render 'button', label: checkout_label, type: 'submit', icon: 'arrow-right', class: 'cart-body__checkout', attributes: 'name="checkout"' %}
+        {%- if context == 'drawer' -%}
+          <a href="{{ routes.cart_url }}" class="cart-body__view">{{ 'cart.view' | t }}</a>
+        {%- endif -%}
+      </div>
+
+      {%- if context == 'page' and additional_checkout_buttons -%}
+        <div class="cart-body__express">{{ content_for_additional_checkout_buttons }}</div>
+      {%- endif -%}
+    </div>
+  </form>
+{%- else -%}
+  {%- liquid
+    assign empty_title = 'cart.empty.title' | t
+    assign empty_text = 'cart.empty.text' | t
+    assign empty_cta = 'cart.empty.cta' | t
+  -%}
+  {% render 'empty-state',
+    title: empty_title,
+    text: empty_text,
+    button_label: empty_cta,
+    button_url: routes.all_products_collection_url,
+    class: 'cart-body__empty'
+  %}
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .cart-body {
+      display: grid;
+      gap: var(--space-s);
+    }
+
+    .cart-body__lines {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .cart-body__note {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .cart-body__note label {
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      font-weight: var(--font-display-weight);
+    }
+
+    .cart-body__note textarea {
+      padding: 0.75rem 1rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-s);
+      background-color: var(--color-surface-alt);
+      color: var(--color-ink);
+      resize: vertical;
+    }
+
+    .cart-body__summary {
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    .cart-body__reminder {
+      display: flex;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 0.75rem 1rem;
+      border: var(--border-dashed);
+      border-radius: var(--radius-m);
+      color: var(--color-ink);
+      font-size: 0.9rem;
+    }
+
+    .cart-body__reminder .icon {
+      flex: none;
+      inline-size: 1.2rem;
+      block-size: 1.2rem;
+    }
+
+    .cart-body__row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin: 0;
+    }
+
+    .cart-body__subtotal {
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      font-weight: var(--font-display-weight);
+    }
+
+    .cart-body__discount {
+      color: var(--color-success);
+      font-size: 0.9rem;
+    }
+
+    .cart-body__tax {
+      margin: 0;
+      color: var(--color-ink-muted);
+      font-size: 0.85rem;
+    }
+
+    .cart-body__actions {
+      display: grid;
+      gap: 0.75rem;
+      margin-block-start: 0.25rem;
+    }
+
+    .cart-body__checkout {
+      inline-size: 100%;
+      min-block-size: 56px;
+    }
+
+    .cart-body__update {
+      min-block-size: 44px;
+      border: var(--border-ink);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .cart-body__view {
+      justify-self: center;
+      min-block-size: 44px;
+      display: inline-flex;
+      align-items: center;
+      font-weight: var(--font-body-weight-bold);
+      text-decoration: underline 2px;
+      text-underline-offset: 4px;
+    }
+
+    .cart-body__empty {
+      margin-block: var(--space-m);
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('cart-items')) {
+    customElements.define(
+      'cart-items',
+      class extends HTMLElement {
+        #timer = 0;
+
+        connectedCallback() {
+          this.addEventListener('click', this.#onClick);
+          this.addEventListener('change', this.#onChange);
+        }
+
+        #onClick = (event) => {
+          const step = event.target.closest('[data-step]');
+          const remove = event.target.closest('[data-remove]');
+          if (step) {
+            const input = this.querySelector(`input[data-line="${step.dataset.line}"]`);
+            this.#update(Number(step.dataset.line), Math.max(0, Number(input.value) + Number(step.dataset.step)), input.id);
+          } else if (remove) {
+            event.preventDefault();
+            this.#update(Number(remove.dataset.line), 0, null);
+          }
+        };
+
+        #onChange = (event) => {
+          const input = event.target;
+          if (input.name !== 'updates[]') return;
+          clearTimeout(this.#timer);
+          this.#timer = setTimeout(() => this.#update(Number(input.dataset.line), Math.max(0, Number(input.value) || 0), input.id), 400);
+        };
+
+        async #update(line, quantity, focusId) {
+          const row = this.querySelector(`.cart-line[data-line="${line}"]`);
+          row?.setAttribute('aria-busy', 'true');
+          const context = this.closest('[data-cart-region]')?.dataset.cartRegion;
+          try {
+            await window.Crumbline.cart.change(line, quantity);
+            const region = document.querySelector(`[data-cart-region="${context}"]`);
+            const target =
+              (focusId && document.getElementById(focusId)) ||
+              region?.querySelector(`.cart-line[data-line="${line}"] input, .cart-line:last-child input`) ||
+              region?.querySelector('.empty-state a, [name="checkout"]');
+            target?.focus();
+          } catch (error) {
+            row?.removeAttribute('aria-busy');
+          }
+        }
+      }
+    );
+  }
+{% endjavascript %}

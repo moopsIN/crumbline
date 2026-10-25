@@ -206,19 +206,32 @@
         </ul>
         {% render 'pagination', paginate: paginate %}
       {%- elsif active_count > 0 -%}
-        <div class="empty-state">
-          <p class="empty-state__title">{{ 'collections.empty.filtered_title' | t }}</p>
-          <p>{{ 'collections.empty.filtered_text' | t }}</p>
-          {%- assign clear_label = 'collections.filters.clear' | t -%}
-          {% render 'button', label: clear_label, url: collection.url, style: 'secondary', attributes: 'data-filter-link' %}
-        </div>
+        {%- liquid
+          assign empty_title = 'collections.empty.filtered_title' | t
+          assign empty_text = 'collections.empty.filtered_text' | t
+          assign empty_cta = 'collections.filters.clear' | t
+        -%}
+        {% render 'empty-state',
+          title: empty_title,
+          text: empty_text,
+          button_label: empty_cta,
+          button_url: collection.url,
+          button_style: 'secondary',
+          button_attributes: 'data-filter-link'
+        %}
       {%- else -%}
-        <div class="empty-state">
-          <p class="empty-state__title">{{ 'collections.empty.title' | t }}</p>
-          <p>{{ 'collections.empty.text' | t }}</p>
-          {%- assign browse_label = 'collections.empty.cta' | t -%}
-          {% render 'button', label: browse_label, url: routes.all_products_collection_url, style: 'secondary' %}
-        </div>
+        {%- liquid
+          assign empty_title = 'collections.empty.title' | t
+          assign empty_text = 'collections.empty.text' | t
+          assign empty_cta = 'collections.empty.cta' | t
+        -%}
+        {% render 'empty-state',
+          title: empty_title,
+          text: empty_text,
+          button_label: empty_cta,
+          button_url: routes.all_products_collection_url,
+          button_style: 'secondary'
+        %}
       {%- endif -%}
     {%- endpaginate -%}
   </div>
@@ -471,31 +484,6 @@
 
     .main-collection .pagination {
       margin-block-start: var(--space-m);
-    }
-
-    /* Empty states (typographic, Q-07 recommendation) */
-    .empty-state {
-      display: grid;
-      justify-items: center;
-      gap: 0.75rem;
-      padding: var(--space-xl) var(--space-s);
-      border: var(--border-dashed);
-      border-radius: var(--radius-l);
-      text-align: center;
-    }
-
-    .empty-state p {
-      margin: 0;
-      max-inline-size: 40ch;
-      color: var(--color-ink-muted);
-    }
-
-    .empty-state .empty-state__title {
-      color: var(--color-ink);
-      font-family: var(--font-display);
-      font-size: var(--step-2);
-      font-weight: var(--font-display-weight);
-      line-height: 1.1;
     }
 
     @media (min-width: 45rem) {

@@ -1,0 +1,257 @@
+{% doc %}
+  One cart line: image, title, variant, the customer's choices (line item
+  properties such as Fulfilment, Date and Message on cake; blank and
+  private `_` properties are hidden), unit and line price, a quantity
+  stepper and a remove link.
+
+  Quantity inputs are named `updates[]`, so the cart page updates with a
+  plain form post; <cart-items> enhances them with the AJAX Cart API.
+
+  @param {object} item - The cart line item
+  @param {number} index - 1-based line number (the Cart API's `line`)
+  @param {string} id - Unique prefix for input ids
+  @param {string} [heading_level] - `h2` or `h3` (default) for the product title
+
+  @example
+  {% render 'cart-line-item', item: item, index: forloop.index, id: 'drawer' %}
+{% enddoc %}
+
+{%- liquid
+  assign date_key = 'products.fulfilment.date_property' | t
+  assign input_id = id | append: '-qty-' | append: index
+  assign unit_price = item.final_price | money
+  assign level = heading_level | default: 'h3'
+-%}
+
+<li class="cart-line" data-line="{{ index }}" data-key="{{ item.key }}">
+  <a href="{{ item.url }}" class="cart-line__media" tabindex="-1" aria-hidden="true">
+    {%- if item.image -%}
+      {{ item.image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '', widths: '120, 180, 240', sizes: '96px' }}
+    {%- else -%}
+      {{ 'image' | placeholder_svg_tag: 'cart-line__placeholder' }}
+    {%- endif -%}
+  </a>
+
+  <div class="cart-line__details">
+    <{{ level }} class="cart-line__title"><a href="{{ item.url }}">{{ item.product.title | escape }}</a></{{ level }}>
+    {%- unless item.product.has_only_default_variant -%}
+      <p class="cart-line__variant">{{ item.variant.title | escape }}</p>
+    {%- endunless -%}
+
+    {%- capture properties -%}
+      {%- for property in item.properties -%}
+        {%- assign first_char = property.first | slice: 0 -%}
+        {%- if property.last == blank or first_char == '_' -%}
+          {%- continue -%}
+        {%- endif -%}
+        <div>
+          <dt>{{ property.first | escape }}</dt>
+          <dd>
+            {%- if property.first == date_key -%}
+              <time datetime="{{ property.last }}">{{ property.last | date: '%a %-d %b %Y' }}</time>
+            {%- else -%}
+              {{ property.last | escape }}
+            {%- endif -%}
+          </dd>
+        </div>
+      {%- endfor -%}
+    {%- endcapture -%}
+    {%- if properties != blank -%}
+      <dl class="cart-line__properties">{{ properties }}</dl>
+    {%- endif -%}
+
+    <div class="cart-line__controls">
+      <div class="cart-line__quantity">
+        <label class="visually-hidden" for="{{ input_id }}">{{ 'cart.quantity_for' | t: title: item.product.title }}</label>
+        <button type="button" class="cart-line__step" data-step="-1" data-line="{{ index }}">
+          {% render 'icon', name: 'minus' %}
+          <span class="visually-hidden">{{ 'products.quantity.decrease' | t }}</span>
+        </button>
+        <input id="{{ input_id }}" type="number" name="updates[]" value="{{ item.quantity }}" min="0" inputmode="numeric" data-line="{{ index }}">
+        <button type="button" class="cart-line__step" data-step="1" data-line="{{ index }}">
+          {% render 'icon', name: 'plus' %}
+          <span class="visually-hidden">{{ 'products.quantity.increase' | t }}</span>
+        </button>
+      </div>
+      <a href="{{ item.url_to_remove }}" class="cart-line__remove" data-remove data-line="{{ index }}">
+        {{- 'cart.remove' | t -}}
+        <span class="visually-hidden">{{ item.product.title | escape }}</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="cart-line__price">
+    {%- if item.original_line_price != item.final_line_price -%}
+      <s class="cart-line__compare">{{ item.original_line_price | money }}</s>
+    {%- endif -%}
+    <span>{{ item.final_line_price | money }}</span>
+    {%- if item.quantity > 1 -%}
+      <small class="cart-line__unit">{{ 'cart.each' | t: price: unit_price }}</small>
+    {%- endif -%}
+  </div>
+</li>
+
+{% stylesheet %}
+  @layer components {
+    .cart-line {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) auto;
+      gap: 0.85rem;
+      padding-block: 1rem;
+      border-block-end: var(--border-divider);
+    }
+
+    .cart-line__media {
+      inline-size: 72px;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      border: var(--border-ink);
+      border-radius: var(--radius-s);
+      background-color: var(--color-pastel-1);
+    }
+
+    .cart-line__media img,
+    .cart-line__placeholder {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+
+    .cart-line__details {
+      display: grid;
+      align-content: start;
+      gap: 0.35rem;
+      min-inline-size: 0;
+    }
+
+    .cart-line__title {
+      font-size: 1.05rem;
+      line-height: 1.2;
+    }
+
+    .cart-line__title a {
+      text-decoration: none;
+    }
+
+    .cart-line__variant {
+      margin: 0;
+      color: var(--color-ink-muted);
+      font-size: 0.85rem;
+    }
+
+    .cart-line__properties {
+      display: grid;
+      gap: 0.15rem;
+      margin: 0;
+      font-size: 0.85rem;
+    }
+
+    .cart-line__properties div {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .cart-line__properties dt {
+      color: var(--color-ink-muted);
+      font-family: var(--font-mono);
+      font-size: var(--text-micro);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+    }
+
+    .cart-line__properties dt::after {
+      content: ':';
+    }
+
+    .cart-line__properties dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .cart-line__controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 1rem;
+      margin-block-start: 0.35rem;
+    }
+
+    .cart-line__quantity {
+      display: inline-flex;
+      align-items: center;
+      border: var(--border-ink);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-surface-alt);
+    }
+
+    .cart-line__quantity input {
+      inline-size: 2.5rem;
+      min-block-size: 44px;
+      border: 0;
+      background: none;
+      color: var(--color-ink);
+      font-family: var(--font-mono);
+      text-align: center;
+      appearance: textfield;
+    }
+
+    .cart-line__quantity input::-webkit-inner-spin-button,
+    .cart-line__quantity input::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+
+    .cart-line__step {
+      display: grid;
+      place-items: center;
+      inline-size: 44px;
+      block-size: 44px;
+      border: 0;
+      border-radius: 50%;
+      background: none;
+      color: var(--color-ink);
+    }
+
+    .cart-line__step .icon {
+      inline-size: 1rem;
+      block-size: 1rem;
+    }
+
+    .no-js .cart-line__step {
+      display: none;
+    }
+
+    .cart-line__remove {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: 44px;
+      color: var(--color-ink-muted);
+      font-size: 0.85rem;
+      text-decoration: underline 1px;
+      text-underline-offset: 4px;
+    }
+
+    .cart-line__price {
+      display: grid;
+      justify-items: end;
+      align-content: start;
+      gap: 0.15rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .cart-line__compare,
+    .cart-line__unit {
+      color: var(--color-ink-muted);
+      font-size: 0.8rem;
+      font-weight: 400;
+    }
+
+    .cart-line[aria-busy='true'] {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+{% endstylesheet %}

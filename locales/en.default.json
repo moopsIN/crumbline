@@ -131,6 +131,30 @@
     },
     "title": "Collections"
   },
+  "cart": {
+    "title": "Your basket",
+    "quantity_for": "Quantity for {{ title }}",
+    "remove": "Remove",
+    "each": "{{ price }} each",
+    "note": "Anything we should know?",
+    "notice_reminder": {
+      "one": "Cakes in your basket need 1 day's notice. Check each one shows the date you want.",
+      "other": "Cakes in your basket need up to {{ count }} days' notice. Check each one shows the date you want."
+    },
+    "subtotal": "Subtotal",
+    "taxes_included": "Taxes included. Shipping and delivery charges confirmed at checkout.",
+    "taxes_excluded": "Taxes and shipping calculated at checkout.",
+    "update": "Update basket",
+    "checkout": "Check out",
+    "view": "View basket",
+    "added": "Added {{ title }} to your basket",
+    "error": "Couldn't update your basket.",
+    "empty": {
+      "title": "Your basket is empty",
+      "text": "Nothing baking yet. Pick a cake and we'll get the oven on.",
+      "cta": "Browse cakes"
+    }
+  },
   "sections": {
     "announcement": {
       "dismiss": "Dismiss announcement"
@@ -172,12 +196,6 @@
     "comment_form_name": "Name",
     "comment_form_submit": "Post",
     "comment_form_title": "Add a comment"
-  },
-  "cart": {
-    "checkout": "Checkout",
-    "title": "Cart",
-    "update": "Update",
-    "remove": "Remove"
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",

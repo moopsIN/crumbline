@@ -2,10 +2,11 @@
  * Crumbline shared client code, loaded with `defer` on every page.
  *
  * Only what several components need lives here: the Section Rendering API
- * helper, the namespaced event names and the <crumbline-toast> element.
+ * helper, the namespaced event names, the <crumbline-toast> element and the
+ * cart (add/change plus the product-form submit handler).
  * Component-specific code stays in each component's {% javascript %} tag.
  *
- * Public API: window.Crumbline.{ EVENTS, fetchSections, toast }
+ * Public API: window.Crumbline.{ EVENTS, fetchSections, toast, cart }
  */
 (() => {
   const EVENTS = Object.freeze({
@@ -104,5 +105,88 @@
 
   if (!customElements.get('crumbline-toast')) customElements.define('crumbline-toast', CrumblineToast);
 
-  window.Crumbline = Object.freeze({ EVENTS, fetchSections, toast });
+  /** POSTs to the Cart API and throws the API's own message on failure. */
+  async function request(url, body, json) {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest', ...(json ? { 'Content-Type': 'application/json' } : {}) },
+      body: json ? JSON.stringify(body) : body,
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || data.status) throw new Error(data.description || data.message || response.statusText);
+    return data;
+  }
+
+  /**
+   * Cart: add and change through the AJAX Cart API, asking Shopify to render
+   * every section that shows cart state in the same request (bundled section
+   * rendering), then swapping their [data-cart-region] parts in place.
+   */
+  const cart = {
+    /** Ids of sections on this page that show cart state (max 5 per request). */
+    sectionIds() {
+      const ids = new Set();
+      document.querySelectorAll('[data-cart-region]').forEach((region) => {
+        const section = region.closest('.shopify-section');
+        if (section) ids.add(section.id.replace('shopify-section-', ''));
+      });
+      return [...ids].slice(0, 5);
+    },
+
+    render(sections) {
+      if (!sections) return;
+      Object.entries(sections).forEach(([id, html]) => {
+        const section = document.getElementById(`shopify-section-${id}`);
+        if (!section || !html) return;
+        const fresh = new DOMParser().parseFromString(html, 'text/html');
+        section.querySelectorAll('[data-cart-region]').forEach((region) => {
+          const match = fresh.querySelector(`[data-cart-region="${region.dataset.cartRegion}"]`);
+          if (match) region.replaceWith(match);
+        });
+      });
+    },
+
+    async add(formData) {
+      formData.append('sections', this.sectionIds().join(','));
+      formData.append('sections_url', window.location.pathname);
+      const data = await request(`${window.Shopify?.routes?.root ?? '/'}cart/add.js`, formData, false);
+      this.render(data.sections);
+      document.dispatchEvent(new CustomEvent(EVENTS.cartUpdated, { detail: { source: 'add', item: data } }));
+      return data;
+    },
+
+    async change(line, quantity) {
+      const data = await request(
+        `${window.Shopify?.routes?.root ?? '/'}cart/change.js`,
+        { line, quantity, sections: this.sectionIds(), sections_url: window.location.pathname },
+        true
+      );
+      this.render(data.sections);
+      document.dispatchEvent(new CustomEvent(EVENTS.cartUpdated, { detail: { source: 'change', cart: data } }));
+      return data;
+    },
+  };
+
+  /* Product and quick-add forms add to the basket without leaving the page. */
+  document.addEventListener('submit', async (event) => {
+    const form = event.target;
+    if (!form.matches('[data-product-form], [data-quick-add]')) return;
+    if (event.submitter?.name === 'checkout') return;
+    event.preventDefault();
+    const buttons = [...document.querySelectorAll(`button[type="submit"][form="${form.id}"]`), ...form.querySelectorAll('button[type="submit"]')];
+    buttons.forEach((button) => button.setAttribute('aria-busy', 'true'));
+    const messages = document.querySelector('crumbline-toast')?.dataset ?? {};
+    try {
+      const item = await cart.add(new FormData(form));
+      if (!document.querySelector('cart-drawer')) {
+        toast(messages.added?.replace('__TITLE__', item.product_title) ?? item.product_title, { label: messages.view ?? '', url: window.Shopify?.routes?.root ? `${window.Shopify.routes.root}cart` : '/cart' });
+      }
+    } catch (error) {
+      toast(`${messages.error ?? ''} ${error.message}`.trim());
+    } finally {
+      buttons.forEach((button) => button.removeAttribute('aria-busy'));
+    }
+  });
+
+  window.Crumbline = Object.freeze({ EVENTS, fetchSections, toast, cart });
 })();

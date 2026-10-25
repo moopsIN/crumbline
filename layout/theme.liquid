@@ -30,6 +30,9 @@
 
     {% sections 'footer-group' %}
 
+    {%- if settings.cart_type == 'drawer' -%}
+      {% section 'cart-drawer' %}
+    {%- endif -%}
     {% render 'toast' %}
     {% render 'whatsapp-button', product_title: product.title %}
   </body>

@@ -10,8 +10,11 @@
 {
   "sections": {
     "main": {
-      "type": "cart",
-      "settings": {}
+      "type": "main-cart",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      }
     }
   },
   "order": [

@@ -26,7 +26,7 @@
   class="main-product full-width"
   data-section-id="{{ section.id }}"
   data-product-url="{{ product.url }}"
-  data-unavailable-label="{{ unavailable_label | escape }}"
+  data-unavailable-label="{{ unavailable_label }}"
   {% render 'section-attributes' %}
 >
   <div class="main-product__inner">
@@ -224,7 +224,7 @@
                   type="button"
                   class="product-share"
                   data-share
-                  data-copied="{{ 'products.share.copied' | t | escape }}"
+                  data-copied="{{ 'products.share.copied' | t }}"
                   data-url="{{ shop.url }}{{ product.url }}"
                   data-title="{{ product.title | escape }}"
                 >
