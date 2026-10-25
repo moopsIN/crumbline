@@ -176,8 +176,9 @@
       pointer-events: none;
     }
 
+    /* opacity, not visibility, so the label stays the accessible name */
     .button[aria-busy='true'] > * {
-      visibility: hidden;
+      opacity: 0;
     }
 
     .button[aria-busy='true']::after {
