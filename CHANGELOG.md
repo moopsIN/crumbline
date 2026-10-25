@@ -4,6 +4,19 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-10-25
+
+Phase 3: product card and collection pages.
+
+### Added
+- Product card: portrait image cropped from each cake's image focus, sold-out / sale / custom badges, "Serves N", allergen chips with a screen-reader sentence, "From" pricing and quick add for single-option products.
+- Collection page: banner with optional related-collection pills and image, storefront filters and sort that update without reloading (and work without JavaScript), active-filter chips, pagination and friendly empty states.
+- Collection list page with collection cards.
+- Theme settings: product card image shape, quick add on cards, allergens you track and allergens to highlight.
+
+### Removed
+- Skeleton's collection and collection-list sections.
+
 ## [0.2.0] — 2026-10-25
 
 Phase 2: header, bottom navigation and footer.
