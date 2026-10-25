@@ -1,0 +1,203 @@
+{% comment %}
+  Cart drawer (guide §4.8): a native <dialog> that slides in from the side on
+  desktop and up as a bottom sheet on phones. Rendered from the layout only
+  when Theme settings → Cart is set to open the drawer. Basket links open it
+  instead of leaving the page; it also opens after an item is added. Its
+  body is re-rendered by the cart script after every change.
+{% endcomment %}
+
+<cart-drawer class="cart-drawer-root">
+  <dialog class="cart-drawer" aria-labelledby="CartDrawerTitle" data-scheme="{{ settings.color_schemes.first.id }}">
+    <div class="cart-drawer__head">
+      <h2 class="cart-drawer__title" id="CartDrawerTitle">
+        {{- 'cart.title' | t -}}
+        <span class="cart-drawer__count" data-cart-region="drawer-count">{{ cart.item_count }}</span>
+      </h2>
+      <button type="button" class="cart-drawer__close" data-close>
+        {% render 'icon', name: 'close' %}
+        <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+      </button>
+    </div>
+    <div class="cart-drawer__body" data-cart-region="drawer-body">
+      {% render 'cart-body', context: 'drawer' %}
+    </div>
+  </dialog>
+</cart-drawer>
+
+{% stylesheet %}
+  @layer components {
+    .cart-drawer {
+      inline-size: min(100%, 28rem);
+      max-inline-size: 100%;
+      block-size: 100dvh;
+      max-block-size: 100dvh;
+      margin: 0 0 0 auto;
+      padding: 0;
+      border: 0;
+      border-inline-start: var(--border-ink);
+      border-start-start-radius: var(--radius-l);
+      border-end-start-radius: var(--radius-l);
+      background-color: var(--color-bg);
+      color: var(--color-ink);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .cart-drawer[open] {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cart-drawer::backdrop {
+      background-color: rgb(27 23 20 / 0.45);
+    }
+
+    .cart-drawer__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem var(--gutter);
+      border-block-end: var(--border-divider);
+    }
+
+    .cart-drawer__title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: var(--step-2);
+    }
+
+    .cart-drawer__count {
+      display: inline-grid;
+      place-items: center;
+      min-inline-size: 28px;
+      block-size: 28px;
+      padding-inline: 6px;
+      border-radius: var(--radius-pill);
+      background-color: var(--color-accent);
+      color: var(--color-on-highlight);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    .cart-drawer__close {
+      display: grid;
+      place-items: center;
+      inline-size: 44px;
+      block-size: 44px;
+      border: var(--border-ink);
+      border-radius: 50%;
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+    }
+
+    .cart-drawer__body {
+      flex: 1;
+      padding: 0 var(--gutter) 1.5rem;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .cart-drawer,
+      .cart-drawer::backdrop {
+        transition:
+          translate var(--dur-slow) var(--ease-out),
+          opacity var(--dur-base),
+          overlay var(--dur-slow) allow-discrete,
+          display var(--dur-slow) allow-discrete;
+      }
+
+      .cart-drawer:not([open]) {
+        translate: 100% 0;
+      }
+
+      @starting-style {
+        .cart-drawer[open] {
+          translate: 100% 0;
+        }
+
+        .cart-drawer[open]::backdrop {
+          opacity: 0;
+        }
+      }
+    }
+
+    /* Bottom sheet on phones */
+    @media (max-width: 56.24rem) {
+      .cart-drawer {
+        inline-size: 100%;
+        block-size: auto;
+        max-block-size: 88dvh;
+        margin: auto 0 0;
+        border-inline-start: 0;
+        border-block-start: var(--border-ink);
+        border-radius: var(--radius-l) var(--radius-l) 0 0;
+      }
+
+      .cart-drawer__body {
+        padding-block-end: calc(1.5rem + env(safe-area-inset-bottom));
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .cart-drawer:not([open]) {
+          translate: 0 100%;
+        }
+
+        @starting-style {
+          .cart-drawer[open] {
+            translate: 0 100%;
+          }
+        }
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('cart-drawer')) {
+    customElements.define(
+      'cart-drawer',
+      class extends HTMLElement {
+        connectedCallback() {
+          this.dialog = this.querySelector('dialog');
+          this.querySelector('[data-close]').addEventListener('click', () => this.dialog.close());
+          this.dialog.addEventListener('click', (event) => {
+            if (event.target === this.dialog) this.dialog.close();
+          });
+          document.addEventListener('click', this.#onBasketClick);
+          document.addEventListener(window.Crumbline?.EVENTS.cartUpdated ?? 'crumbline:cart:updated', this.#onCartUpdated);
+        }
+
+        disconnectedCallback() {
+          document.removeEventListener('click', this.#onBasketClick);
+          document.removeEventListener(window.Crumbline?.EVENTS.cartUpdated ?? 'crumbline:cart:updated', this.#onCartUpdated);
+        }
+
+        open() {
+          if (!this.dialog.open) this.dialog.showModal();
+          this.querySelector('.cart-drawer__close').focus();
+        }
+
+        #onBasketClick = (event) => {
+          const link = event.target.closest('[data-basket-link]');
+          if (!link || event.metaKey || event.ctrlKey) return;
+          event.preventDefault();
+          this.open();
+        };
+
+        #onCartUpdated = (event) => {
+          if (event.detail?.source === 'add') this.open();
+        };
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.cart_drawer.name",
+  "class": "cart-drawer-section",
+  "settings": []
+}
+{% endschema %}
