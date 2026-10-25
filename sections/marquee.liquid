@@ -1,0 +1,220 @@
+{% comment %}
+  Scrolling ink ribbon of short phrases (Cute). The second copy of the strip
+  is aria-hidden; screen readers get one label listing the items. It pauses
+  on hover and focus, and stands still for reduced motion. The tilted band
+  is clipped, so it never widens the page.
+{% endcomment %}
+
+{%- assign labels = '' -%}
+{%- capture items -%}
+  {%- for block in section.blocks -%}
+    {%- assign labels = labels | append: block.settings.text | append: ', ' -%}
+    <span class="marquee__item" {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</span>
+    <span class="marquee__sep" aria-hidden="true">{{ section.settings.separator }}</span>
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- if section.blocks.size > 0 -%}
+  <div class="marquee-section full-width" {% render 'section-attributes' %}>
+    <div
+      class="marquee{% if section.settings.tilt %} marquee--tilt{% endif %}"
+      role="region"
+      aria-label="{{ labels | remove_last: ', ' | escape }}"
+      tabindex="0"
+      style="--marquee-speed: {{ section.settings.speed }}s;"
+    >
+      <div class="marquee__group" aria-hidden="true">{{ items }}</div>
+      <div class="marquee__group" aria-hidden="true">{{ items }}</div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .marquee-section {
+      overflow: clip;
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1) * 0.35);
+      background: none;
+    }
+
+    .marquee {
+      display: flex;
+      overflow: hidden;
+      padding-block: 0.85rem;
+      border-block: var(--border-ink);
+      background-color: var(--color-bg);
+      color: var(--color-ink);
+    }
+
+    .marquee--tilt {
+      inline-size: 106%;
+      margin-inline-start: -3%;
+      rotate: -1.6deg;
+    }
+
+    .marquee__group {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      gap: 1.75rem;
+      padding-inline-end: 1.75rem;
+      font-family: var(--font-display);
+      font-size: var(--step-2);
+      font-style: italic;
+      white-space: nowrap;
+    }
+
+    .marquee__sep {
+      color: var(--color-highlight);
+      font-style: normal;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .marquee__group {
+        will-change: transform;
+        animation: marquee-scroll var(--marquee-speed, 34s) linear infinite;
+      }
+
+      .marquee:hover .marquee__group,
+      .marquee:focus-within .marquee__group,
+      .marquee:focus .marquee__group {
+        animation-play-state: paused;
+      }
+    }
+
+    @keyframes marquee-scroll {
+      to {
+        transform: translateX(-100%);
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.marquee.name",
+  "class": "marquee-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "separator",
+      "label": "t:sections.marquee.separator",
+      "options": [
+        {
+          "value": "✺",
+          "label": "t:sections.marquee.sep_star"
+        },
+        {
+          "value": "✦",
+          "label": "t:sections.marquee.sep_sparkle"
+        },
+        {
+          "value": "•",
+          "label": "t:sections.marquee.sep_dot"
+        },
+        {
+          "value": "♥",
+          "label": "t:sections.marquee.sep_heart"
+        }
+      ],
+      "default": "✺"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "t:sections.marquee.speed",
+      "info": "t:sections.marquee.speed_info",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "default": 35
+    },
+    {
+      "type": "checkbox",
+      "id": "tilt",
+      "label": "t:sections.marquee.tilt",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "t:sections.marquee.item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:sections.marquee.item_text",
+          "default": "Fresh today"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.marquee.name",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "text": "Baked to order"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "text": "Birthday cakes"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "text": "Celebration bakes"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "text": "Local pickup"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
