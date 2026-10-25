@@ -4,6 +4,21 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-10-25
+
+Phase 6: homepage sections.
+
+### Added
+- Hero with one photo in a market-stall awning frame, a rotating stamp badge, a "Today's bake" ticket and optional speech bubbles; an optional cut-out photo collage hero.
+- Scrolling ribbon of short phrases.
+- "What's the occasion?" chips that filter the cakes below or link to collections.
+- Featured collection, Find us (location and "call us" cards), our story, chat-style reviews, a sticky-note social photo wall, newsletter sign-up, rich text, image with text, FAQ and a call-to-action band.
+- Gentle reveal-on-scroll (off for reduced motion).
+- A generic default homepage for fresh installs.
+
+### Changed
+- The stamp badge now spins on the GPU, which cuts its constant repaint cost.
+
 ## [0.5.0] — 2026-10-25
 
 Phase 5: cart and cart drawer.
