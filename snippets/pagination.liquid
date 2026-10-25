@@ -1,0 +1,94 @@
+{% doc %}
+  Renders accessible pagination for a `paginate` block: previous/next links
+  and page numbers, with the current page marked `aria-current`.
+
+  @param {object} paginate - The `paginate` object from the surrounding `{% paginate %}`
+
+  @example
+  {% render 'pagination', paginate: paginate %}
+{% enddoc %}
+
+{%- if paginate.pages > 1 -%}
+  <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+    <ul class="pagination__list" role="list">
+      <li>
+        {%- if paginate.previous -%}
+          <a href="{{ paginate.previous.url }}" class="pagination__step">
+            {% render 'icon', name: 'arrow-left' %}
+            <span class="visually-hidden">{{ 'general.pagination.previous' | t }}</span>
+          </a>
+        {%- endif -%}
+      </li>
+      {%- for part in paginate.parts -%}
+        <li>
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}" class="pagination__page">
+              <span class="visually-hidden">{{ 'general.pagination.page' | t }}</span>
+              {{ part.title }}
+            </a>
+          {%- elsif part.title == paginate.current_page -%}
+            <span class="pagination__page" aria-current="page">
+              <span class="visually-hidden">{{ 'general.pagination.page' | t }}</span>
+              {{ part.title }}
+            </span>
+          {%- else -%}
+            <span class="pagination__gap">{{ part.title }}</span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+      <li>
+        {%- if paginate.next -%}
+          <a href="{{ paginate.next.url }}" class="pagination__step">
+            {% render 'icon', name: 'arrow-right' %}
+            <span class="visually-hidden">{{ 'general.pagination.next' | t }}</span>
+          </a>
+        {%- endif -%}
+      </li>
+    </ul>
+  </nav>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .pagination__list {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .pagination__page,
+    .pagination__step {
+      display: grid;
+      place-items: center;
+      min-inline-size: 44px;
+      block-size: 44px;
+      padding-inline: 0.75rem;
+      border: var(--border-width) solid var(--color-border-control);
+      border-radius: var(--radius-pill);
+      font-family: var(--font-mono);
+      text-decoration: none;
+    }
+
+    .pagination__page[aria-current='page'] {
+      border-color: var(--color-ink);
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+      box-shadow: var(--shadow-hard);
+    }
+
+    a.pagination__page:hover,
+    .pagination__step:hover {
+      border-color: var(--color-ink);
+    }
+
+    .pagination__gap {
+      padding-inline: 0.25rem;
+      color: var(--color-ink-muted);
+    }
+  }
+{% endstylesheet %}
