@@ -1,5 +1,41 @@
 # AGENTS.md
 
+## Project context
+
+### What this is
+
+**Crumbline** is a free, open-source Shopify theme for cake shops and bakeries, built by Moops Design from Shopify's Skeleton theme. It is distributed under the MIT licence via GitHub (`moopsIN/crumbline`) and the Moops website, and demoed on a Shopify dev store with sample cake data.
+
+The theme exists for two reasons, in this order:
+
+1. **A usable product.** Small cake businesses should be able to install it and sell with it on the Basic plan with no paid apps. It must solve cake-specific problems that generic "bakery" themes ignore: structured ordering for size/tiers/flavour, pickup or delivery date selection with lead time, allergen and ingredient disclosure, pre-orders for occasions, and photography layouts that don't crop tall tiered cakes.
+2. **A technology demonstration.** The code is a portfolio piece. It should read as clean, modern, well-documented Shopify theme architecture (theme blocks, `{% stylesheet %}`/`{% javascript %}` tags, LiquidDoc, full localisation) that any developer could open and learn from.
+
+### Who is building it
+
+**Moops Design** (moops.in) is a small app and software studio based in Indore, Madhya Pradesh, India, with a registered office in Sagar. We design and build apps, websites, ops tools and online stores for small and mid-sized businesses across MP and India — including Shopify and custom commerce with UPI, COD, Razorpay, Shiprocket and GST invoicing. Our stack leans on Laravel, React/Next, Flutter and Shopify. Our brand voice is playful and warm on the surface ("cute by design") with serious engineering underneath; we favour boring, reliable technology with delightful UI, fixed scope, and shipping on time. Crumbline should feel like a Moops product: polished, friendly, no bloat.
+
+The target merchant is a home baker or small cake shop — often in India, often taking orders over WhatsApp and Instagram today — who needs a storefront that handles custom orders without an app subscription.
+
+### Project documentation — read before working
+
+Before making changes, read these documents in the `docs/` folder and follow them. They take priority over general assumptions:
+
+- `docs/design-and-development-guide.md` — visual direction, design tokens, component conventions, coding standards, naming, accessibility and performance rules for Crumbline.
+- `docs/phased-plan.md` — the build order, what each phase delivers, and what is explicitly out of scope for the current phase. Work on the current phase only; do not pull in later-phase features.
+- `docs/mockups/` — reference mockups and style explorations. Match them; do not invent a different visual direction.
+
+If a document referenced here does not exist yet, say so and ask before proceeding rather than guessing.
+
+### Working rules for this repo
+
+- Build on the Shopify **Basic** plan feature set. Do not depend on Plus-only features (checkout customisation, B2B objects, combined listings).
+- No paid-app dependencies. Cake-specific features are implemented in the theme using variants, line item properties, metafields and metaobjects.
+- Every user-facing string goes through locale files; every new setting label goes through schema locales.
+- Run `shopify theme check` before committing and fix what it reports.
+- Keep the Skeleton copyright notice in `LICENSE` alongside the Moops one.
+- Commit messages: short imperative subject, reference the phase or task from `docs/phased-plan.md` where relevant.
+
 🚨 MANDATORY: YOU MUST CALL "learn_shopify_api" ONCE WHEN WORKING WITH LIQUID THEMES.
 
 Use the [Shopify AI Toolkit](https://shopify.dev/docs/apps/build/ai-toolkit) for all Shopify API and platform work. If missing, install it in the agent host per that page (or `npx skills add Shopify/shopify-ai-toolkit --list` for skill-compatible hosts).
