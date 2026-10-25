@@ -1,0 +1,173 @@
+{% comment %}
+  An image (plain or awning frame) beside a column of theme blocks; image on
+  the left or right from 900px, stacked on phones.
+{% endcomment %}
+
+<div class="image-with-text full-width image-with-text--{{ section.settings.image_position }}" {% render 'section-attributes' %}>
+  <div class="image-with-text__inner">
+    {% render 'media-frame',
+      image: section.settings.image,
+      style: section.settings.media_style,
+      sunburst: true,
+      aspect_ratio: '4 / 5',
+      sizes: '(min-width: 900px) 45vw, 100vw',
+      class: 'image-with-text__media'
+    %}
+    <div class="image-with-text__copy" data-reveal>
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .image-with-text {
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+    }
+
+    .image-with-text__inner {
+      display: grid;
+      gap: var(--space-xl);
+      align-items: center;
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .image-with-text__copy {
+      display: grid;
+      gap: var(--space-s);
+    }
+
+    @media (min-width: 56.25rem) {
+      .image-with-text__inner {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .image-with-text--right .image-with-text__media {
+        order: 2;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.image_with_text.name",
+  "class": "image-with-text-section",
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.story.image"
+    },
+    {
+      "type": "select",
+      "id": "media_style",
+      "label": "t:sections.hero.media_style",
+      "options": [
+        {
+          "value": "plain",
+          "label": "t:blocks.image.frame_plain"
+        },
+        {
+          "value": "awning",
+          "label": "t:blocks.image.frame_awning"
+        }
+      ],
+      "default": "plain"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "t:sections.image_with_text.position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.image_with_text.left"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.image_with_text.right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.image_with_text.name",
+      "blocks": [
+        {
+          "type": "heading",
+          "settings": {
+            "heading": "Celebration cakes, <em>your way</em>",
+            "level": "h2",
+            "size": "large",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "text": "<p>Tell us the occasion, the guest count and the flavours you love. We'll design something special.</p>",
+            "style": "body",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "button",
+          "settings": {
+            "label": "Ask about a custom cake",
+            "link": "/pages/contact",
+            "style": "primary",
+            "show_arrow": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
