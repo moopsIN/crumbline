@@ -4,6 +4,22 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-10-25
+
+Phase 4: product page.
+
+### Added
+- Product page with a portrait gallery (thumbnails, full-size zoom) and merchant-ordered blocks.
+- Cake facts card: serves, notice, allergens and size.
+- Option pills for size, flavour and other options; prices, facts and availability update without reloading.
+- Pickup or delivery choice and a date picker of the next 14 open days that respects each cake's notice period, a daily cut-off hour and closed weekdays, plus "Pick another date". Works without JavaScript.
+- Message on the cake with a character counter; quantity stepper; share button; ingredients and allergen note.
+- Sticky "Add to basket" bar on phones.
+- Theme settings → Cake options: notice period, cut-off hour, closed days, pickup address, delivery note, allergen disclaimer.
+
+### Removed
+- Skeleton's product section.
+
 ## [0.3.0] — 2026-10-25
 
 Phase 3: product card and collection pages.
