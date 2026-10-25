@@ -1,0 +1,116 @@
+{% doc %}
+  Article card for blogs and search: image (or a pastel ground), date,
+  title as one stretched link, and an excerpt.
+
+  @param {article} article - The article
+  @param {number} [index] - Position, picks the pastel ground
+  @param {string} [heading_level] - `h2` (default) or `h3`
+
+  @example
+  {% render 'article-card', article: article, index: forloop.index %}
+{% enddoc %}
+
+{%- liquid
+  assign level = heading_level | default: 'h2'
+  assign pastel = index | default: 1 | modulo: 5 | plus: 1
+-%}
+
+<article class="article-card" style="--card-pastel: var(--color-pastel-{{ pastel }});">
+  <div class="article-card__media">
+    {%- if article.image -%}
+      {{ article.image | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 900px) 30vw, 100vw', loading: 'lazy', alt: '', class: 'article-card__image' }}
+    {%- endif -%}
+  </div>
+  <div class="article-card__body">
+    {%- if article.published_at -%}
+      <p class="article-card__date mono">{{ article.published_at | time_tag: format: 'date' }}</p>
+    {%- endif -%}
+    <{{ level }} class="article-card__title"><a href="{{ article.url }}" class="article-card__link">{{ article.title | escape }}</a></{{ level }}>
+    <p class="article-card__excerpt">{{ article.excerpt_or_content | strip_html | truncatewords: 24 }}</p>
+  </div>
+</article>
+
+{% stylesheet %}
+  @layer components {
+    .article-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      block-size: 100%;
+      overflow: hidden;
+      border: var(--border-ink);
+      border-radius: var(--radius-m);
+      background-color: var(--color-surface);
+      transition:
+        translate 450ms var(--ease-spring),
+        box-shadow var(--dur-base);
+    }
+
+    .article-card__media {
+      aspect-ratio: 16 / 10;
+      background-color: var(--card-pastel);
+    }
+
+    .article-card__image {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+
+    .article-card__body {
+      display: grid;
+      gap: 0.4rem;
+      padding: 1rem 1.15rem 1.25rem;
+      border-block-start: var(--border-ink);
+    }
+
+    .article-card__date {
+      margin: 0;
+      color: var(--color-ink-muted);
+    }
+
+    .article-card__title {
+      font-size: var(--step-1);
+    }
+
+    .article-card__link {
+      text-decoration: none;
+    }
+
+    .article-card__link::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+    }
+
+    .article-card__link:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .article-card:has(.article-card__link:focus-visible) {
+      outline: 3px solid var(--color-ink);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 6px var(--color-accent);
+    }
+
+    .article-card__excerpt {
+      margin: 0;
+      color: var(--color-ink-muted);
+      font-size: 0.95rem;
+    }
+
+    @media (hover: hover) {
+      .article-card:hover {
+        translate: -3px -3px;
+        box-shadow: 7px 7px 0 var(--color-ink);
+      }
+    }
+
+    @media (min-width: 45rem) {
+      .article-card {
+        border-radius: var(--radius-l);
+      }
+    }
+  }
+{% endstylesheet %}
