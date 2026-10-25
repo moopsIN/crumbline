@@ -1,0 +1,406 @@
+{
+  "accessibility": {
+    "skip_to_content": "Ir al contenido",
+    "account": "Cuenta",
+    "close": "Cerrar",
+    "new_window": "(se abre en una ventana nueva)"
+  },
+  "general": {
+    "whatsapp": {
+      "cta": "Escríbanos por WhatsApp",
+      "message": "¡Hola, {{ shop }}! Quisiera consultar sobre un pedido.",
+      "message_product": "¡Hola, {{ shop }}! Quisiera consultar sobre {{ product }}."
+    },
+    "social": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "pinterest": "Pinterest",
+      "youtube": "YouTube"
+    },
+    "pagination": {
+      "label": "Paginación",
+      "previous": "Página anterior",
+      "next": "Página siguiente",
+      "page": "Página"
+    },
+    "meta": {
+      "tagged": "etiquetado «{{ tags }}»",
+      "page": "Página {{ page }}"
+    }
+  },
+  "forms": {
+    "email": "Correo electrónico",
+    "email_placeholder": "Su correo electrónico",
+    "name": "Nombre",
+    "phone": "Teléfono",
+    "message": "Mensaje",
+    "send": "Enviar",
+    "contact": {
+      "success": "¡Gracias! Le responderemos pronto.",
+      "error": "Revise el formulario:"
+    }
+  },
+  "products": {
+    "price": {
+      "from": "Desde {{ price }}",
+      "sale": "Precio de oferta",
+      "regular": "Precio habitual",
+      "tax_included": "Impuestos incluidos."
+    },
+    "allergens": {
+      "contains": "Contiene: {{ list }}."
+    },
+    "card": {
+      "sold_out": "Agotado",
+      "sale": "Oferta",
+      "serves": "Para {{ people }} personas",
+      "add": "Añadir {{ title }} a la cesta",
+      "placeholder_title": "Su pastel aquí"
+    },
+    "facts": {
+      "serves": "Porciones",
+      "notice": "Antelación",
+      "allergens": "Alérgenos",
+      "size": "Tamaño",
+      "notice_days": {
+        "one": "1 día",
+        "other": "{{ count }} días"
+      }
+    },
+    "variant": {
+      "sold_out": "Agotado",
+      "choose": "Elija una opción"
+    },
+    "fulfilment": {
+      "property": "Entrega",
+      "date_property": "Fecha",
+      "method": "¿Recogida o envío?",
+      "pickup": "Recogida",
+      "delivery": "Envío a domicilio",
+      "pickup_from": "Recoger en: {{ address }}",
+      "date": "¿Para cuándo lo necesita?",
+      "notice": {
+        "zero": "Elija un día.",
+        "one": "Este pastel necesita 1 día de antelación.",
+        "other": "Este pastel necesita {{ count }} días de antelación."
+      },
+      "other_date": "Elegir otra fecha",
+      "closed_error": "Ese día está cerrado. Elija otro, por favor.",
+      "early_error": "Es demasiado pronto. La primera fecha disponible es {{ date }}."
+    },
+    "message": {
+      "label": "Mensaje en el pastel",
+      "property": "Mensaje en el pastel",
+      "hint": "Opcional, hasta {{ count }} caracteres."
+    },
+    "quantity": {
+      "label": "Cantidad",
+      "decrease": "Reducir cantidad",
+      "increase": "Aumentar cantidad"
+    },
+    "buy": {
+      "add": "Añadir a la cesta",
+      "sold_out": "Agotado",
+      "unavailable": "No disponible"
+    },
+    "description": "Descripción",
+    "ingredients": "Ingredientes",
+    "gallery": {
+      "zoom": "Abrir la imagen {{ index }} a tamaño completo",
+      "show": "Mostrar la imagen {{ index }}",
+      "zoom_dialog": "Imagen a tamaño completo"
+    },
+    "share": {
+      "label": "Compartir",
+      "copied": "Enlace copiado"
+    }
+  },
+  "collections": {
+    "product_count": {
+      "zero": "Ningún pastel",
+      "one": "1 pastel",
+      "other": "{{ count }} pasteles"
+    },
+    "banner": {
+      "nav_label": "Más colecciones"
+    },
+    "filters": {
+      "toggle": "Filtrar y ordenar",
+      "price_from": "Desde",
+      "price_to": "Hasta",
+      "sort": "Ordenar por",
+      "apply": "Ver resultados",
+      "remove": "Quitar filtro",
+      "clear": "Borrar filtros"
+    },
+    "empty": {
+      "title": "Todavía no hay nada aquí",
+      "text": "Pronto habrá recién horneados. Mientras tanto, eche un vistazo al resto.",
+      "cta": "Ver todos los pasteles",
+      "filtered_title": "Ningún pastel coincide",
+      "filtered_text": "Pruebe a quitar uno o dos filtros."
+    }
+  },
+  "cart": {
+    "title": "Su cesta",
+    "quantity_for": "Cantidad de {{ title }}",
+    "remove": "Quitar",
+    "each": "{{ price }} c/u",
+    "note": "¿Algo que debamos saber?",
+    "notice_reminder": {
+      "one": "Los pasteles de su cesta necesitan 1 día de antelación. Compruebe que cada uno tenga la fecha que desea.",
+      "other": "Los pasteles de su cesta necesitan hasta {{ count }} días de antelación. Compruebe que cada uno tenga la fecha que desea."
+    },
+    "subtotal": "Subtotal",
+    "taxes_included": "Impuestos incluidos. Los gastos de envío se confirman al pagar.",
+    "taxes_excluded": "Impuestos y envío calculados al pagar.",
+    "update": "Actualizar cesta",
+    "checkout": "Pagar",
+    "view": "Ver cesta",
+    "added": "{{ title }} se añadió a su cesta",
+    "error": "No se pudo actualizar su cesta.",
+    "empty": {
+      "title": "Su cesta está vacía",
+      "text": "Todavía no hay nada en el horno. Elija un pastel y nos ponemos manos a la obra.",
+      "cta": "Ver pasteles"
+    }
+  },
+  "search": {
+    "title": "Buscar",
+    "label": "Buscar en la tienda",
+    "placeholder": "Buscar pasteles, páginas y artículos",
+    "submit": "Buscar",
+    "results_count": {
+      "zero": "No hay resultados para «{{ terms }}»",
+      "one": "1 resultado para «{{ terms }}»",
+      "other": "{{ count }} resultados para «{{ terms }}»"
+    },
+    "page": "Página",
+    "article": "Artículo del blog",
+    "collection": "Colección",
+    "empty_title": "No se encontró nada",
+    "empty_text": "Pruebe con otra palabra o vea todos nuestros pasteles.",
+    "suggestions": "Sugerencias",
+    "view_all": "Ver todos los resultados para «{{ terms }}»",
+    "no_suggestions": "No hay sugerencias para «{{ terms }}»."
+  },
+  "blog": {
+    "tags": "Filtrar artículos",
+    "all": "Todos los artículos",
+    "empty": "Todavía no hay artículos",
+    "more": "Más artículos",
+    "comments": {
+      "zero": "Comentarios",
+      "one": "1 comentario",
+      "other": "{{ count }} comentarios"
+    },
+    "comment_title": "Deje un comentario",
+    "comment": "Comentario",
+    "post": "Publicar comentario",
+    "comment_moderated": "¡Gracias! Su comentario aparecerá cuando se apruebe.",
+    "comment_posted": "¡Gracias! Su comentario ya está publicado.",
+    "moderation_note": "Revisamos los comentarios antes de publicarlos."
+  },
+  "not_found": {
+    "title": "Esta página se ha perdido",
+    "text": "Puede que se haya movido o que el enlace no sea correcto. Pruebe a buscar o vuelva a los pasteles.",
+    "cta": "Ver pasteles",
+    "stamp": "Página no encontrada"
+  },
+  "customers": {
+    "password": "Contraseña",
+    "password_confirm": "Confirmar contraseña",
+    "first_name": "Nombre",
+    "last_name": "Apellidos",
+    "login": {
+      "title": "Iniciar sesión",
+      "forgot": "¿Olvidó su contraseña?",
+      "create": "Crear una cuenta",
+      "submit": "Iniciar sesión",
+      "guest_title": "¿Compra como invitado?",
+      "guest": "Continuar como invitado"
+    },
+    "recover": {
+      "title": "Restablecer su contraseña",
+      "text": "Le enviaremos un enlace por correo para crear una nueva.",
+      "submit": "Enviar enlace",
+      "cancel": "Volver a iniciar sesión",
+      "success": "Revise su correo: le hemos enviado un enlace."
+    },
+    "register": {
+      "title": "Crear una cuenta",
+      "submit": "Crear cuenta",
+      "login": "¿Ya tiene una cuenta? Inicie sesión"
+    },
+    "account": {
+      "title": "Su cuenta",
+      "hello": "Hola, {{ name }}.",
+      "logout": "Cerrar sesión",
+      "orders": "Sus pedidos",
+      "no_orders": "Todavía no ha hecho ningún pedido.",
+      "address": "Dirección predeterminada",
+      "manage_addresses": {
+        "one": "Gestionar direcciones (1)",
+        "other": "Gestionar direcciones ({{ count }})"
+      }
+    },
+    "order": {
+      "number": "Pedido",
+      "date": "Fecha",
+      "status": "Estado",
+      "total": "Total",
+      "back": "← Volver a su cuenta",
+      "title": "Pedido {{ name }}",
+      "cancelled": "Cancelado el {{ date }}",
+      "items": "Artículos",
+      "fulfilled": "Enviado el {{ date }}",
+      "billing": "Facturación",
+      "shipping": "Entrega"
+    },
+    "addresses": {
+      "title": "Sus direcciones",
+      "add": "Añadir una dirección",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "confirm_delete": "¿Eliminar esta dirección?",
+      "save": "Guardar dirección",
+      "default": "Usar como dirección predeterminada",
+      "default_label": "Predeterminada",
+      "company": "Empresa",
+      "address1": "Dirección",
+      "address2": "Piso, puerta, etc.",
+      "city": "Ciudad",
+      "zip": "Código postal",
+      "country": "País",
+      "province": "Provincia / estado"
+    },
+    "activate": {
+      "title": "Active su cuenta",
+      "text": "Elija una contraseña para terminar de configurar su cuenta.",
+      "submit": "Activar cuenta",
+      "decline": "Rechazar invitación"
+    },
+    "reset": {
+      "title": "Elija una nueva contraseña",
+      "text": "Introduzca una nueva contraseña para {{ email }}.",
+      "submit": "Guardar contraseña"
+    }
+  },
+  "password": {
+    "password": "Contraseña",
+    "enter": "Entrar",
+    "enter_with": "Entrar con contraseña",
+    "notify": "Avísenme",
+    "stamp": "Abrimos muy pronto",
+    "admin_html": "¿Es el propietario? <a href=\"{{ link }}\">Inicie sesión aquí</a>"
+  },
+  "gift_card": {
+    "title": "Su tarjeta regalo",
+    "intro": "Esta es su tarjeta regalo de {{ value }} para {{ shop }}.",
+    "balance": "Saldo",
+    "code": "Código de la tarjeta regalo",
+    "copy": "Copiar código",
+    "copied": "¡Copiado!",
+    "expired": "Esta tarjeta regalo ha caducado.",
+    "disabled": "Esta tarjeta regalo está desactivada.",
+    "expires_on": "Caduca el {{ date }}",
+    "use_at_checkout": "Use este código al pagar.",
+    "shop": "Empezar a comprar",
+    "print": "Imprimir",
+    "add_to_apple_wallet": "Añadir a Apple Wallet",
+    "qr": "Código QR de esta tarjeta regalo"
+  },
+  "sections": {
+    "announcement": {
+      "dismiss": "Cerrar aviso"
+    },
+    "header": {
+      "menu": "Menú",
+      "main_menu": "Principal",
+      "view_all": "Todo: {{ title }}",
+      "search": "Buscar",
+      "basket": "Cesta",
+      "basket_count": {
+        "one": "Cesta, 1 artículo",
+        "other": "Cesta, {{ count }} artículos"
+      }
+    },
+    "bottom_nav": {
+      "label": "Accesos rápidos"
+    },
+    "footer": {
+      "social_empty": "Añada sus redes sociales en Configuración del tema → Redes sociales.",
+      "newsletter_success": "¡Gracias! Ya está en la lista.",
+      "newsletter_submit": "Suscribirse",
+      "country": "País",
+      "language": "Idioma",
+      "update": "Actualizar",
+      "back_to_top": "Volver arriba ↑"
+    },
+    "occasions": {
+      "all": "Todo",
+      "count": "Pasteles mostrados: {{ number }}"
+    },
+    "featured_collection": {
+      "view_all": "Ver todo"
+    },
+    "visit": {
+      "directions": "Cómo llegar"
+    },
+    "cake_builder": {
+      "setup_title": "Elija un producto para el creador",
+      "setup_text": "En la configuración de esta sección, elija un producto cuyas variantes combinen tamaño y sabor.",
+      "no_js": "El creador de pasteles necesita JavaScript. Puede elegir las mismas opciones en la página del pastel.",
+      "no_js_cta": "Crear su pastel",
+      "total": "Total",
+      "message_empty": "Su mensaje aquí",
+      "date_empty": "Elija un día",
+      "step_size": "Tamaño",
+      "step_flavour": "Sabor",
+      "step_message": "Mensaje",
+      "step_collect": "Recogida",
+      "legend_size": "¿De qué tamaño lo quiere?",
+      "legend_flavour": "Elija un sabor",
+      "legend_message": "¿Qué debe decir?",
+      "legend_collect": "¿Cuándo lo recoge?",
+      "step_count": "Paso {{ current }} de {{ total }}",
+      "back": "Atrás",
+      "next": "Siguiente",
+      "error_size": "Elija un tamaño para continuar.",
+      "error_flavour": "Elija un sabor para continuar.",
+      "error_date": "Elija un día para su pastel."
+    },
+    "commission_form": {
+      "enquiry_type": "Consulta de pastel personalizado",
+      "step_occasion": "Ocasión",
+      "step_guests": "Invitados y sabores",
+      "step_contact": "Fecha y contacto",
+      "legend_occasion": "¿Cuál es la ocasión?",
+      "legend_guests": "¿Para quién es?",
+      "legend_contact": "¿Cuándo y cómo podemos contactarle?",
+      "other": "Otra",
+      "occasion_details": "Cuéntenos más (opcional)",
+      "guests": "¿Cuántos invitados?",
+      "flavours": "Sabores que le gustan",
+      "not_sure": "Aún no lo sé",
+      "yes": "Sí",
+      "dietary": "Necesidades alimentarias",
+      "dietary_hint": "P. ej., sin huevo, sin frutos secos, vegano.",
+      "ideas": "Ideas de diseño",
+      "inspiration": "Enlace a una foto que le encante",
+      "date": "Fecha deseada",
+      "date_hint": {
+        "one": "Necesitamos al menos 1 día de antelación.",
+        "other": "Necesitamos al menos {{ count }} días de antelación."
+      },
+      "anything_else": "¿Algo más?",
+      "send": "Enviar consulta",
+      "success_title": "¡Gracias! Hemos recibido su consulta.",
+      "success_text": "Le responderemos por correo, normalmente en un día.",
+      "whatsapp_hint": "¿Prefiere chatear? Envíe los mismos datos por WhatsApp.",
+      "whatsapp_cta": "Enviar por WhatsApp",
+      "whatsapp_intro": "¡Hola, {{ shop }}! Quisiera un pastel personalizado:"
+    }
+  }
+}
