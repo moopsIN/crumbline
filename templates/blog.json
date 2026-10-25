@@ -10,8 +10,11 @@
 {
   "sections": {
     "main": {
-      "type": "blog",
-      "settings": {}
+      "type": "main-blog",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      }
     }
   },
   "order": [
