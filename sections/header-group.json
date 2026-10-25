@@ -9,14 +9,88 @@
  */
 {
   "type": "header",
-  "name": "t:general.header",
+  "name": "t:sections.groups.header",
   "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "settings": {
+        "text": "",
+        "dismissible": true,
+        "color_scheme": "scheme-2"
+      }
+    },
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "menu": "main-menu",
+        "show_search": true,
+        "sticky": "always",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "bottom_nav": {
+      "type": "bottom-nav",
+      "blocks": {
+        "home": {
+          "type": "item",
+          "settings": {
+            "kind": "link",
+            "label": "Home",
+            "link": "/",
+            "icon": "home"
+          }
+        },
+        "shop": {
+          "type": "item",
+          "settings": {
+            "kind": "link",
+            "label": "Shop",
+            "link": "/collections/all",
+            "icon": "shop"
+          }
+        },
+        "basket": {
+          "type": "item",
+          "settings": {
+            "kind": "basket",
+            "label": "Basket",
+            "icon": "basket"
+          }
+        },
+        "search": {
+          "type": "item",
+          "settings": {
+            "kind": "link",
+            "label": "Search",
+            "link": "/search",
+            "icon": "search"
+          }
+        },
+        "find": {
+          "type": "item",
+          "settings": {
+            "kind": "link",
+            "label": "Find us",
+            "link": "/pages/contact",
+            "icon": "pin"
+          }
+        }
+      },
+      "block_order": [
+        "home",
+        "shop",
+        "basket",
+        "search",
+        "find"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1"
+      }
     }
   },
   "order": [
-    "header"
-  ],
+    "announcement",
+    "header",
+    "bottom_nav"
+  ]
 }
