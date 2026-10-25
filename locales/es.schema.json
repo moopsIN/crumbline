@@ -1,0 +1,607 @@
+{
+  "settings": {
+    "branding": {
+      "name": "Marca",
+      "favicon": "Favicon",
+      "favicon_info": "Se muestra en las pestañas del navegador. Use una imagen cuadrada de al menos 32 × 32 px."
+    },
+    "colors": {
+      "name": "Colores",
+      "header_surfaces": "Fondos",
+      "background": "Fondo",
+      "surface": "Tarjetas y paneles",
+      "surface_info": "Tarjetas de producto, paneles laterales y botones en reposo.",
+      "surface_alt": "Campos y opciones",
+      "surface_alt_info": "Opciones y campos de texto antes de elegirlos.",
+      "header_text": "Texto",
+      "text": "Texto y contornos",
+      "text_info": "También se usa en los bordes y en la sombra marcada.",
+      "text_muted": "Texto secundario",
+      "header_accents": "Acentos",
+      "accent": "Acento",
+      "accent_info": "Solo decorativo: sombras de botones, halo de foco, insignias. No se usa para texto sobre fondos claros.",
+      "accent_text": "Texto de acento",
+      "accent_text_info": "La palabra en color de los títulos. Solo para texto grande; elija un tono con contraste de al menos 3:1.",
+      "highlight": "Resalte",
+      "highlight_info": "Opciones seleccionadas, navegación activa e insignias.",
+      "highlight_2": "Segundo resalte",
+      "highlight_2_info": "Rayas del toldo y pequeñas decoraciones.",
+      "header_buttons": "Botones",
+      "button": "Botón",
+      "button_label": "Texto del botón",
+      "secondary_button": "Botón secundario",
+      "secondary_button_label": "Texto del botón secundario"
+    },
+    "typography": {
+      "name": "Tipografía",
+      "display_font": "Títulos",
+      "display_font_info": "Para el logotipo en texto, los títulos y los precios de los tiques.",
+      "body_font": "Cuerpo",
+      "mono_font": "Etiquetas",
+      "mono_font_info": "Etiquetas pequeñas en mayúsculas, chips y números de paso.",
+      "hand_font": "Manuscrita",
+      "hand_font_info": "Solo para leyendas decorativas y bocadillos.",
+      "body_scale": "Tamaño del texto"
+    },
+    "layout": {
+      "name": "Diseño",
+      "page_width": "Ancho de página",
+      "page_width_standard": "Estándar",
+      "page_width_wide": "Ancho",
+      "section_spacing": "Espacio entre secciones",
+      "spacing_compact": "Compacto",
+      "spacing_default": "Predeterminado",
+      "spacing_roomy": "Amplio",
+      "mobile_nav": "Navegación en móvil",
+      "mobile_nav_info": "La barra inferior solo aparece en teléfonos. Edite sus enlaces en la sección Navegación inferior del encabezado.",
+      "mobile_nav_bottom": "Barra inferior",
+      "mobile_nav_drawer": "Menú lateral",
+      "cards_header": "Tarjetas de producto",
+      "card_aspect": "Forma de la imagen",
+      "card_aspect_info": "El formato vertical favorece a los pasteles altos y de varios pisos.",
+      "aspect_portrait": "Vertical (4:5)",
+      "aspect_tall": "Alto (3:4)",
+      "aspect_square": "Cuadrado (1:1)",
+      "aspect_landscape": "Horizontal (4:3)",
+      "card_quick_add": "Añadir rápido en tarjetas",
+      "card_quick_add_info": "Muestra un botón de añadir en las tarjetas de productos con una sola opción. Desactívelo si sus páginas de producto piden fecha de recogida o mensaje, para que los clientes siempre visiten la página del producto."
+    },
+    "buttons": {
+      "name": "Botones",
+      "shadow": "Mostrar sombra en botones",
+      "shadow_info": "La sombra desplazada detrás de los botones principales.",
+      "shape": "Forma",
+      "shape_pill": "Píldora",
+      "shape_rounded": "Redondeada"
+    },
+    "decorations": {
+      "name": "Decoraciones",
+      "enabled": "Mostrar pegatinas y bocadillos",
+      "enabled_info": "Activa detalles divertidos como los bocadillos. Desactivado, la tienda se ve limpia y sencilla."
+    },
+    "cake": {
+      "name": "Opciones de pasteles",
+      "whatsapp_header": "WhatsApp",
+      "whatsapp_number": "Número de WhatsApp",
+      "whatsapp_number_info": "Incluya el código de país, p. ej. +34 600 000 000. Se usa en los botones de WhatsApp de toda la tienda.",
+      "whatsapp_floating": "Mostrar botón flotante de WhatsApp",
+      "allergens_header": "Alérgenos",
+      "allergen_list": "Alérgenos que indica",
+      "allergen_list_info": "Separados por comas. Solo se muestran estos en los productos, desde el metacampo de alérgenos o las etiquetas allergen:….",
+      "allergen_highlight": "Destacar estos alérgenos",
+      "allergen_highlight_info": "Separados por comas, p. ej. Frutos secos. Se muestran en un color de aviso.",
+      "ordering_header": "Pedidos",
+      "lead_time_days": "Antelación necesaria",
+      "lead_time_days_info": "Valor predeterminado para todos los productos; el metacampo de antelación de cada producto lo sustituye.",
+      "days_unit": "d",
+      "cutoff_hour": "Hora límite diaria (24 h)",
+      "cutoff_hour_info": "Los pedidos posteriores a esta hora cuentan desde el día siguiente. Usa la zona horaria de su tienda.",
+      "closed_days_info": "Días en que no entrega pasteles. No se pueden elegir como fecha de recogida o envío.",
+      "closed_mon": "Cerrado los lunes",
+      "closed_tue": "Cerrado los martes",
+      "closed_wed": "Cerrado los miércoles",
+      "closed_thu": "Cerrado los jueves",
+      "closed_fri": "Cerrado los viernes",
+      "closed_sat": "Cerrado los sábados",
+      "closed_sun": "Cerrado los domingos",
+      "pickup_address": "Dirección de recogida",
+      "pickup_address_info": "Se muestra cuando el cliente elige recogida.",
+      "delivery_note": "Nota de envío",
+      "allergen_disclaimer": "Aviso de alérgenos"
+    },
+    "social": {
+      "name": "Redes sociales",
+      "info": "Los enlaces aparecen en la tarjeta Síguenos del pie de página.",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "pinterest": "Pinterest",
+      "youtube": "YouTube"
+    },
+    "cart": {
+      "name": "Cesta",
+      "cart_type": "Al añadir un producto",
+      "cart_type_drawer": "Abrir la cesta lateral",
+      "cart_type_page": "Mostrar un mensaje (página de cesta)",
+      "lead_time_reminder": "Mostrar recordatorio de antelación",
+      "lead_time_reminder_info": "Recuerda a los clientes cuánta antelación necesitan los pasteles de su cesta."
+    },
+    "search": {
+      "name": "Búsqueda",
+      "predictive": "Mostrar sugerencias al escribir",
+      "predictive_info": "Abre un buscador con sugerencias de productos, colecciones, páginas y artículos."
+    }
+  },
+  "sections": {
+    "shared": {
+      "content": "Contenido",
+      "layout": "Diseño",
+      "style": "Estilo",
+      "color_scheme": "Esquema de color",
+      "padding": "Espacio arriba y abajo",
+      "padding_none": "Ninguno",
+      "padding_small": "Pequeño",
+      "padding_default": "Predeterminado",
+      "padding_large": "Grande",
+      "eyebrow": "Etiqueta sobre el título",
+      "heading": "Título",
+      "heading_info": "Ponga una palabra en cursiva para darle el color de acento.",
+      "text": "Texto de introducción",
+      "card_colour": "Color",
+      "colour_sky": "Cielo",
+      "colour_lavender": "Lavanda",
+      "colour_apricot": "Albaricoque",
+      "colour_pistachio": "Pistacho",
+      "colour_latte": "Café con leche",
+      "colour_butter": "Mantequilla",
+      "colour_strawberry": "Fresa"
+    },
+    "custom_section": {
+      "name": "Sección personalizada",
+      "background_image": "Imagen de fondo",
+      "background_image_info": "Solo decorativa; asegúrese de que el texto encima se lea bien."
+    },
+    "groups": {
+      "header": "Encabezado",
+      "footer": "Pie de página"
+    },
+    "announcement": {
+      "name": "Barra de anuncios",
+      "text": "Mensaje",
+      "text_info": "Déjelo vacío para ocultar la barra.",
+      "link": "Enlace",
+      "dismissible": "Los visitantes pueden cerrarla"
+    },
+    "header": {
+      "name": "Encabezado",
+      "logo": "Imagen del logotipo",
+      "logo_width": "Ancho del logotipo",
+      "logo_text": "Texto del logotipo",
+      "logo_text_info": "Se muestra si no hay imagen de logotipo. Déjelo vacío para usar el nombre de la tienda. Ponga una palabra en cursiva para darle el color de acento.",
+      "menu_setting": "Menú",
+      "menu_info": "En escritorio se muestran hasta 5 enlaces principales.",
+      "show_search": "Mostrar búsqueda",
+      "sticky": "Encabezado fijo",
+      "sticky_always": "Siempre",
+      "sticky_scroll_up": "Al desplazarse hacia arriba",
+      "sticky_never": "Nunca"
+    },
+    "bottom_nav": {
+      "name": "Navegación inferior",
+      "info": "Solo en teléfonos, cuando Configuración del tema → Diseño → Navegación en móvil es Barra inferior.",
+      "item": "Enlace",
+      "kind": "Tipo",
+      "kind_link": "Enlace",
+      "kind_basket": "Cesta (botón central elevado)",
+      "item_label": "Etiqueta",
+      "item_link": "Enlace",
+      "icon": "Icono",
+      "icon_home": "Inicio",
+      "icon_shop": "Cupcake",
+      "icon_basket": "Cesta",
+      "icon_cake": "Pastel",
+      "icon_pin": "Ubicación",
+      "icon_search": "Búsqueda",
+      "icon_account": "Cuenta",
+      "icon_calendar": "Calendario"
+    },
+    "footer": {
+      "name": "Pie de página",
+      "hero": "Parte superior del pie",
+      "show_hero": "Mostrar nombre grande y botones",
+      "kicker": "Etiqueta",
+      "wordmark": "Nombre grande",
+      "wordmark_info": "Déjelo vacío para usar el nombre de la tienda. Ponga una palabra en cursiva para darle el color de acento.",
+      "tagline": "Eslogan",
+      "button_label": "Texto del botón",
+      "button_link": "Enlace del botón",
+      "show_whatsapp": "Mostrar enlace de WhatsApp",
+      "show_whatsapp_info": "Requiere un número en Configuración del tema → Opciones de pasteles.",
+      "show_payment_icons": "Mostrar iconos de pago",
+      "block_text": "Texto",
+      "block_menu": "Menú",
+      "block_contact": "Contacto",
+      "block_social": "Redes sociales",
+      "block_newsletter": "Boletín",
+      "icon": "Icono",
+      "icon_none": "Ninguno",
+      "icon_cake": "Pastel",
+      "icon_pin": "Ubicación",
+      "icon_phone": "Teléfono",
+      "icon_mail": "Sobre",
+      "icon_calendar": "Calendario",
+      "icon_basket": "Cesta",
+      "icon_shop": "Cupcake",
+      "icon_instagram": "Instagram",
+      "title": "Título",
+      "text": "Texto",
+      "menu": "Menú",
+      "address": "Dirección",
+      "phone": "Teléfono",
+      "email": "Correo electrónico",
+      "social_info": "Usa los enlaces de Configuración del tema → Redes sociales."
+    },
+    "collection_banner": {
+      "name": "Cabecera de colección",
+      "eyebrow": "Etiqueta sobre el título",
+      "show_description": "Mostrar descripción de la colección",
+      "menu": "Enlaces de colecciones",
+      "menu_info": "Menú opcional de colecciones relacionadas, mostrado como píldoras bajo el título.",
+      "show_image": "Mostrar imagen de la colección",
+      "media_style": "Marco de la imagen"
+    },
+    "main_collection": {
+      "name": "Productos de la colección",
+      "products_per_page": "Productos por página",
+      "enable_filtering": "Mostrar filtros",
+      "enable_filtering_info": "Configure los filtros en el admin de Shopify, en Search & Discovery (app gratuita de Shopify).",
+      "enable_sorting": "Mostrar orden",
+      "columns_mobile": "Columnas en teléfonos",
+      "columns_1": "1",
+      "columns_2": "2",
+      "columns_desktop": "Columnas en escritorio"
+    },
+    "list_collections": {
+      "name": "Lista de colecciones",
+      "heading": "Título",
+      "collection_list": "Colecciones",
+      "collection_list_info": "Déjelo vacío para mostrar todas las colecciones."
+    },
+    "main_product": {
+      "name": "Producto",
+      "media_aspect": "Forma de la imagen",
+      "media_aspect_info": "El vertical muestra los pasteles altos completos; usa el punto de enfoque de cada producto.",
+      "sticky_bar": "Mostrar barra fija de añadir en teléfonos",
+      "block_title": "Título",
+      "show_vendor": "Mostrar proveedor",
+      "block_price": "Precio",
+      "block_cake_facts": "Datos del pastel",
+      "block_variant_picker": "Opciones",
+      "block_fulfilment": "Fecha de recogida o envío",
+      "fulfilment_required": "La fecha es obligatoria",
+      "fulfilment_delivery": "Ofrecer envío a domicilio",
+      "fulfilment_info": "La antelación, la hora límite y los días cerrados están en Configuración del tema → Opciones de pasteles.",
+      "block_cake_message": "Mensaje en el pastel",
+      "max_length": "Límite de caracteres",
+      "block_quantity": "Cantidad",
+      "block_buy_buttons": "Botones de compra",
+      "dynamic_checkout": "Mostrar botones de pago exprés",
+      "dynamic_checkout_info": "Los botones exprés (p. ej., Shop Pay) van directos al pago y omiten la comprobación de fecha y mensaje. Manténgalos desactivados si estos son obligatorios.",
+      "block_description": "Descripción",
+      "open_default": "Abierto por defecto",
+      "block_ingredients": "Ingredientes",
+      "block_allergen_note": "Nota de alérgenos",
+      "block_share": "Compartir"
+    },
+    "cart_drawer": {
+      "name": "Cesta lateral"
+    },
+    "main_cart": {
+      "name": "Cesta"
+    },
+    "hero": {
+      "name": "Portada",
+      "media": "Imagen",
+      "image": "Imagen",
+      "image_info": "Las fotos verticales de pasteles altos funcionan mejor. Use un PNG recortado con «Ajuste: imagen completa» para el estilo de puesto de mercado.",
+      "media_style": "Marco",
+      "image_fit": "Ajuste",
+      "fit_cover": "Llenar el marco",
+      "fit_contain": "Imagen completa",
+      "stamp_text": "Texto del sello",
+      "stamp_text_info": "Hasta 40 caracteres. Déjelo vacío para ocultarlo.",
+      "ticket_product": "Producto «del día»",
+      "ticket_product_info": "Muestra un pequeño tique con enlace a este producto.",
+      "ticket_label": "Etiqueta del tique",
+      "bubble_1": "Bocadillo 1",
+      "bubble_2": "Bocadillo 2",
+      "bubble_info": "Solo se muestra si Configuración del tema → Decoraciones está activado."
+    },
+    "hero_collage": {
+      "name": "Portada collage",
+      "button_label": "Texto del botón",
+      "button_link": "Enlace del botón",
+      "button_2_label": "Texto del segundo botón",
+      "button_2_link": "Enlace del segundo botón",
+      "piece": "Foto recortada",
+      "piece_image": "Imagen",
+      "piece_image_info": "Funciona mejor un PNG transparente de un solo producto.",
+      "position": "Posición",
+      "top_left": "Arriba a la izquierda",
+      "top_right": "Arriba a la derecha",
+      "bottom_left": "Abajo a la izquierda",
+      "bottom_right": "Abajo a la derecha",
+      "center": "Centro",
+      "size": "Tamaño"
+    },
+    "marquee": {
+      "name": "Texto en movimiento",
+      "separator": "Separador",
+      "sep_star": "Estrella",
+      "sep_sparkle": "Destello",
+      "sep_dot": "Punto",
+      "sep_heart": "Corazón",
+      "speed": "Duración de una vuelta",
+      "speed_info": "Cuanto más alto, más lento.",
+      "tilt": "Inclinar la banda",
+      "item": "Frase",
+      "item_text": "Texto"
+    },
+    "occasions": {
+      "name": "Ocasiones",
+      "mode": "Qué hacen los chips",
+      "mode_info": "El filtro necesita una sección Colección destacada justo debajo.",
+      "mode_filter": "Filtrar los productos de abajo",
+      "mode_link": "Abrir una colección",
+      "occasion": "Ocasión",
+      "label": "Etiqueta",
+      "tag": "Clave de ocasión",
+      "tag_info": "Coincide con el metacampo Ocasiones o la etiqueta occasion:… del producto, p. ej. birthday. Por defecto, la etiqueta.",
+      "collection": "Colección",
+      "collection_info": "Se abre en modo enlace y sin JavaScript.",
+      "image": "Imagen (opcional)",
+      "image_info": "Sustituye al icono."
+    },
+    "featured_collection": {
+      "name": "Colección destacada",
+      "collection": "Colección",
+      "products_to_show": "Productos que mostrar",
+      "show_view_all": "Mostrar botón «Ver todo»"
+    },
+    "visit": {
+      "name": "Dónde encontrarnos",
+      "location": "Ubicación",
+      "tag": "Etiqueta",
+      "location_name": "Nombre",
+      "note": "Nota",
+      "map_link": "Enlace para llegar",
+      "map_link_info": "Pegue un enlace de Google Maps o Apple Maps.",
+      "stamp_text": "Texto del sello",
+      "call": "Tarjeta de contacto"
+    },
+    "story": {
+      "name": "Nuestra historia",
+      "text": "Texto",
+      "image": "Imagen",
+      "point": "Punto numerado",
+      "point_title": "Título",
+      "person": "Miembro del equipo",
+      "person_image": "Foto",
+      "person_name": "Nombre",
+      "person_role": "Función"
+    },
+    "reviews": {
+      "name": "Opiniones",
+      "chat_title": "Título de la ventana de chat",
+      "review": "Opinión",
+      "quote": "Cita",
+      "author": "Nombre",
+      "context": "Contexto",
+      "context_info": "P. ej., «Pedido de cumpleaños».",
+      "reply": "Es nuestra respuesta",
+      "reply_info": "Se muestra a la derecha como mensaje de la tienda."
+    },
+    "social_grid": {
+      "name": "Muro de fotos sociales",
+      "handle": "Usuario",
+      "handle_info": "P. ej., @supasteleria",
+      "button_label": "Texto del botón",
+      "button_info": "Enlaza a Instagram en Configuración del tema → Redes sociales.",
+      "post": "Foto",
+      "image": "Imagen",
+      "caption": "Leyenda",
+      "caption_info": "Estilo manuscrito; que sea breve.",
+      "link": "Enlace a la publicación"
+    },
+    "newsletter": {
+      "name": "Boletín",
+      "consent": "Letra pequeña"
+    },
+    "rich_text": {
+      "name": "Texto enriquecido"
+    },
+    "image_with_text": {
+      "name": "Imagen con texto",
+      "position": "Posición de la imagen",
+      "left": "Izquierda",
+      "right": "Derecha"
+    },
+    "faq": {
+      "name": "Preguntas frecuentes",
+      "question": "Pregunta",
+      "answer": "Respuesta"
+    },
+    "cta_banner": {
+      "name": "Llamada a la acción"
+    },
+    "cake_builder": {
+      "name": "Creador de pasteles",
+      "product": "Producto del creador",
+      "product_info": "Un producto cuyas variantes combinen tamaño y sabor (p. ej., Tamaño: 15 cm, 20 cm; Sabor: Vainilla, Limón).",
+      "size_option": "Nombre de la opción de tamaño",
+      "option_info": "Debe coincidir con los nombres de opción del producto.",
+      "flavour_option": "Nombre de la opción de sabor",
+      "serves_block": "Porciones por tamaño",
+      "serves_size": "Valor del tamaño",
+      "serves_size_info": "Tal como está escrito en el producto, p. ej. 20 cm",
+      "serves_people": "Porciones"
+    },
+    "contact_form": {
+      "name": "Formulario de contacto"
+    },
+    "commission_form": {
+      "name": "Consulta de pastel personalizado",
+      "flavours_setting": "Sabores que ofrece",
+      "flavours_info": "Separados por comas. Los clientes pueden marcar varios."
+    },
+    "main_search": {
+      "name": "Resultados de búsqueda"
+    },
+    "predictive_search": {
+      "name": "Sugerencias de búsqueda"
+    },
+    "main_blog": {
+      "name": "Artículos del blog"
+    },
+    "main_article": {
+      "name": "Artículo del blog",
+      "show_author": "Mostrar autor"
+    },
+    "main_page": {
+      "name": "Contenido de la página"
+    },
+    "main_404": {
+      "name": "Página no encontrada"
+    },
+    "main_login": {
+      "name": "Inicio de sesión"
+    },
+    "main_register": {
+      "name": "Registro"
+    },
+    "main_account": {
+      "name": "Cuenta"
+    },
+    "main_order": {
+      "name": "Pedido"
+    },
+    "main_addresses": {
+      "name": "Direcciones"
+    },
+    "main_activate_account": {
+      "name": "Activar cuenta"
+    },
+    "main_reset_password": {
+      "name": "Restablecer contraseña"
+    },
+    "main_password": {
+      "name": "Página de contraseña",
+      "show_newsletter": "Mostrar suscripción por correo"
+    }
+  },
+  "blocks": {
+    "shared": {
+      "alignment": "Alineación",
+      "align_start": "Inicio",
+      "align_center": "Centro",
+      "align_end": "Final"
+    },
+    "text": {
+      "name": "Texto",
+      "text": "Texto",
+      "style": "Estilo",
+      "style_body": "Cuerpo",
+      "style_lead": "Introducción (más grande)",
+      "style_micro": "Etiqueta pequeña"
+    },
+    "heading": {
+      "name": "Título",
+      "eyebrow": "Etiqueta sobre el título",
+      "eyebrow_info": "Breve, p. ej. «Crea tu pastel». Déjelo vacío para ocultarla.",
+      "heading": "Título",
+      "heading_info": "Ponga una palabra en cursiva para darle el color de acento.",
+      "level": "Nivel del título",
+      "level_info": "Use un solo H1 por página, normalmente en la primera sección.",
+      "level_h1": "H1",
+      "level_h2": "H2",
+      "level_h3": "H3",
+      "size": "Tamaño",
+      "size_medium": "Mediano",
+      "size_large": "Grande",
+      "size_hero": "Portada"
+    },
+    "button": {
+      "name": "Botón",
+      "label": "Texto",
+      "link": "Enlace",
+      "style": "Estilo",
+      "style_primary": "Principal",
+      "style_secondary": "Secundario",
+      "style_tertiary": "Enlace de texto",
+      "show_arrow": "Mostrar flecha"
+    },
+    "image": {
+      "name": "Imagen",
+      "image": "Imagen",
+      "frame": "Marco",
+      "frame_plain": "Sencillo",
+      "frame_awning": "Toldo de puesto de mercado",
+      "sunburst": "Mostrar rayos de sol",
+      "aspect_ratio": "Recorte",
+      "aspect_natural": "Original",
+      "aspect_square": "Cuadrado",
+      "aspect_portrait": "Vertical (4:5)",
+      "aspect_tall": "Alto (3:4)",
+      "aspect_landscape": "Horizontal (4:3)",
+      "focus": "Punto de enfoque",
+      "focus_info": "Qué parte conservar al recortar la imagen. «Superior» conserva el piso de arriba de los pasteles altos.",
+      "focus_top": "Arriba",
+      "focus_upper": "Superior",
+      "focus_center": "Centro",
+      "focus_bottom": "Abajo"
+    },
+    "chip_row": {
+      "name": "Fila de chips"
+    },
+    "chip": {
+      "name": "Chip",
+      "label": "Etiqueta",
+      "style": "Estilo",
+      "style_label": "Contorno",
+      "style_badge": "Insignia",
+      "style_solid": "Sólido",
+      "icon": "Icono",
+      "icon_none": "Ninguno",
+      "icon_cake": "Pastel",
+      "icon_shop": "Cupcake",
+      "icon_basket": "Cesta",
+      "icon_pin": "Ubicación",
+      "icon_calendar": "Calendario",
+      "icon_check": "Visto",
+      "icon_home": "Inicio",
+      "icon_whatsapp": "WhatsApp",
+      "icon_instagram": "Instagram"
+    },
+    "spacer": {
+      "name": "Espaciador",
+      "size": "Tamaño",
+      "size_2xs": "Muy muy pequeño",
+      "size_xs": "Muy pequeño",
+      "size_s": "Pequeño",
+      "size_m": "Mediano",
+      "size_l": "Grande",
+      "size_xl": "Muy grande",
+      "size_2xl": "Enorme"
+    },
+    "group": {
+      "name": "Grupo",
+      "category": "Diseño",
+      "preset_column": "Columna",
+      "preset_row": "Fila",
+      "direction": "Dirección",
+      "direction_column": "Columna",
+      "direction_row": "Fila",
+      "gap": "Espacio entre elementos"
+    }
+  }
+}
