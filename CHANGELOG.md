@@ -4,6 +4,13 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+### Changed
+- Headings use DM Serif Display instead of Fraunces, which cuts font downloads on the home page from 314 KB to 142 KB.
+- Social photo captions and speech bubbles use the heading italic. The separate handwriting font (Caveat) and its setting are gone.
+
+### Fixed
+- The icon inside the "Find us" stamp is centred again.
+
 ## [0.10.0] — 2026-10-25
 
 Phase 10: localisation.
