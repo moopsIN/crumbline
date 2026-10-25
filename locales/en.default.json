@@ -23,6 +23,10 @@
       "previous": "Previous page",
       "next": "Next page",
       "page": "Page"
+    },
+    "meta": {
+      "tagged": "tagged “{{ tags }}”",
+      "page": "Page {{ page }}"
     }
   },
   "forms": {
@@ -136,8 +140,7 @@
       "cta": "Browse all cakes",
       "filtered_title": "No cakes match",
       "filtered_text": "Try removing a filter or two."
-    },
-    "title": "Collections"
+    }
   },
   "cart": {
     "title": "Your basket",
@@ -285,7 +288,6 @@
     }
   },
   "password": {
-    "title": "Opening soon",
     "password": "Password",
     "enter": "Enter",
     "enter_with": "Enter using password",
