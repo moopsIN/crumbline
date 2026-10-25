@@ -71,6 +71,74 @@
       "title": "Title",
       "subtitle": "Subtitle",
       "normal": "Normal text"
+    }
+  },
+  "settings": {
+    "branding": {
+      "name": "Branding",
+      "favicon": "Favicon",
+      "favicon_info": "Shown in browser tabs. Use a square image, at least 32 × 32 px."
     },
+    "colors": {
+      "name": "Colours",
+      "header_surfaces": "Backgrounds",
+      "background": "Background",
+      "surface": "Cards and panels",
+      "surface_info": "Product cards, drawers and buttons at rest.",
+      "surface_alt": "Fields and options",
+      "surface_alt_info": "Option pills and text fields before they're chosen.",
+      "header_text": "Text",
+      "text": "Text and outlines",
+      "text_info": "Also used for borders and the hard shadow.",
+      "text_muted": "Secondary text",
+      "header_accents": "Accents",
+      "accent": "Accent",
+      "accent_info": "Decoration only: button shadows, focus halo, badges. Not used for text on light backgrounds.",
+      "accent_text": "Accent text",
+      "accent_text_info": "The coloured word in headings. Large text only, so pick a shade with at least 3:1 contrast.",
+      "highlight": "Highlight",
+      "highlight_info": "Selected options, active navigation and badges.",
+      "highlight_2": "Second highlight",
+      "highlight_2_info": "Awning stripes and small decorations.",
+      "header_buttons": "Buttons",
+      "button": "Button",
+      "button_label": "Button label",
+      "secondary_button": "Secondary button",
+      "secondary_button_label": "Secondary button label"
+    },
+    "typography": {
+      "name": "Typography",
+      "display_font": "Headings",
+      "display_font_info": "Used for the logo text, headings and prices in tickets.",
+      "body_font": "Body",
+      "mono_font": "Labels",
+      "mono_font_info": "Small uppercase labels, chips and step numbers.",
+      "hand_font": "Handwriting",
+      "hand_font_info": "Only for decorative captions and speech bubbles.",
+      "body_scale": "Text size"
+    },
+    "layout": {
+      "name": "Layout",
+      "page_width": "Page width",
+      "page_width_standard": "Standard",
+      "page_width_wide": "Wide",
+      "section_spacing": "Space between sections",
+      "spacing_compact": "Compact",
+      "spacing_default": "Default",
+      "spacing_roomy": "Roomy"
+    },
+    "buttons": {
+      "name": "Buttons",
+      "shadow": "Show button shadow",
+      "shadow_info": "The offset shadow behind primary buttons.",
+      "shape": "Shape",
+      "shape_pill": "Pill",
+      "shape_rounded": "Rounded"
+    },
+    "decorations": {
+      "name": "Decorations",
+      "enabled": "Show stickers and speech bubbles",
+      "enabled_info": "Turns on playful extras such as speech bubbles. Off keeps the store clean and simple."
+    }
   }
 }
