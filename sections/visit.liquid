@@ -1,0 +1,449 @@
+{% comment %}
+  "Find us" (Cute market cards): location cards with a ring stamp, address,
+  note and a directions link, plus an optional ink "call us" card with the
+  phone number and WhatsApp. No embedded map (no third-party scripts).
+{% endcomment %}
+
+{%- capture whatsapp_url -%}{% render 'whatsapp-url' %}{%- endcapture -%}
+
+<div class="visit full-width" {% render 'section-attributes' %}>
+  <div class="visit__inner">
+    {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
+    <div class="visit__grid">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'location' -%}
+            {%- liquid
+              assign colour = block.settings.color
+              if colour == 'butter'
+                assign card_bg = 'var(--color-highlight)'
+              elsif colour == 'strawberry'
+                assign card_bg = 'var(--color-highlight-2)'
+              else
+                assign card_bg = 'var(--color-pastel-' | append: colour | append: ')'
+              endif
+              assign ring_id = 'visit-ring-' | append: block.id
+            -%}
+            <article class="visit-card" style="--card-bg: {{ card_bg }};" data-reveal {{ block.shopify_attributes }}>
+              {%- if block.settings.stamp_text != blank -%}
+                <div class="visit-card__stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100">
+                    <path id="{{ ring_id }}" d="M50,50 m-36,0 a36,36 0 1,1 72,0 a36,36 0 1,1 -72,0" fill="none"/>
+                    <text><textPath href="#{{ ring_id }}" textLength="222" lengthAdjust="spacing">{{ block.settings.stamp_text | upcase | escape }} • </textPath></text>
+                  </svg>
+                  {% render 'icon', name: block.settings.icon %}
+                </div>
+              {%- endif -%}
+              {%- if block.settings.tag != blank -%}
+                {% render 'chip', label: block.settings.tag, style: 'badge', class: 'visit-card__tag' %}
+              {%- endif -%}
+              <h3 class="visit-card__title">{{ block.settings.name | escape }}</h3>
+              {%- if block.settings.address != blank -%}
+                <address class="visit-card__address">{{ block.settings.address | escape | newline_to_br }}</address>
+              {%- endif -%}
+              {%- if block.settings.note != blank -%}
+                <p class="visit-card__note">{{ block.settings.note | escape }}</p>
+              {%- endif -%}
+              {%- if block.settings.map_link != blank -%}
+                <a href="{{ block.settings.map_link }}" class="visit-card__link" target="_blank" rel="noopener">
+                  {{- 'sections.visit.directions' | t -}}
+                  {% render 'icon', name: 'arrow-right' %}
+                </a>
+              {%- endif -%}
+            </article>
+
+          {%- when 'call' -%}
+            <article class="visit-card visit-card--call" data-reveal {{ block.shopify_attributes }}>
+              {%- if block.settings.tag != blank -%}
+                {% render 'chip', label: block.settings.tag, style: 'badge', class: 'visit-card__tag' %}
+              {%- endif -%}
+              <h3 class="visit-card__title">{{ block.settings.heading | escape }}</h3>
+              {%- if block.settings.phone != blank -%}
+                <a class="visit-card__phone" href="tel:{{ block.settings.phone | remove: ' ' }}">{{ block.settings.phone | escape }}</a>
+              {%- endif -%}
+              {%- if block.settings.text != blank -%}
+                <p class="visit-card__note">{{ block.settings.text | escape }}</p>
+              {%- endif -%}
+              {%- if block.settings.show_whatsapp and whatsapp_url != blank -%}
+                {%- assign wa_label = 'general.whatsapp.cta' | t -%}
+                {% render 'button', label: wa_label, url: whatsapp_url, size: 'small', attributes: 'target="_blank" rel="noopener"', class: 'visit-card__whatsapp' %}
+              {%- endif -%}
+            </article>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .visit {
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+    }
+
+    .visit__inner {
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .visit__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 16.875rem), 1fr));
+      gap: 1.25rem;
+    }
+
+    .visit-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      min-block-size: 18rem;
+      padding: 1.5rem;
+      overflow: hidden;
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--card-bg, var(--color-surface));
+      color: var(--color-on-highlight);
+      transition:
+        rotate 500ms var(--ease-bounce),
+        translate 500ms var(--ease-bounce),
+        box-shadow var(--dur-base);
+    }
+
+    .visit-card:hover {
+      rotate: -1.5deg;
+      translate: 0 -6px;
+      box-shadow: 4px 4px 0 var(--color-ink);
+    }
+
+    .visit-card:nth-child(even):hover {
+      rotate: 1.5deg;
+    }
+
+    .visit-card__tag {
+      align-self: flex-start;
+    }
+
+    .visit-card__title {
+      padding-inline-end: 5.25rem;
+      font-size: var(--step-2);
+    }
+
+    .visit-card__address {
+      color: color-mix(in oklch, var(--color-on-highlight) 80%, transparent);
+      font-size: 0.95rem;
+      font-style: normal;
+    }
+
+    .visit-card__note {
+      margin: 0;
+      color: color-mix(in oklch, var(--color-on-highlight) 85%, transparent);
+    }
+
+    .visit-card__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      align-self: flex-start;
+      min-block-size: 44px;
+      margin-block-start: auto;
+      font-weight: var(--font-body-weight-bold);
+      text-decoration: underline 2px;
+      text-underline-offset: 6px;
+    }
+
+    .visit-card__link .icon {
+      inline-size: 1rem;
+      block-size: 1rem;
+      rotate: -45deg;
+    }
+
+    .visit-card__stamp {
+      position: absolute;
+      inset-block-start: 1rem;
+      inset-inline-end: 1rem;
+      display: grid;
+      place-items: center;
+      inline-size: 80px;
+      block-size: 80px;
+      border: var(--border-width) solid var(--color-on-highlight);
+      border-radius: 50%;
+      background-color: var(--color-awning-light);
+      color: var(--color-on-highlight);
+    }
+
+    .visit-card__stamp svg {
+      position: absolute;
+      inset: 0;
+      overflow: visible;
+    }
+
+    .visit-card__stamp text {
+      fill: var(--color-on-highlight);
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      letter-spacing: 1.6px;
+    }
+
+    .visit-card__stamp .icon {
+      inline-size: 1.5rem;
+      block-size: 1.5rem;
+    }
+
+    .visit-card--call {
+      background-color: var(--color-on-highlight);
+      color: var(--color-on-ink);
+    }
+
+    .visit-card--call .visit-card__title {
+      padding-inline-end: 0;
+    }
+
+    .visit-card--call .visit-card__note {
+      color: var(--color-on-ink-muted);
+    }
+
+    .visit-card__phone {
+      color: var(--color-highlight);
+      font-family: var(--font-display);
+      font-size: var(--step-3);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+
+    .visit-card__whatsapp {
+      align-self: flex-start;
+      margin-block-start: auto;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .visit-card:hover {
+        rotate: 0deg;
+        translate: 0 0;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.visit.name",
+  "class": "visit-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.shared.eyebrow",
+      "default": "Find us"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.shared.heading",
+      "info": "t:sections.shared.heading_info",
+      "default": "Come say <em>hello.</em>"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:sections.shared.text",
+      "default": "Collect your order or find us at a market near you."
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "location",
+      "name": "t:sections.visit.location",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "t:sections.visit.tag",
+          "default": "Pickup"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "t:sections.visit.location_name",
+          "default": "Our kitchen"
+        },
+        {
+          "type": "textarea",
+          "id": "address",
+          "label": "t:sections.footer.address"
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "t:sections.visit.note",
+          "default": "Collections by arrangement."
+        },
+        {
+          "type": "url",
+          "id": "map_link",
+          "label": "t:sections.visit.map_link",
+          "info": "t:sections.visit.map_link_info"
+        },
+        {
+          "type": "text",
+          "id": "stamp_text",
+          "label": "t:sections.visit.stamp_text",
+          "default": "Baked with love"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:sections.bottom_nav.icon",
+          "options": [
+            {
+              "value": "home",
+              "label": "t:sections.bottom_nav.icon_home"
+            },
+            {
+              "value": "basket",
+              "label": "t:sections.bottom_nav.icon_basket"
+            },
+            {
+              "value": "pin",
+              "label": "t:sections.bottom_nav.icon_pin"
+            },
+            {
+              "value": "cake",
+              "label": "t:sections.bottom_nav.icon_cake"
+            }
+          ],
+          "default": "home"
+        },
+        {
+          "type": "select",
+          "id": "color",
+          "label": "t:sections.shared.card_colour",
+          "options": [
+            {
+              "value": "1",
+              "label": "t:sections.shared.colour_sky"
+            },
+            {
+              "value": "2",
+              "label": "t:sections.shared.colour_lavender"
+            },
+            {
+              "value": "3",
+              "label": "t:sections.shared.colour_apricot"
+            },
+            {
+              "value": "4",
+              "label": "t:sections.shared.colour_pistachio"
+            },
+            {
+              "value": "5",
+              "label": "t:sections.shared.colour_latte"
+            },
+            {
+              "value": "butter",
+              "label": "t:sections.shared.colour_butter"
+            },
+            {
+              "value": "strawberry",
+              "label": "t:sections.shared.colour_strawberry"
+            }
+          ],
+          "default": "butter"
+        }
+      ]
+    },
+    {
+      "type": "call",
+      "name": "t:sections.visit.call",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "t:sections.visit.tag",
+          "default": "Talk to us"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.shared.heading",
+          "default": "Got a cake idea?"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "t:sections.footer.phone"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:sections.shared.text",
+          "default": "Call, text or WhatsApp. Custom orders welcome."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_whatsapp",
+          "label": "t:sections.footer.show_whatsapp",
+          "info": "t:sections.footer.show_whatsapp_info",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.visit.name",
+      "blocks": [
+        {
+          "type": "location"
+        },
+        {
+          "type": "call"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
