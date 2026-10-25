@@ -7,10 +7,18 @@
 {%- capture collage -%}
   {%- for block in section.blocks -%}
     {%- if block.settings.image != blank -%}
-      {%- assign loading = 'lazy' -%}
-      {%- if forloop.first -%}{%- assign loading = 'eager' -%}{%- endif -%}
+      {%- liquid
+        assign loading = 'lazy'
+        assign fetchpriority = 'auto'
+        if forloop.first
+          unless section.index > 1
+            assign loading = 'eager'
+            assign fetchpriority = 'high'
+          endunless
+        endif
+      -%}
       <div class="collage__piece collage__piece--{{ block.settings.position }} collage__piece--{{ block.settings.size }}" {{ block.shopify_attributes }}>
-        {{ block.settings.image | image_url: width: 700 | image_tag: widths: '280, 420, 560, 700', sizes: '(min-width: 900px) 260px, 45vw', loading: loading, alt: block.settings.image.alt }}
+        {{ block.settings.image | image_url: width: 700 | image_tag: widths: '280, 420, 560, 700', sizes: '(min-width: 900px) 260px, 45vw', loading: loading, fetchpriority: fetchpriority, alt: block.settings.image.alt }}
       </div>
     {%- endif -%}
   {%- endfor -%}

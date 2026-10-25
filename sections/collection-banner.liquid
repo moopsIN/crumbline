@@ -9,6 +9,11 @@
   if section.settings.show_image and collection.image
     assign show_image = true
   endif
+
+  assign is_first = false
+  unless section.index > 1
+    assign is_first = true
+  endunless
 -%}
 
 <div class="collection-banner full-width{% if show_image %} collection-banner--with-image{% endif %}" {% render 'section-attributes' %}>
@@ -45,7 +50,7 @@
         sunburst: true,
         aspect_ratio: '4 / 3',
         sizes: '(min-width: 900px) 40vw, 100vw',
-        priority: true,
+        priority: is_first,
         class: 'collection-banner__media'
       %}
     {%- endif -%}
