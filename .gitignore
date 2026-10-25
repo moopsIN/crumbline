@@ -15,3 +15,8 @@ node_modules/
 ## Release files
 release
 *.zip
+
+# docs
+docs/
+AGENTS.md 
+CLAUDE.md
