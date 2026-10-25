@@ -297,8 +297,6 @@
     "cart": "Cart",
     "collection": "Collection",
     "collections_grid": "Collections grid",
-    "footer": "Footer",
-    "header": "Header",
     "page": "Page",
     "password": "Password",
     "product": "Product",
@@ -306,9 +304,7 @@
   },
   "labels": {
     "grid_gap": "Grid spacing",
-    "grid_item_width": "Grid item width",
-    "menu": "Menu",
-    "show_payment_icons": "Show payment icons"
+    "grid_item_width": "Grid item width"
   },
   "options": {
     "size": {
