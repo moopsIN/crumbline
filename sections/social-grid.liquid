@@ -11,11 +11,6 @@
   assign colours = 'strawberry,butter,1,2,3,4' | split: ','
 -%}
 
-{%- comment -%} Captions use the hand font, which only loads where it's used (D-28). {%- endcomment -%}
-{% style %}
-  {{ settings.type_hand_font | font_face: font_display: 'swap' }}
-{% endstyle %}
-
 <div class="social-grid full-width" {% render 'section-attributes' %}>
   <div class="social-grid__inner">
     {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
@@ -149,9 +144,10 @@
     .post__caption {
       margin-block-start: 0.55rem;
       overflow: hidden;
-      font-family: var(--font-hand);
+      font-family: var(--font-display);
       font-size: clamp(1.15rem, 0.9rem + 0.8vw, 1.4rem);
-      font-weight: 500;
+      font-style: italic;
+      font-weight: 400;
       line-height: 1.1;
       white-space: nowrap;
       text-overflow: ellipsis;

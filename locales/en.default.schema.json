@@ -39,8 +39,6 @@
       "body_font": "Body",
       "mono_font": "Labels",
       "mono_font_info": "Small uppercase labels, chips and step numbers.",
-      "hand_font": "Handwriting",
-      "hand_font_info": "Only for decorative captions and speech bubbles.",
       "body_scale": "Text size"
     },
     "layout": {
