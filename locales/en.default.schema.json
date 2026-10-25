@@ -440,6 +440,14 @@
       "serves_size": "Size value",
       "serves_size_info": "Exactly as written on the product, e.g. 8\"",
       "serves_people": "Serves"
+    },
+    "contact_form": {
+      "name": "Contact form"
+    },
+    "commission_form": {
+      "name": "Custom cake enquiry",
+      "flavours_setting": "Flavours to offer",
+      "flavours_info": "Comma-separated. Customers can tick any."
     }
   },
   "blocks": {
