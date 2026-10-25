@@ -150,7 +150,7 @@
             options[this.#active].scrollIntoView({ block: 'nearest' });
           } else if (event.key === 'Enter' && this.#active >= 0) {
             event.preventDefault();
-            options[this.#active].querySelector('a').click();
+            options[this.#active].click();
           }
         }
       }
