@@ -33,7 +33,8 @@
     "price": {
       "from": "From {{ price }}",
       "sale": "Sale price",
-      "regular": "Regular price"
+      "regular": "Regular price",
+      "tax_included": "Tax included."
     },
     "allergens": {
       "contains": "Contains: {{ list }}."
@@ -44,6 +45,63 @@
       "serves": "Serves {{ people }}",
       "add": "Add {{ title }} to basket",
       "placeholder_title": "Your cake here"
+    },
+    "facts": {
+      "serves": "Serves",
+      "notice": "Notice",
+      "allergens": "Allergens",
+      "size": "Size",
+      "notice_days": {
+        "one": "1 day",
+        "other": "{{ count }} days"
+      }
+    },
+    "variant": {
+      "sold_out": "Sold out",
+      "choose": "Choose an option"
+    },
+    "fulfilment": {
+      "property": "Fulfilment",
+      "date_property": "Date",
+      "method": "Pickup or delivery?",
+      "pickup": "Pickup",
+      "delivery": "Delivery",
+      "pickup_from": "Collect from: {{ address }}",
+      "date": "When do you need it?",
+      "notice": {
+        "zero": "Pick a day.",
+        "one": "This cake needs 1 day's notice.",
+        "other": "This cake needs {{ count }} days' notice."
+      },
+      "other_date": "Pick another date",
+      "closed_error": "We're closed that day. Please pick another.",
+      "early_error": "That's too soon. The earliest date is {{ date }}."
+    },
+    "message": {
+      "label": "Message on the cake",
+      "property": "Message on cake",
+      "hint": "Optional, up to {{ count }} characters."
+    },
+    "quantity": {
+      "label": "Quantity",
+      "decrease": "Decrease quantity",
+      "increase": "Increase quantity"
+    },
+    "buy": {
+      "add": "Add to basket",
+      "sold_out": "Sold out",
+      "unavailable": "Unavailable"
+    },
+    "description": "Description",
+    "ingredients": "Ingredients",
+    "gallery": {
+      "zoom": "Open image {{ index }} full size",
+      "show": "Show image {{ index }}",
+      "zoom_dialog": "Full-size image"
+    },
+    "share": {
+      "label": "Share",
+      "copied": "Link copied"
     }
   },
   "collections": {

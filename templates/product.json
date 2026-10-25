@@ -10,8 +10,88 @@
 {
   "sections": {
     "main": {
-      "type": "product",
-      "settings": {}
+      "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {
+            "show_vendor": false
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "facts": {
+          "type": "cake_facts",
+          "settings": {}
+        },
+        "picker": {
+          "type": "variant_picker",
+          "settings": {}
+        },
+        "fulfilment": {
+          "type": "fulfilment",
+          "settings": {
+            "required": true,
+            "show_delivery": true
+          }
+        },
+        "message": {
+          "type": "cake_message",
+          "settings": {
+            "max_length": 40
+          }
+        },
+        "quantity": {
+          "type": "quantity",
+          "settings": {}
+        },
+        "buy": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": false
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "open": true
+          }
+        },
+        "ingredients": {
+          "type": "ingredients",
+          "settings": {}
+        },
+        "allergens": {
+          "type": "allergen_note",
+          "settings": {}
+        },
+        "share": {
+          "type": "share",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "title",
+        "price",
+        "facts",
+        "picker",
+        "fulfilment",
+        "message",
+        "quantity",
+        "buy",
+        "description",
+        "ingredients",
+        "allergens",
+        "share"
+      ],
+      "settings": {
+        "media_aspect": "4 / 5",
+        "sticky_bar": true,
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      }
     }
   },
   "order": [
