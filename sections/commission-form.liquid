@@ -1,0 +1,650 @@
+{% comment %}
+  Custom cake enquiry (guide §7.5): three steps, Occasion → Guests &
+  flavours → Date & contact, on Shopify's contact form, so every answer
+  arrives in the store's contact email. With JS it is a stepper (like the
+  cake builder) with per-step checks and an optional "Send on WhatsApp"
+  button that writes the same details into a message. Without JS all
+  three steps show on one page.
+{% endcomment %}
+
+{%- liquid
+  assign min_seconds = settings.lead_time_days | times: 86400 | plus: 0
+  assign min_date = 'now' | date: '%s' | plus: min_seconds | date: '%Y-%m-%d'
+  capture whatsapp_url
+    render 'whatsapp-url', message: 'x'
+  endcapture
+  assign step_names = 'sections.commission_form.step_occasion,sections.commission_form.step_guests,sections.commission_form.step_contact' | split: ','
+-%}
+
+<commission-form
+  class="commission-form full-width"
+  data-whatsapp="{% if whatsapp_url != blank %}{{ whatsapp_url | split: '?text=' | first }}{% endif %}"
+  data-step-label="{{ 'sections.cake_builder.step_count' | t: current: '__CURRENT__', total: 3 }}"
+  data-whatsapp-intro="{{ 'sections.commission_form.whatsapp_intro' | t: shop: shop.name }}"
+  {% render 'section-attributes' %}
+>
+  <div class="commission-form__inner">
+    {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
+
+    {%- form 'contact', id: 'CommissionForm', class: 'commission-form__form' -%}
+      <input type="hidden" name="contact[Enquiry]" value="{{ 'sections.commission_form.enquiry_type' | t }}">
+      {%- if form.posted_successfully? -%}
+        <div class="commission-form__status commission-form__status--success" role="status" tabindex="-1" data-form-status>
+          {% render 'icon', name: 'check' %}
+          <div>
+            <strong>{{ 'sections.commission_form.success_title' | t }}</strong>
+            <p>{{ 'sections.commission_form.success_text' | t }}</p>
+          </div>
+        </div>
+      {%- else -%}
+        {%- if form.errors -%}
+          <div class="commission-form__status commission-form__status--error commission-form__errors" role="alert" tabindex="-1" data-form-status>
+            {% render 'icon', name: 'alert' %}
+            <div>{{ 'forms.contact.error' | t }}{{ form.errors | default_errors }}</div>
+          </div>
+        {%- endif -%}
+
+        <ol class="commission-form__steps js-only" role="list">
+          {%- for key in step_names -%}
+            <li>
+              <button type="button" class="commission-form__pip" data-goto="{{ forloop.index0 }}" {% if forloop.first %}aria-current="step"{% else %}disabled{% endif %}>
+                <b class="mono">0{{ forloop.index }}</b>
+                <span>{{ key | t }}</span>
+              </button>
+            </li>
+          {%- endfor -%}
+        </ol>
+
+        {%- comment -%} Step 1: occasion {%- endcomment -%}
+        <fieldset class="commission-form__panel" data-step="0">
+          <legend class="commission-form__legend" tabindex="-1">{{ 'sections.commission_form.legend_occasion' | t }}</legend>
+          <div class="commission-form__pills">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'occasion' -%}
+                <label class="option-pill" {{ block.shopify_attributes }}>
+                  <input type="radio" name="contact[Occasion]" value="{{ block.settings.label | escape }}" required data-summary-field="occasion">
+                  <span>{{ block.settings.label | escape }}</span>
+                </label>
+              {%- endif -%}
+            {%- endfor -%}
+            <label class="option-pill">
+              <input type="radio" name="contact[Occasion]" value="{{ 'sections.commission_form.other' | t }}" required data-other-occasion>
+              <span>{{ 'sections.commission_form.other' | t }}</span>
+            </label>
+          </div>
+          <div class="commission-form__field" data-occasion-details>
+            <label for="CommissionOccasionDetails">{{ 'sections.commission_form.occasion_details' | t }}</label>
+            <input id="CommissionOccasionDetails" type="text" name="contact[Occasion details]">
+          </div>
+        </fieldset>
+
+        {%- comment -%} Step 2: guests and flavours {%- endcomment -%}
+        <fieldset class="commission-form__panel" data-step="1">
+          <legend class="commission-form__legend" tabindex="-1">{{ 'sections.commission_form.legend_guests' | t }}</legend>
+          <div class="commission-form__field">
+            <label for="CommissionGuests">{{ 'sections.commission_form.guests' | t }} <span aria-hidden="true">*</span></label>
+            <input id="CommissionGuests" type="number" name="contact[Guests]" min="1" inputmode="numeric" required>
+          </div>
+          <div class="commission-form__field">
+            <span class="commission-form__label" id="CommissionFlavoursLabel">{{ 'sections.commission_form.flavours' | t }}</span>
+            <div class="commission-form__pills" role="group" aria-labelledby="CommissionFlavoursLabel">
+              {%- assign flavours = section.settings.flavours | split: ',' -%}
+              {%- for flavour in flavours -%}
+                {%- assign flavour_name = flavour | strip -%}
+                {%- if flavour_name != blank -%}
+                  <label class="option-pill">
+                    <input type="checkbox" name="contact[Flavour: {{ flavour_name | escape }}]" value="{{ 'sections.commission_form.yes' | t }}" data-flavour="{{ flavour_name | escape }}">
+                    <span>{{ flavour_name | escape }}</span>
+                  </label>
+                {%- endif -%}
+              {%- endfor -%}
+              <label class="option-pill">
+                <input type="checkbox" name="contact[Flavour: {{ 'sections.commission_form.not_sure' | t }}]" value="{{ 'sections.commission_form.yes' | t }}" data-flavour="{{ 'sections.commission_form.not_sure' | t }}">
+                <span>{{ 'sections.commission_form.not_sure' | t }}</span>
+              </label>
+            </div>
+          </div>
+          <div class="commission-form__field">
+            <label for="CommissionDietary">{{ 'sections.commission_form.dietary' | t }}</label>
+            <input id="CommissionDietary" type="text" name="contact[Dietary needs]" aria-describedby="CommissionDietaryHint">
+            <p class="commission-form__hint" id="CommissionDietaryHint">{{ 'sections.commission_form.dietary_hint' | t }}</p>
+          </div>
+          <div class="commission-form__field">
+            <label for="CommissionIdeas">{{ 'sections.commission_form.ideas' | t }}</label>
+            <textarea id="CommissionIdeas" name="contact[Design ideas]" rows="4"></textarea>
+          </div>
+          <div class="commission-form__field">
+            <label for="CommissionLink">{{ 'sections.commission_form.inspiration' | t }}</label>
+            <input id="CommissionLink" type="url" name="contact[Inspiration link]" inputmode="url" placeholder="https://">
+          </div>
+        </fieldset>
+
+        {%- comment -%} Step 3: date and contact {%- endcomment -%}
+        <fieldset class="commission-form__panel" data-step="2">
+          <legend class="commission-form__legend" tabindex="-1">{{ 'sections.commission_form.legend_contact' | t }}</legend>
+          <div class="commission-form__row">
+            <div class="commission-form__field">
+              <label for="CommissionDate">{{ 'sections.commission_form.date' | t }} <span aria-hidden="true">*</span></label>
+              <input id="CommissionDate" type="date" name="contact[Date needed]" min="{{ min_date }}" required aria-describedby="CommissionDateHint">
+              <p class="commission-form__hint" id="CommissionDateHint">{{ 'sections.commission_form.date_hint' | t: count: settings.lead_time_days }}</p>
+            </div>
+            <div class="commission-form__field">
+              <span class="commission-form__label" id="CommissionFulfilmentLabel">{{ 'products.fulfilment.method' | t }}</span>
+              <div class="commission-form__pills" role="radiogroup" aria-labelledby="CommissionFulfilmentLabel">
+                <label class="option-pill">
+                  <input type="radio" name="contact[Fulfilment]" value="{{ 'products.fulfilment.pickup' | t }}" checked>
+                  <span>{{ 'products.fulfilment.pickup' | t }}</span>
+                </label>
+                <label class="option-pill">
+                  <input type="radio" name="contact[Fulfilment]" value="{{ 'products.fulfilment.delivery' | t }}">
+                  <span>{{ 'products.fulfilment.delivery' | t }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="commission-form__row">
+            <div class="commission-form__field">
+              <label for="CommissionName">{{ 'forms.name' | t }} <span aria-hidden="true">*</span></label>
+              <input id="CommissionName" type="text" name="contact[name]" autocomplete="name" required>
+            </div>
+            <div class="commission-form__field">
+              <label for="CommissionEmail">{{ 'forms.email' | t }} <span aria-hidden="true">*</span></label>
+              <input id="CommissionEmail" type="email" name="contact[email]" autocomplete="email" required>
+            </div>
+          </div>
+          <div class="commission-form__field">
+            <label for="CommissionPhone">{{ 'forms.phone' | t }}</label>
+            <input id="CommissionPhone" type="tel" name="contact[Phone]" autocomplete="tel">
+          </div>
+          <div class="commission-form__field">
+            <label for="CommissionBody">{{ 'sections.commission_form.anything_else' | t }}</label>
+            <textarea id="CommissionBody" name="contact[body]" rows="3"></textarea>
+          </div>
+        </fieldset>
+
+        <p class="commission-form__error" role="alert" data-step-error hidden>{% render 'icon', name: 'alert' %}<span></span></p>
+
+        <div class="commission-form__nav">
+          {%- assign back_label = 'sections.cake_builder.back' | t -%}
+          {%- assign next_label = 'sections.cake_builder.next' | t -%}
+          {%- assign send_label = 'sections.commission_form.send' | t -%}
+          <span class="js-only">{% render 'button', label: back_label, style: 'secondary', size: 'small', attributes: 'data-back disabled' %}</span>
+          <span class="commission-form__count mono js-only" data-step-count aria-live="polite">{{ 'sections.cake_builder.step_count' | t: current: 1, total: 3 }}</span>
+          <span class="js-only" data-next-wrap>{% render 'button', label: next_label, size: 'small', icon: 'arrow-right', attributes: 'data-next' %}</span>
+          <span data-submit-wrap>{% render 'button', label: send_label, type: 'submit', icon: 'arrow-right' %}</span>
+        </div>
+
+        {%- if whatsapp_url != blank -%}
+          <div class="commission-form__whatsapp js-only">
+            <p class="commission-form__hint">{{ 'sections.commission_form.whatsapp_hint' | t }}</p>
+            <a href="#" class="commission-form__whatsapp-link" data-whatsapp-link aria-disabled="true" target="_blank" rel="noopener">
+              {% render 'icon', name: 'whatsapp' %}{{ 'sections.commission_form.whatsapp_cta' | t }}
+            </a>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</commission-form>
+
+{% stylesheet %}
+  @layer components {
+    .commission-form {
+      display: block;
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+    }
+
+    .commission-form__inner {
+      max-inline-size: 46rem;
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .commission-form__form {
+      display: grid;
+      gap: var(--space-s);
+      padding: clamp(1.25rem, 1rem + 1vw, 2rem);
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-surface);
+    }
+
+    .commission-form__field {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .commission-form__field label,
+    .commission-form__label {
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .commission-form__field :is(input, textarea, select) {
+      min-block-size: 48px;
+      padding: 0.6rem 1.1rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-s);
+      background-color: var(--color-surface-alt);
+      color: var(--color-ink);
+    }
+
+    .commission-form__field input {
+      border-radius: var(--radius-pill);
+    }
+
+    .commission-form__field textarea {
+      min-block-size: 7rem;
+      resize: vertical;
+    }
+
+    .commission-form__hint {
+      margin: 0;
+      color: var(--color-ink-muted);
+      font-size: 0.85rem;
+    }
+
+    .commission-form__row {
+      display: grid;
+      gap: var(--space-s);
+    }
+
+    @media (min-width: 40rem) {
+      .commission-form__row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .commission-form__status {
+      display: flex;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 1rem 1.25rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-m);
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .commission-form__status--success {
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+    }
+
+    .commission-form__status--error {
+      border-color: var(--color-error);
+      color: var(--color-error);
+    }
+
+    .commission-form__status .icon {
+      flex: none;
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+    }
+
+    .commission-form__errors ul {
+      margin: 0.25rem 0 0;
+      padding-inline-start: 1.2rem;
+      font-weight: 400;
+    }
+
+    .commission-form__steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.4rem;
+      margin: 0;
+      padding: 0 0 1.1rem;
+      border-block-end: var(--border-divider);
+      list-style: none;
+    }
+
+    .commission-form__pip {
+      position: relative;
+      display: grid;
+      justify-items: start;
+      gap: 0.1rem;
+      inline-size: 100%;
+      min-block-size: 44px;
+      padding: 0.7rem 0.1rem 0;
+      border: 0;
+      background: none;
+      color: var(--color-ink-muted);
+      text-align: start;
+      cursor: pointer;
+    }
+
+    .commission-form__pip::before {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: 0;
+      block-size: 5px;
+      border-radius: var(--radius-pill);
+      background-color: var(--color-border);
+    }
+
+    .commission-form__pip b {
+      font-size: var(--text-micro);
+    }
+
+    .commission-form__pip span {
+      font-weight: var(--font-body-weight-bold);
+      font-size: 0.86rem;
+    }
+
+    .commission-form__pip.is-done,
+    .commission-form__pip[aria-current='step'] {
+      color: var(--color-ink);
+    }
+
+    .commission-form__pip.is-done::before {
+      background-color: var(--color-ink);
+    }
+
+    .commission-form__pip[aria-current='step']::before {
+      background-color: var(--color-accent);
+    }
+
+    .commission-form__panel {
+      display: grid;
+      gap: var(--space-s);
+      min-inline-size: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .commission-form__legend {
+      margin-block-end: 0.8rem;
+      padding: 0;
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      font-weight: var(--font-display-weight);
+    }
+
+    .commission-form__pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .commission-form__error {
+      display: flex;
+      gap: 0.4rem;
+      margin: 0;
+      color: var(--color-error);
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .commission-form__error .icon {
+      inline-size: 1.1rem;
+      block-size: 1.1rem;
+    }
+
+    .commission-form__nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding-block-start: 1.1rem;
+      border-block-start: var(--border-divider);
+    }
+
+    .commission-form__count {
+      color: var(--color-ink-muted);
+    }
+
+    .commission-form__whatsapp {
+      display: grid;
+      justify-items: start;
+      gap: 0.4rem;
+    }
+
+    .commission-form__whatsapp-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-block-size: 44px;
+      font-weight: var(--font-body-weight-bold);
+      text-decoration: underline 2px;
+      text-underline-offset: 4px;
+    }
+
+    .commission-form__whatsapp-link .icon {
+      inline-size: 1.2rem;
+      block-size: 1.2rem;
+    }
+
+    .commission-form__whatsapp-link[aria-disabled='true'] {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .commission-form__status p {
+      margin: 0.25rem 0 0;
+      font-weight: 400;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('commission-form')) {
+    customElements.define(
+      'commission-form',
+      class extends HTMLElement {
+        #step = 0;
+
+        connectedCallback() {
+          this.querySelector('[data-form-status]')?.focus();
+          this.form = this.querySelector('form');
+          this.panels = [...this.querySelectorAll('.commission-form__panel')];
+          if (!this.panels.length) return;
+          this.pips = [...this.querySelectorAll('[data-goto]')];
+          this.querySelector('[data-next]')?.addEventListener('click', () => this.#next());
+          this.querySelector('[data-back]')?.addEventListener('click', () => this.#go(this.#step - 1));
+          this.pips.forEach((pip) => pip.addEventListener('click', () => this.#go(Number(pip.dataset.goto))));
+          this.form.addEventListener('change', () => this.#refresh());
+          this.form.addEventListener('input', () => this.#refresh());
+          this.form.addEventListener('submit', (event) => {
+            if (!this.#validate(this.#step)) event.preventDefault();
+          });
+          this.#go(0, false);
+          this.#refresh();
+        }
+
+        #refresh() {
+          const other = this.querySelector('[data-other-occasion]');
+          this.querySelector('[data-occasion-details]').hidden = !other?.checked;
+          const link = this.querySelector('[data-whatsapp-link]');
+          if (link) {
+            const ready = Boolean(this.form.querySelector('[name="contact[Occasion]"]:checked'));
+            link.setAttribute('aria-disabled', String(!ready));
+            link.href = ready ? `${this.dataset.whatsapp}?text=${encodeURIComponent(this.#message())}` : '#';
+          }
+          const error = this.querySelector('[data-step-error]');
+          if (!error.hidden && this.#validate(this.#step, false)) error.hidden = true;
+        }
+
+        /* Every filled-in answer, one per line, for WhatsApp. */
+        #message() {
+          const lines = [this.dataset.whatsappIntro];
+          this.panels.forEach((panel) =>
+            panel.querySelectorAll('input, textarea').forEach((field) => {
+              if (!field.name || !field.value) return;
+              if ((field.type === 'radio' || field.type === 'checkbox') && !field.checked) return;
+              const own = field.id && this.querySelector(`label[for="${field.id}"]`);
+              const group = field.closest('[role="group"], [role="radiogroup"], fieldset');
+              const groupLabel = group?.getAttribute('aria-labelledby')
+                ? document.getElementById(group.getAttribute('aria-labelledby'))?.textContent
+                : group?.querySelector('legend')?.textContent;
+              const label = (own?.textContent ?? groupLabel ?? field.name).replace('*', '').trim().replace(/[?:]$/, '');
+              const value = field.type === 'checkbox' ? field.closest('label').textContent.trim() : field.value;
+              lines.push(`${label}: ${value}`);
+            })
+          );
+          return lines.join('\n');
+        }
+
+        #validate(step, show = true) {
+          const fields = [...this.panels[step].querySelectorAll('input, textarea')];
+          const invalid = fields.find((field) => !field.checkValidity());
+          const error = this.querySelector('[data-step-error]');
+          if (show) {
+            error.hidden = !invalid;
+            if (invalid) {
+              error.querySelector('span').textContent = invalid.validationMessage;
+              invalid.focus();
+            }
+          }
+          return !invalid;
+        }
+
+        #next() {
+          if (this.#validate(this.#step)) this.#go(this.#step + 1);
+        }
+
+        #go(step, focus = true) {
+          if (step < 0 || step >= this.panels.length) return;
+          this.#step = step;
+          this.panels.forEach((panel, i) => (panel.hidden = i !== step));
+          this.pips.forEach((pip, i) => {
+            if (i === step) pip.setAttribute('aria-current', 'step');
+            else pip.removeAttribute('aria-current');
+            pip.classList.toggle('is-done', i < step);
+            pip.disabled = i > step;
+          });
+          const last = step === this.panels.length - 1;
+          this.querySelector('[data-back]').disabled = step === 0;
+          this.querySelector('[data-next-wrap]').hidden = last;
+          this.querySelector('[data-submit-wrap]').hidden = !last;
+          this.querySelector('[data-step-error]').hidden = true;
+          this.querySelector('[data-step-count]').textContent = this.dataset.stepLabel.replace('__CURRENT__', step + 1);
+          if (focus) this.panels[step].querySelector('legend').focus();
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.commission_form.name",
+  "class": "commission-form-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.shared.eyebrow",
+      "default": "Custom cakes"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.shared.heading",
+      "info": "t:sections.shared.heading_info",
+      "default": "Tell us about <em>your cake</em>"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:sections.shared.text",
+      "default": "Three quick steps. We'll reply by email with ideas and a price."
+    },
+    {
+      "type": "text",
+      "id": "flavours",
+      "label": "t:sections.commission_form.flavours_setting",
+      "info": "t:sections.commission_form.flavours_info",
+      "default": "Vanilla, Chocolate, Lemon, Red velvet"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "occasion",
+      "name": "t:sections.occasions.occasion",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.occasions.label",
+          "default": "Birthday"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.commission_form.name",
+      "blocks": [
+        {
+          "type": "occasion",
+          "settings": {
+            "label": "Birthday"
+          }
+        },
+        {
+          "type": "occasion",
+          "settings": {
+            "label": "Wedding"
+          }
+        },
+        {
+          "type": "occasion",
+          "settings": {
+            "label": "Anniversary"
+          }
+        },
+        {
+          "type": "occasion",
+          "settings": {
+            "label": "Baby shower"
+          }
+        },
+        {
+          "type": "occasion",
+          "settings": {
+            "label": "Celebration"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
