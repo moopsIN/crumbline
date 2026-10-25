@@ -15,6 +15,7 @@
   @param {string} [sizes] - The `sizes` attribute for the layout slot
   @param {boolean} [priority] - Mark as the LCP image: eager loading and high fetch priority
   @param {string} [class] - Extra classes
+  @param {string} [content] - HTML to place in the window instead of an image (e.g. a collage)
 
   @example
   {% render 'media-frame', image: section.settings.image, style: 'awning', sunburst: true, sizes: '(min-width: 900px) 470px, 90vw', priority: true %}
@@ -40,7 +41,9 @@
     <div class="media-frame__awning" aria-hidden="true"></div>
   {%- endif -%}
   <div class="media-frame__window{% if style == 'awning' and sunburst %} media-frame__window--sunburst{% endif %}">
-    {%- if image != blank -%}
+    {%- if content != blank -%}
+      {{ content }}
+    {%- elsif image != blank -%}
       {{
         image
         | image_url: width: 1600

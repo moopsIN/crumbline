@@ -1,0 +1,71 @@
+{% doc %}
+  The Cute section heading: an optional mono eyebrow with an accent dot, a
+  display heading (italic words take the accent colour) and an optional
+  intro line. Reveals on scroll.
+
+  @param {string} [eyebrow] - Short label, e.g. "Find us"
+  @param {string} heading - Heading HTML from an inline_richtext setting
+  @param {string} [text] - Intro sentence
+  @param {string} [level] - `h1` or `h2` (default)
+  @param {string} [align] - `start` (default) or `center`
+
+  @example
+  {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
+{% enddoc %}
+
+{%- assign level = level | default: 'h2' -%}
+
+{%- if heading != blank or eyebrow != blank -%}
+  <header class="section-heading section-heading--{{ align | default: 'start' }}" data-reveal>
+    {%- if eyebrow != blank -%}
+      <p class="section-heading__eyebrow mono">{{ eyebrow | escape }}</p>
+    {%- endif -%}
+    {%- if heading != blank -%}
+      <{{ level }} class="section-heading__title">{{ heading }}</{{ level }}>
+    {%- endif -%}
+    {%- if text != blank -%}
+      <p class="section-heading__text">{{ text | escape }}</p>
+    {%- endif -%}
+  </header>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .section-heading {
+      max-inline-size: 41.25rem;
+      margin-block-end: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+    }
+
+    .section-heading--center {
+      margin-inline: auto;
+      text-align: center;
+    }
+
+    .section-heading__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin: 0 0 1rem;
+      color: var(--color-ink-muted);
+    }
+
+    .section-heading__eyebrow::before {
+      content: '';
+      inline-size: 11px;
+      block-size: 11px;
+      border: var(--border-ink);
+      border-radius: 50%;
+      background-color: var(--color-accent);
+    }
+
+    .section-heading__title {
+      font-size: var(--step-3);
+    }
+
+    .section-heading__text {
+      margin: 0.9rem 0 0;
+      color: var(--color-ink-muted);
+      font-size: 1.08em;
+    }
+  }
+{% endstylesheet %}

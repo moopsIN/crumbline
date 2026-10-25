@@ -46,9 +46,24 @@
   endif
 
   assign serves = product.metafields.crumbline.serves.value
+
+  # Occasions for the occasions filter: metafield list, else occasion:* tags.
+  assign occasions = product.metafields.crumbline.occasion.value | join: ' ' | downcase
+  if occasions == blank
+    for tag in product.tags
+      assign tag_lower = tag | downcase
+      if tag_lower contains 'occasion:'
+        assign occasions = occasions | append: ' ' | append: tag_lower | remove_first: 'occasion:'
+      endif
+    endfor
+  endif
 -%}
 
-<article class="product-card{% if product.available == false %} product-card--sold-out{% endif %}" style="--card-pastel: var(--color-pastel-{{ pastel }});">
+<article
+  class="product-card{% if product.available == false %} product-card--sold-out{% endif %}"
+  style="--card-pastel: var(--color-pastel-{{ pastel }});"
+  data-occasions="{{ occasions | strip | escape }}"
+>
   <div class="product-card__media">
     {%- if product.featured_media -%}
       {%- liquid
