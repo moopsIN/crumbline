@@ -2,7 +2,55 @@
   "accessibility": {
     "skip_to_content": "Skip to content",
     "account": "Account",
-    "basket": "Basket"
+    "basket": "Basket",
+    "close": "Close",
+    "new_window": "(opens in a new window)"
+  },
+  "general": {
+    "whatsapp": {
+      "cta": "WhatsApp us",
+      "message": "Hi {{ shop }}! I'd like to ask about an order.",
+      "message_product": "Hi {{ shop }}! I'd like to ask about the {{ product }}."
+    },
+    "social": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "pinterest": "Pinterest",
+      "youtube": "YouTube"
+    }
+  },
+  "forms": {
+    "email": "Email",
+    "email_placeholder": "Your email"
+  },
+  "sections": {
+    "announcement": {
+      "dismiss": "Dismiss announcement"
+    },
+    "header": {
+      "menu": "Menu",
+      "main_menu": "Main",
+      "view_all": "All {{ title }}",
+      "search": "Search",
+      "basket": "Basket",
+      "basket_count": {
+        "one": "Basket, 1 item",
+        "other": "Basket, {{ count }} items"
+      }
+    },
+    "bottom_nav": {
+      "label": "Quick links"
+    },
+    "footer": {
+      "social_empty": "Add your social links in Theme settings → Social.",
+      "newsletter_success": "Thanks! You're on the list.",
+      "newsletter_submit": "Subscribe",
+      "country": "Country",
+      "language": "Language",
+      "update": "Update",
+      "back_to_top": "Back to top ↑"
+    }
   },
   "404": {
     "title": "404",
