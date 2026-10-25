@@ -1,8 +1,22 @@
 # Changelog
 
-All notable changes to Crumbline are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/). Each build phase ends with a `0.N.0` pre-release; the first public release will be `1.0.0`.
+All notable changes to Crumbline are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/). Each build phase from Phase 1 ends with a tagged `0.N.0` pre-release (the Phase 0 entries `0.0.0` and `0.0.1` are untagged); the first public release will be `1.0.0`.
 
 ## [Unreleased]
+
+## [0.12.0] — 2026-10-25
+
+Phase 12: demo store and documentation.
+
+### Added
+- A setup guide for merchants in `docs/setup.md`: install, the settings tour, products, notice and closed days, WhatsApp, allergens, pages, menus, the homepage, languages and a go-live checklist.
+- Demo screenshots and a link to the Crumbline Bakery demo store in the README.
+
+### Fixed
+- An italic word in a text logo no longer loses the space before it.
+- The WhatsApp button on the dark "Got a cake idea?" card is visible.
+- Line breaks in the pickup address are kept.
+- A collection banner with links no longer makes the page scroll sideways on small phones.
 
 ## [0.11.0] — 2026-10-25
 

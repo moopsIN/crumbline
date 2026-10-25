@@ -11,8 +11,23 @@
 
 <p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/licence-MIT%20%2B%20Shopify%20Skeleton-green.svg" alt="Licence: MIT, with Shopify Skeleton portions"></a>
-  <img src="https://img.shields.io/badge/status-in%20development-orange.svg" alt="Status: in development">
+  <img src="https://img.shields.io/badge/status-pre--release-orange.svg" alt="Status: pre-release">
   <img src="https://img.shields.io/badge/Shopify-Basic%20plan%20ready-95BF47.svg" alt="Works on the Shopify Basic plan">
+</p>
+
+<p align="center">
+  <img src=".github/screenshot-desktop.jpg" alt="Crumbline demo homepage on desktop: a big serif headline, a tiered cake in a striped-awning frame and a rotating stamp badge" width="100%">
+</p>
+
+<p align="center">
+  <img src=".github/screenshot-home-mobile.jpg" alt="Crumbline homepage on a phone, with the floating bottom navigation" width="30%">
+  <img src=".github/screenshot-product-mobile.jpg" alt="Product page on a phone: size and flavour pills, pickup or delivery, and date pills" width="30%">
+  <img src=".github/screenshot-builder-mobile.jpg" alt="Cake builder on a phone: running total and a live summary card" width="30%">
+</p>
+
+<p align="center">
+  <strong>See it live:</strong> <a href="https://crumbline-6gtfwmtt.myshopify.com/?preview_theme_id=198963069094">Crumbline Bakery demo store</a>. The store is password-protected; email <a href="mailto:info@moops.in">info@moops.in</a> for the password.<br>
+  <sub>Crumbline Bakery is a fictional shop. Demo photos are from <a href="https://www.pexels.com">Pexels</a>.</sub>
 </p>
 
 ---
@@ -25,7 +40,7 @@ Crumbline puts those steps into the storefront. It runs on Shopify's **Basic pla
 
 ## Features
 
-> Crumbline is in active development. The features below are the v1 scope. See [Roadmap](#roadmap) for what is built so far.
+> Everything below is built and included in the current pre-release. v1.0.0 follows a final round of manual testing.
 
 **Ordering cakes**
 - Option pills for size, tiers and flavour, with "Serves N" shown next to each size
@@ -54,19 +69,21 @@ Crumbline puts those steps into the storefront. It runs on Shopify's **Basic pla
 - Built on Shopify's [Skeleton theme](https://github.com/Shopify/skeleton-theme): theme blocks, `{% stylesheet %}` and `{% javascript %}` per component, LiquidDoc on every snippet
 - Vanilla JavaScript custom elements, no framework and no build step
 - Progressive enhancement: every form works without JavaScript
-- Targets: WCAG 2.2 AA, Lighthouse mobile performance 90 or higher, under 60 KB of JavaScript per page
+- Accessibility and speed: built to WCAG 2.2 AA; Lighthouse mobile performance 93–99 on the main pages; about 55 KB of JavaScript and 5 font files per page
 - Fully translatable: ships in English and Spanish, storefront and theme editor
 
 ## Getting started
 
 ### For merchants
 
-Crumbline hasn't been released yet. Once v1.0.0 is out:
+Crumbline v1.0.0 isn't out yet. Once it is:
 
 1. Download `crumbline.zip` from the [Releases](https://github.com/moopsIN/crumbline/releases) page.
 2. In Shopify admin, go to **Online Store → Themes → Add theme → Upload zip file**.
 3. Open **Customize** to set your colours, fonts, lead time, closed days and WhatsApp number.
 4. Optional: add the product metafields below to show servings, allergens and image focus.
+
+The [setup guide](./docs/setup.md) walks through every step, from settings to your first test order.
 
 ### For developers
 
@@ -99,7 +116,7 @@ Crumbline works without any setup and gets better with a few product metafields.
 | `occasion` | List of single line text | `birthday`, `wedding` | Occasion filters |
 | `builder_eligible` | True or false | `true` | Lets the product appear in the cake builder |
 
-No metafields? You can use tags instead, for example `occasion:birthday` or `allergen:nuts`. Full guides will live in [`docs/`](./docs/) and ship by v1.0.0.
+No metafields? You can use tags instead, for example `occasion:birthday` or `allergen:nuts`. Step-by-step guides: [setup](./docs/setup.md), [metafields](./docs/metafields.md) and [cake builder](./docs/cake-builder.md). Changes are listed in the [changelog](./CHANGELOG.md).
 
 ## Languages
 
@@ -141,8 +158,8 @@ Crumbline is built in phases, and each one ends with a tagged pre-release (`v0.N
 - [x] Phase 8: custom order form and WhatsApp hand-off
 - [x] Phase 9: search, blog, pages, customer accounts, 404, password and gift card
 - [x] Phase 10: localisation (Spanish)
-- [ ] Phase 11: performance and accessibility hardening
-- [ ] Phase 12: demo store content and documentation
+- [x] Phase 11: performance and accessibility hardening
+- [x] Phase 12: demo store content and documentation
 - [ ] Phase 13: v1.0.0 release
 - [ ] Phase 14 (stretch): Shopify Theme Store readiness
 

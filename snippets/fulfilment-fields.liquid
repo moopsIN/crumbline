@@ -196,6 +196,11 @@
       font-size: 0.9rem;
     }
 
+    /* Keep the line breaks a merchant types into the pickup address. */
+    .fulfilment__help--pickup {
+      white-space: pre-line;
+    }
+
     .fulfilment__help--delivery,
     .fulfilment:has([data-method='delivery']:checked) .fulfilment__help--pickup {
       display: none;

@@ -66,7 +66,7 @@
               {%- endif -%}
               {%- if block.settings.show_whatsapp and whatsapp_url != blank -%}
                 {%- assign wa_label = 'general.whatsapp.cta' | t -%}
-                {% render 'button', label: wa_label, url: whatsapp_url, size: 'small', attributes: 'target="_blank" rel="noopener"', class: 'visit-card__whatsapp' %}
+                {% render 'button', label: wa_label, url: whatsapp_url, style: 'secondary', size: 'small', attributes: 'target="_blank" rel="noopener"', class: 'visit-card__whatsapp' %}
               {%- endif -%}
             </article>
         {%- endcase -%}
