@@ -480,5 +480,33 @@
         "label": "t:settings.social.youtube"
       }
     ]
+  },
+  {
+    "name": "t:settings.cart.name",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "t:settings.cart.cart_type",
+        "options": [
+          {
+            "value": "drawer",
+            "label": "t:settings.cart.cart_type_drawer"
+          },
+          {
+            "value": "page",
+            "label": "t:settings.cart.cart_type_page"
+          }
+        ],
+        "default": "drawer"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_lead_time_reminder",
+        "label": "t:settings.cart.lead_time_reminder",
+        "info": "t:settings.cart.lead_time_reminder_info",
+        "default": true
+      }
+    ]
   }
 ]
