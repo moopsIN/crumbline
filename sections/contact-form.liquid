@@ -1,0 +1,220 @@
+{% comment %}
+  A simple contact form (name, email, phone, message) on Shopify's contact
+  form, with success and error messages.
+{% endcomment %}
+
+<div class="contact-form full-width" {% render 'section-attributes' %}>
+  <div class="contact-form__inner">
+    {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
+    {%- form 'contact', id: 'ContactForm', class: 'contact-form__form' -%}
+      {%- if form.posted_successfully? -%}
+        <p class="contact-form__status contact-form__status--success" role="status" tabindex="-1" data-form-status>
+          {% render 'icon', name: 'check' %}{{ 'forms.contact.success' | t }}
+        </p>
+      {%- else -%}
+        {%- if form.errors -%}
+          <div class="contact-form__status contact-form__status--error contact-form__errors" role="alert" tabindex="-1" data-form-status>
+            {% render 'icon', name: 'alert' %}
+            <div>{{ 'forms.contact.error' | t }}{{ form.errors | default_errors }}</div>
+          </div>
+        {%- endif -%}
+        <div class="contact-form__row">
+          <div class="contact-form__field">
+            <label for="ContactName">{{ 'forms.name' | t }}</label>
+            <input id="ContactName" type="text" name="contact[name]" autocomplete="name" value="{{ form.name }}">
+          </div>
+          <div class="contact-form__field">
+            <label for="ContactEmail">{{ 'forms.email' | t }} <span aria-hidden="true">*</span></label>
+            <input id="ContactEmail" type="email" name="contact[email]" autocomplete="email" required value="{{ form.email }}">
+          </div>
+        </div>
+        <div class="contact-form__field">
+          <label for="ContactPhone">{{ 'forms.phone' | t }}</label>
+          <input id="ContactPhone" type="tel" name="contact[phone]" autocomplete="tel" value="{{ form.phone }}">
+        </div>
+        <div class="contact-form__field">
+          <label for="ContactBody">{{ 'forms.message' | t }}</label>
+          <textarea id="ContactBody" name="contact[body]" rows="5">{{ form.body }}</textarea>
+        </div>
+        {%- assign send_label = 'forms.send' | t -%}
+        {% render 'button', label: send_label, type: 'submit', icon: 'arrow-right' %}
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .contact-form {
+      display: block;
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+    }
+
+    .contact-form__inner {
+      max-inline-size: 46rem;
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .contact-form__form {
+      display: grid;
+      gap: var(--space-s);
+      padding: clamp(1.25rem, 1rem + 1vw, 2rem);
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-surface);
+    }
+
+    .contact-form__field {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .contact-form__field label,
+    .contact-form__label {
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .contact-form__field :is(input, textarea, select) {
+      min-block-size: 48px;
+      padding: 0.6rem 1.1rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-s);
+      background-color: var(--color-surface-alt);
+      color: var(--color-ink);
+    }
+
+    .contact-form__field input {
+      border-radius: var(--radius-pill);
+    }
+
+    .contact-form__field textarea {
+      min-block-size: 7rem;
+      resize: vertical;
+    }
+
+    .contact-form__hint {
+      margin: 0;
+      color: var(--color-ink-muted);
+      font-size: 0.85rem;
+    }
+
+    .contact-form__row {
+      display: grid;
+      gap: var(--space-s);
+    }
+
+    @media (min-width: 40rem) {
+      .contact-form__row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .contact-form__status {
+      display: flex;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 1rem 1.25rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-m);
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .contact-form__status--success {
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+    }
+
+    .contact-form__status--error {
+      border-color: var(--color-error);
+      color: var(--color-error);
+    }
+
+    .contact-form__status .icon {
+      flex: none;
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+    }
+
+    .contact-form__errors ul {
+      margin: 0.25rem 0 0;
+      padding-inline-start: 1.2rem;
+      font-weight: 400;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelector('[data-form-status]')?.focus();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.contact_form.name",
+  "class": "contact-form-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.shared.eyebrow",
+      "default": "Say hello"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.shared.heading",
+      "info": "t:sections.shared.heading_info",
+      "default": "Get in <em>touch</em>"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:sections.shared.text",
+      "default": "Questions about an order or a cake idea? We'll reply soon."
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact_form.name"
+    }
+  ]
+}
+{% endschema %}
