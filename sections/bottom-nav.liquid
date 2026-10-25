@@ -31,6 +31,9 @@
       <a
         href="{{ url | default: routes.root_url }}"
         class="bottom-nav__item{% if block.settings.kind == 'basket' %} bottom-nav__item--basket{% endif %}"
+        {% if block.settings.kind == 'basket' %}
+          data-basket-link
+        {% endif %}
         {% if current %}
           aria-current="page"
         {% endif %}
@@ -39,8 +42,10 @@
         {% render 'icon', name: block.settings.icon %}
         <span class="bottom-nav__label">{{ block.settings.label | escape }}</span>
         {%- if block.settings.kind == 'basket' -%}
-          <span class="bottom-nav__count" data-cart-count aria-hidden="true">{{ cart.item_count }}</span>
-          <span class="visually-hidden">{{ 'sections.header.basket_count' | t: count: cart.item_count }}</span>
+          <span class="bottom-nav__count-region" data-cart-region="nav-count">
+            <span class="bottom-nav__count" aria-hidden="true">{{ cart.item_count }}</span>
+            <span class="visually-hidden">{{ 'sections.header.basket_count' | t: count: cart.item_count }}</span>
+          </span>
         {%- endif -%}
       </a>
     {%- endfor -%}
@@ -125,6 +130,10 @@
       box-shadow:
         1px 1px 0 var(--color-ink),
         0 0 0 5px var(--color-surface);
+    }
+
+    .bottom-nav__count-region {
+      display: contents;
     }
 
     .bottom-nav__count {

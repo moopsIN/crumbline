@@ -123,8 +123,10 @@
       <a href="{{ routes.cart_url }}" class="basket-pill" data-basket-link>
         {% render 'icon', name: 'basket' %}
         <span class="basket-pill__label" aria-hidden="true">{{ 'sections.header.basket' | t }}</span>
-        <span class="basket-pill__count" data-cart-count aria-hidden="true">{{ cart.item_count }}</span>
-        <span class="visually-hidden">{{ 'sections.header.basket_count' | t: count: cart.item_count }}</span>
+        <span class="basket-pill__count-region" data-cart-region="header-count" aria-live="polite">
+          <span class="basket-pill__count" aria-hidden="true">{{ cart.item_count }}</span>
+          <span class="visually-hidden">{{ 'sections.header.basket_count' | t: count: cart.item_count }}</span>
+        </span>
       </a>
     </div>
   </header>
@@ -317,6 +319,10 @@
 
     .basket-pill__label {
       display: none;
+    }
+
+    .basket-pill__count-region {
+      display: contents;
     }
 
     .basket-pill__count {
