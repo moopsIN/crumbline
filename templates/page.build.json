@@ -1,0 +1,63 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "page",
+      "settings": {}
+    },
+    "builder": {
+      "type": "cake-builder",
+      "blocks": {
+        "s6": {
+          "type": "serves",
+          "settings": {
+            "size": "6\"",
+            "serves": "8–10"
+          }
+        },
+        "s8": {
+          "type": "serves",
+          "settings": {
+            "size": "8\"",
+            "serves": "12–16"
+          }
+        },
+        "s10": {
+          "type": "serves",
+          "settings": {
+            "size": "10\"",
+            "serves": "20–24"
+          }
+        }
+      },
+      "block_order": [
+        "s6",
+        "s8",
+        "s10"
+      ],
+      "settings": {
+        "eyebrow": "Build a cake",
+        "heading": "Dream it, <em>we'll bake it.</em>",
+        "text": "Pick a size, a flavour and a message, then watch it come together.",
+        "size_option": "Size",
+        "flavour_option": "Flavour",
+        "message_length": 40,
+        "show_delivery": true,
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "builder"
+  ]
+}

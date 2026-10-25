@@ -428,6 +428,18 @@
     },
     "cta_banner": {
       "name": "Call to action"
+    },
+    "cake_builder": {
+      "name": "Cake builder",
+      "product": "Builder product",
+      "product_info": "A product whose variants combine size and flavour (e.g. Size: 6\", 8\"; Flavour: Vanilla, Lemon).",
+      "size_option": "Size option name",
+      "option_info": "Must match the option names on the product.",
+      "flavour_option": "Flavour option name",
+      "serves_block": "Servings for a size",
+      "serves_size": "Size value",
+      "serves_size_info": "Exactly as written on the product, e.g. 8\"",
+      "serves_people": "Serves"
     }
   },
   "blocks": {

@@ -4,6 +4,14 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-10-25
+
+Phase 7: cake builder.
+
+### Added
+- Cake builder section: choose size, flavour, a message and a collection day in four steps, with a live summary card showing servings and the price, then add to the basket.
+- A "Build a cake" page template and a setup guide in `docs/cake-builder.md`.
+
 ## [0.6.0] — 2026-10-25
 
 Phase 6: homepage sections.
