@@ -1,0 +1,135 @@
+{% comment %}
+  Predictive search results, rendered through the Section Rendering API by
+  the search modal (`/search/suggest?q=…&section_id=predictive-search`).
+  Each result is an option of the modal's listbox.
+{% endcomment %}
+
+{%- liquid
+  assign results = predictive_search.resources
+  assign total = results.products.size | plus: results.collections.size | plus: results.pages.size | plus: results.articles.size
+-%}
+
+<div class="predictive-results" data-results-count="{{ total }}">
+  {%- if predictive_search.performed and total > 0 -%}
+    <ul class="predictive-results__list" role="listbox" id="PredictiveSearchResults" aria-label="{{ 'search.suggestions' | t }}">
+      {%- for product in results.products limit: 5 -%}
+        <li role="option" id="predictive-product-{{ forloop.index }}" aria-selected="false">
+          <a href="{{ product.url }}" class="predictive-results__item" tabindex="-1">
+            <span class="predictive-results__thumb">
+              {%- if product.featured_media -%}
+                {{ product.featured_media | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}
+              {%- endif -%}
+            </span>
+            <span class="predictive-results__text">
+              <span class="predictive-results__title">{{ product.title | escape }}</span>
+              <span class="predictive-results__meta">{{ product.price | money }}</span>
+            </span>
+          </a>
+        </li>
+      {%- endfor -%}
+      {%- for item in results.collections limit: 3 -%}
+        <li role="option" id="predictive-collection-{{ forloop.index }}" aria-selected="false">
+          <a href="{{ item.url }}" class="predictive-results__item" tabindex="-1">
+            <span class="predictive-results__text"><span class="predictive-results__title">{{ item.title | escape }}</span><span class="predictive-results__meta mono">{{ 'search.collection' | t }}</span></span>
+          </a>
+        </li>
+      {%- endfor -%}
+      {%- for item in results.pages limit: 3 -%}
+        <li role="option" id="predictive-page-{{ forloop.index }}" aria-selected="false">
+          <a href="{{ item.url }}" class="predictive-results__item" tabindex="-1">
+            <span class="predictive-results__text"><span class="predictive-results__title">{{ item.title | escape }}</span><span class="predictive-results__meta mono">{{ 'search.page' | t }}</span></span>
+          </a>
+        </li>
+      {%- endfor -%}
+      {%- for item in results.articles limit: 3 -%}
+        <li role="option" id="predictive-article-{{ forloop.index }}" aria-selected="false">
+          <a href="{{ item.url }}" class="predictive-results__item" tabindex="-1">
+            <span class="predictive-results__text"><span class="predictive-results__title">{{ item.title | escape }}</span><span class="predictive-results__meta mono">{{ 'search.article' | t }}</span></span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+    <a href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}" class="predictive-results__all">{{ 'search.view_all' | t: terms: predictive_search.terms }}</a>
+  {%- elsif predictive_search.performed -%}
+    <p class="predictive-results__empty">{{ 'search.no_suggestions' | t: terms: predictive_search.terms }}</p>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .predictive-results__list {
+      display: grid;
+      gap: 0.25rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .predictive-results__item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-block-size: 48px;
+      padding: 0.4rem 0.6rem;
+      border: var(--border-width) solid transparent;
+      border-radius: var(--radius-s);
+      text-decoration: none;
+    }
+
+    [aria-selected='true'] > .predictive-results__item,
+    .predictive-results__item:hover {
+      border-color: var(--color-ink);
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+    }
+
+    .predictive-results__thumb {
+      flex: none;
+      inline-size: 44px;
+      block-size: 44px;
+      overflow: hidden;
+      border-radius: var(--radius-s);
+      background-color: var(--color-pastel-1);
+    }
+
+    .predictive-results__thumb img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+
+    .predictive-results__text {
+      display: grid;
+    }
+
+    .predictive-results__title {
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .predictive-results__meta {
+      color: inherit;
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    .predictive-results__all,
+    .predictive-results__empty {
+      display: block;
+      margin: 0.75rem 0 0;
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .predictive-results__all {
+      text-decoration: underline 2px;
+      text-underline-offset: 4px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.predictive_search.name",
+  "class": "predictive-search-section",
+  "settings": []
+}
+{% endschema %}

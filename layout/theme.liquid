@@ -33,6 +33,9 @@
     {%- if settings.cart_type == 'drawer' -%}
       {% section 'cart-drawer' %}
     {%- endif -%}
+    {%- if settings.predictive_search -%}
+      {% render 'search-modal' %}
+    {%- endif -%}
     {% render 'toast' %}
     {% render 'whatsapp-button', product_title: product.title %}
   </body>
