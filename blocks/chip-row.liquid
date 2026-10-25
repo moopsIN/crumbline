@@ -1,0 +1,39 @@
+{% doc %}
+  Renders a row of chips, e.g. "Baked to order · Local pickup".
+
+  @example
+  {% content_for 'block', type: 'chip-row', id: 'chips' %}
+{% enddoc %}
+
+<ul class="chip-row" {{ block.shopify_attributes }} role="list">
+  {% content_for 'blocks' %}
+</ul>
+
+{% stylesheet %}
+  @layer components {
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:blocks.chip_row.name",
+  "blocks": [{ "type": "_chip" }],
+  "presets": [
+    {
+      "name": "t:blocks.chip_row.name",
+      "blocks": [
+        { "type": "_chip", "settings": { "label": "Baked to order", "icon": "cake" } },
+        { "type": "_chip", "settings": { "label": "Local pickup", "icon": "pin" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

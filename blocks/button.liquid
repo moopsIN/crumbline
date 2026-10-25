@@ -1,0 +1,56 @@
+{% doc %}
+  Renders one button or button-styled link, using the button snippet.
+
+  @example
+  {% content_for 'block', type: 'button', id: 'cta' %}
+{% enddoc %}
+
+{%- liquid
+  assign icon = blank
+  if block.settings.show_arrow
+    assign icon = 'arrow-right'
+  endif
+-%}
+
+<div class="button-block" {{ block.shopify_attributes }}>
+  {% render 'button',
+    label: block.settings.label,
+    url: block.settings.link,
+    style: block.settings.style,
+    icon: icon
+  %}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.button.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "t:blocks.button.label",
+      "default": "Order a cake"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:blocks.button.link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "t:blocks.button.style",
+      "options": [{"value": "primary", "label": "t:blocks.button.style_primary"}, {"value": "secondary", "label": "t:blocks.button.style_secondary"}, {"value": "tertiary", "label": "t:blocks.button.style_tertiary"}],
+      "default": "primary"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow",
+      "label": "t:blocks.button.show_arrow",
+      "default": true
+    }
+  ],
+  "presets": [{ "name": "t:blocks.button.name" }]
+}
+{% endschema %}

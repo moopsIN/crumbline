@@ -158,5 +158,110 @@
       "background_image": "Background image",
       "background_image_info": "Decorative only; make sure text on top stays readable."
     }
+  },
+  "blocks": {
+    "shared": {
+      "alignment": "Alignment",
+      "align_start": "Start",
+      "align_center": "Centre",
+      "align_end": "End"
+    },
+    "text": {
+      "name": "Text",
+      "text": "Text",
+      "style": "Style",
+      "style_body": "Body",
+      "style_lead": "Intro (larger)",
+      "style_micro": "Small label"
+    },
+    "heading": {
+      "name": "Heading",
+      "eyebrow": "Label above heading",
+      "eyebrow_info": "Short, e.g. \"Build a cake\". Leave blank to hide.",
+      "heading": "Heading",
+      "heading_info": "Make a word italic to give it the accent colour.",
+      "level": "Heading level",
+      "level_info": "Use one H1 per page, usually in the first section.",
+      "level_h1": "H1",
+      "level_h2": "H2",
+      "level_h3": "H3",
+      "size": "Size",
+      "size_medium": "Medium",
+      "size_large": "Large",
+      "size_hero": "Hero"
+    },
+    "button": {
+      "name": "Button",
+      "label": "Label",
+      "link": "Link",
+      "style": "Style",
+      "style_primary": "Primary",
+      "style_secondary": "Secondary",
+      "style_tertiary": "Text link",
+      "show_arrow": "Show arrow"
+    },
+    "image": {
+      "name": "Image",
+      "image": "Image",
+      "frame": "Frame",
+      "frame_plain": "Plain",
+      "frame_awning": "Market stall awning",
+      "sunburst": "Show sunburst",
+      "aspect_ratio": "Crop",
+      "aspect_natural": "Original",
+      "aspect_square": "Square",
+      "aspect_portrait": "Portrait (4:5)",
+      "aspect_tall": "Tall (3:4)",
+      "aspect_landscape": "Landscape (4:3)",
+      "focus": "Focal point",
+      "focus_info": "Which part to keep when the image is cropped. Upper keeps the top tier of tall cakes.",
+      "focus_top": "Top",
+      "focus_upper": "Upper",
+      "focus_center": "Centre",
+      "focus_bottom": "Bottom"
+    },
+    "chip_row": {
+      "name": "Chip row"
+    },
+    "chip": {
+      "name": "Chip",
+      "label": "Label",
+      "style": "Style",
+      "style_label": "Outline",
+      "style_badge": "Badge",
+      "style_solid": "Solid",
+      "icon": "Icon",
+      "icon_none": "None",
+      "icon_cake": "Cake",
+      "icon_shop": "Cupcake",
+      "icon_basket": "Basket",
+      "icon_pin": "Location",
+      "icon_calendar": "Calendar",
+      "icon_check": "Tick",
+      "icon_home": "Home",
+      "icon_whatsapp": "WhatsApp",
+      "icon_instagram": "Instagram"
+    },
+    "spacer": {
+      "name": "Spacer",
+      "size": "Size",
+      "size_2xs": "Extra extra small",
+      "size_xs": "Extra small",
+      "size_s": "Small",
+      "size_m": "Medium",
+      "size_l": "Large",
+      "size_xl": "Extra large",
+      "size_2xl": "Huge"
+    },
+    "group": {
+      "name": "Group",
+      "category": "Layout",
+      "preset_column": "Column",
+      "preset_row": "Row",
+      "direction": "Direction",
+      "direction_column": "Column",
+      "direction_row": "Row",
+      "gap": "Space between"
+    }
   }
 }
