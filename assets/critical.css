@@ -1,117 +1,342 @@
-/** Critical CSS for the theme. This file is included on every page. */
-
-/* Reset styles inspired by https://www.joshwcomeau.com/css/custom-css-reset/ */
-* {
-  box-sizing: border-box;
-  margin: 0;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  min-height: 100svh;
-}
-
-html:has(dialog[scroll-lock][open], details[scroll-lock][open]) {
-  overflow: hidden;
-}
-
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
-
-input,
-textarea,
-select {
-  font: inherit;
-  border-radius: var(--style-border-radius-inputs);
-}
-
-select {
-  background-color: var(--color-background);
-  color: currentcolor;
-}
-
-dialog {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-}
-
-p {
-  text-wrap: pretty;
-}
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  overflow-wrap: break-word;
-}
-
-p:empty {
-  display: none;
-}
-
-:is(p, h1, h2, h3, h4, h5, h6):first-child,
-:empty:first-child + :where(p, h1, h2, h3, h4, h5, h6) {
-  margin-block-start: 0;
-}
-
-:is(p, h1, h2, h3, h4, h5, h6):last-child,
-:where(p, h1, h2, h3, h4, h5, h6) + :has(+ :empty:last-child) {
-  margin-block-end: 0;
-}
-
-/** Theme styles below */
-body {
-  font-family: var(--font-primary--family);
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-}
-
-/** Section layout utilities */
-
 /**
- * Setup a grid that enables both full-width and constrained layouts
- * depending on the class of the child elements.
- *
- * By default, a minimum content margin is set on the left and right
- * sides of the section and the content is centered in the viewport to
- * not exceed the maximum page width.
- *
- * When a child element is given the `full-width` class, it will span
- * the entire viewport.
+ * Crumbline critical CSS, loaded on every page.
+ * Holds the layer order, static design tokens, reset, base element styles,
+ * the page texture, the section grid and a few utilities. Component CSS lives
+ * in each component's {% stylesheet %} inside `@layer components`.
+ * Setting-driven tokens (colours, fonts, widths) come from snippets/css-variables.liquid.
  */
-.shopify-section {
-  --content-width: min(
-    calc(var(--page-width) - var(--page-margin) * 2),
-    calc(100% - var(--page-margin) * 2)
-  );
-  --content-margin: minmax(var(--page-margin), 1fr);
-  --content-grid: var(--content-margin) var(--content-width) var(--content-margin);
 
-  /* This is required to make <img> elements work as background images */
-  position: relative;
-  grid-template-columns: var(--content-grid);
-  display: grid;
-  width: 100%;
+@layer reset, tokens, base, components, utilities;
+
+/* ---------- Tokens ---------- */
+@layer tokens {
+  :root {
+    /* Type scale (guide §3.2) */
+    --step--1: clamp(0.8rem, 0.78rem + 0.1vw, 0.875rem);
+    --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+    --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.5rem);
+    --step-2: clamp(1.6rem, 1.35rem + 1.2vw, 2.25rem);
+    --step-3: clamp(2.2rem, 1.7rem + 2.6vw, 3.75rem);
+    --step-4: clamp(3.6rem, 2.2rem + 7vw, 8.5rem);
+    --text-micro: 0.68rem;
+
+    /* Space (guide §3.3) */
+    --space-3xs: clamp(0.25rem, 0.23rem + 0.1vw, 0.3rem);
+    --space-2xs: clamp(0.5rem, 0.47rem + 0.2vw, 0.6rem);
+    --space-xs: clamp(0.75rem, 0.7rem + 0.3vw, 0.9rem);
+    --space-s: clamp(1rem, 0.93rem + 0.4vw, 1.2rem);
+    --space-m: clamp(1.5rem, 1.38rem + 0.6vw, 1.8rem);
+    --space-l: clamp(2rem, 1.85rem + 0.8vw, 2.4rem);
+    --space-xl: clamp(3rem, 2.7rem + 1.5vw, 3.6rem);
+    --space-2xl: clamp(4rem, 3.5rem + 2.5vw, 5.4rem);
+    --space-3xl: clamp(6rem, 5rem + 5vw, 8rem);
+
+    /* Layout; breakpoints for reference: 40rem, 56.25rem (bottom nav), 64rem, 80rem */
+    --gutter: clamp(1rem, 0.6rem + 2vw, 2.5rem);
+    --content-max-wide: 96rem;
+    --section-padding-block: calc(clamp(2.4rem, 1.8rem + 3vw, 4.8rem) * var(--section-spacing-scale, 1));
+    --header-h: 72px;
+    --bottom-nav-h: 92px;
+
+    /* Shape (guide §3.4) */
+    --radius-s: 0.75rem;
+    --radius-m: 1.375rem;
+    --radius-l: 2rem;
+    --radius-pill: 999px;
+    --border-width: 2px;
+
+    /* Static colours (guide §3.1) */
+    --color-sunburst: #FFEDB3;
+    --color-pastel-1: #C9E8F7;
+    --color-pastel-2: #DCD3FF;
+    --color-pastel-3: #FFC48A;
+    --color-pastel-4: #C6EBC9;
+    --color-pastel-5: #F1DFC8;
+    --color-success: #276B43;
+    --color-warning: #8F5714;
+    --color-error: #B3261E;
+    --color-allergen-warn-bg: #FFE1D1;
+    --color-allergen-warn-fg: #9A3A10;
+
+    /* Motion (guide §3.5) */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --dur-fast: 120ms;
+    --dur-base: 200ms;
+    --dur-slow: 360ms;
+
+    --z-header: 50;
+    --z-bottom-nav: 60;
+    --z-texture: 100;
+    --z-toast: 200;
+  }
+
+  @supports (transition-timing-function: linear(0, 1)) {
+    :root {
+      --ease-spring: linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 85.6%, 1);
+      --ease-bounce: linear(0, 0.063, 0.25 9.1%, 1.045 27.3%, 1.141 33.5%, 1.162 37.2%, 1.143 41%, 0.995 54.5%, 0.957 60.6%, 0.957 64.4%, 0.996 77.3%, 1.004 84.5%, 1);
+    }
+  }
+
+  @media (min-width: 56.25rem) {
+    :root {
+      --bottom-nav-h: 0px;
+    }
+  }
+
+  /* Declared per scheme so var() resolves against the element's own scheme colours. */
+  :root,
+  [data-scheme] {
+    --color-accent-soft: color-mix(in oklch, var(--color-accent) 18%, var(--color-surface));
+    --color-border: color-mix(in oklch, var(--color-ink) 14%, transparent);
+    --color-border-control: color-mix(in oklch, var(--color-ink) 50%, transparent);
+    --color-border-dashed: color-mix(in oklch, var(--color-ink) 35%, transparent);
+    --border-ink: var(--border-width) solid var(--color-ink);
+    --border-ink-thin: 1.5px solid var(--color-ink);
+    --border-dashed: 1.5px dashed var(--color-border-dashed);
+    --border-divider: var(--border-width) dashed var(--color-border);
+    --shadow-hard: 4px 4px 0 var(--color-ink);
+    --shadow-hard-accent: var(--button-shadow-offset, 4px) var(--button-shadow-offset, 4px) 0 var(--color-accent);
+    --shadow-hard-lg: 8px 8px 0 var(--color-ink);
+    --shadow-soft: 0 24px 50px -24px rgb(27 23 20 / 0.3);
+  }
 }
 
-/* Child elements, by default, are constrained to the central column of the grid. */
-.shopify-section > * {
-  grid-column: 2;
+/* ---------- Reset ---------- */
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  html:has(dialog[scroll-lock][open], details[scroll-lock][open]) {
+    overflow: hidden;
+  }
 }
 
-/* Child elements that use the full-width utility class span the entire viewport. */
-.shopify-section > .full-width {
-  grid-column: 1 / -1;
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    font-size: calc(100% * var(--font-scale, 1));
+    scroll-padding-block-start: calc(var(--header-h) + 1rem);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 100svh;
+    padding-block-end: var(--bottom-nav-h);
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-weight: var(--font-body-weight);
+    font-size: var(--step-0);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  /* Paper grain (guide §3.6): fixed SVG noise multiplied over the page. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-texture);
+    pointer-events: none;
+    opacity: 0.16;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.5'/></svg>");
+  }
+
+  main {
+    flex: 1;
+  }
+
+  /* The skip link moves focus here; the ring would wrap the whole page. */
+  main:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  [data-scheme] {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: var(--font-display-weight);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  :is(h1, h2, h3, h4) em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--color-accent-text);
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  p:empty {
+    display: none;
+  }
+
+  a {
+    color: inherit;
+    text-underline-offset: 4px;
+  }
+
+  strong,
+  b {
+    font-weight: var(--font-body-weight-bold);
+  }
+
+  /* 16px minimum stops iOS zooming into fields, even at a reduced body scale. */
+  input,
+  textarea,
+  select {
+    font-size: max(1rem, 16px);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px var(--color-accent);
+  }
+
+  ::selection {
+    background-color: var(--color-highlight);
+    color: #1B1714;
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+    font-size: max(0.8em, var(--text-micro));
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /*
+   * Section grid: children sit in the centre column (content max width with a
+   * fluid gutter); `.full-width` children span the viewport.
+   */
+  .shopify-section {
+    --content-width: min(var(--content-max), calc(100% - var(--gutter) * 2));
+    --content-margin: minmax(var(--gutter), 1fr);
+    --content-grid: var(--content-margin) var(--content-width) var(--content-margin);
+
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--content-grid);
+    inline-size: 100%;
+  }
+
+  .shopify-section > * {
+    grid-column: 2;
+  }
+
+  .shopify-section > .full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Utilities ---------- */
+@layer utilities {
+  .visually-hidden {
+    position: absolute !important;
+    inline-size: 1px !important;
+    block-size: 1px !important;
+    overflow: hidden !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+  }
+
+  .skip-link {
+    position: absolute;
+    inset-block-start: var(--space-2xs);
+    inset-inline-start: var(--space-2xs);
+    z-index: calc(var(--z-toast) + 1);
+    padding: 0.75rem 1.4rem;
+    border: var(--border-ink);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-weight: var(--font-body-weight-bold);
+    text-decoration: none;
+    translate: 0 -200%;
+  }
+
+  .skip-link:focus-visible {
+    translate: 0 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
