@@ -1,0 +1,269 @@
+{% comment %}
+  Customer reviews as the Cute chat window: speech-bubble messages with an
+  initial avatar, name and context; a review can be marked as the shop's
+  reply (right-aligned ink bubble). Review apps can be added as app blocks.
+  No star ratings are faked.
+{% endcomment %}
+
+<div class="reviews full-width" {% render 'section-attributes' %}>
+  <div class="reviews__inner">
+    {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
+    <div class="reviews__chat" data-reveal>
+      {%- if section.settings.chat_title != blank -%}
+        <p class="reviews__head mono">{{ section.settings.chat_title | escape }}</p>
+      {%- endif -%}
+      <ul class="reviews__list" role="list">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              <li>{% render block %}</li>
+            {%- when 'review' -%}
+              {%- assign avatar = forloop.index0 | modulo: 4 | plus: 1 -%}
+              <li class="review{% if block.settings.reply %} review--reply{% endif %}" {{ block.shopify_attributes }}>
+                {%- unless block.settings.reply -%}
+                  <span class="review__avatar" style="--avatar: var(--color-pastel-{{ avatar }});" aria-hidden="true">{{ block.settings.name | slice: 0 | upcase }}</span>
+                {%- endunless -%}
+                <figure class="review__bubble">
+                  <blockquote class="review__quote">{{ block.settings.quote | escape }}</blockquote>
+                  <figcaption class="review__meta mono">
+                    {{- block.settings.name | escape -}}
+                    {%- if block.settings.context != blank %} · {{ block.settings.context | escape }}{% endif -%}
+                  </figcaption>
+                </figure>
+              </li>
+          {%- endcase -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .reviews {
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+    }
+
+    .reviews__inner {
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .reviews__chat {
+      display: grid;
+      gap: 0.9rem;
+      max-inline-size: 40rem;
+      padding: clamp(1.1rem, 1rem + 1vw, 1.75rem);
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-surface);
+      box-shadow: var(--shadow-soft);
+      rotate: 1deg;
+    }
+
+    .reviews__head {
+      margin: 0;
+      padding-block-end: 0.8rem;
+      border-block-end: var(--border-divider);
+      color: var(--color-ink-muted);
+    }
+
+    .reviews__list {
+      display: grid;
+      gap: 0.9rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .review {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.6rem;
+      max-inline-size: 90%;
+    }
+
+    .review__avatar {
+      display: grid;
+      flex: none;
+      place-items: center;
+      inline-size: 36px;
+      block-size: 36px;
+      border: var(--border-ink);
+      border-radius: 50%;
+      background-color: var(--avatar);
+      color: var(--color-on-highlight);
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .review__bubble {
+      margin: 0;
+      padding: 0.75rem 1rem;
+      border-radius: 20px 20px 20px 6px;
+      background-color: var(--color-bg);
+    }
+
+    .review__quote {
+      margin: 0;
+      font-size: 0.96rem;
+      line-height: 1.45;
+    }
+
+    .review__meta {
+      margin-block-start: 0.3rem;
+      color: var(--color-ink-muted);
+    }
+
+    .review--reply {
+      justify-self: end;
+    }
+
+    .review--reply .review__bubble {
+      border-radius: 20px 20px 6px 20px;
+      background-color: var(--color-ink);
+      color: var(--color-bg);
+    }
+
+    .review--reply .review__meta {
+      color: color-mix(in oklch, var(--color-bg) 80%, transparent);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reviews__chat {
+        rotate: 0deg;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.reviews.name",
+  "class": "reviews-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.shared.eyebrow",
+      "default": "Kind words"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.shared.heading",
+      "info": "t:sections.shared.heading_info",
+      "default": "What people <em>are saying</em>"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:sections.shared.text"
+    },
+    {
+      "type": "text",
+      "id": "chat_title",
+      "label": "t:sections.reviews.chat_title",
+      "default": "Messages from customers"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "review",
+      "name": "t:sections.reviews.review",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "t:sections.reviews.quote",
+          "default": "The birthday cake was perfect, and it tasted even better than it looked."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "t:sections.reviews.author",
+          "default": "A happy customer"
+        },
+        {
+          "type": "text",
+          "id": "context",
+          "label": "t:sections.reviews.context",
+          "info": "t:sections.reviews.context_info"
+        },
+        {
+          "type": "checkbox",
+          "id": "reply",
+          "label": "t:sections.reviews.reply",
+          "info": "t:sections.reviews.reply_info",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.reviews.name",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "quote": "The birthday cake was perfect, and it tasted even better than it looked.",
+            "name": "A happy customer",
+            "context": "Birthday order"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "quote": "Thank you! It was a joy to bake.",
+            "name": "The bakery",
+            "reply": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

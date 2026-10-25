@@ -1,0 +1,326 @@
+{% comment %}
+  Our story (Cute): heading and rich text, an optional framed photo, up to
+  three numbered points and team cards (name, role, photo or initial).
+{% endcomment %}
+
+{%- liquid
+  assign points = section.blocks | where: 'type', 'point'
+  assign people = section.blocks | where: 'type', 'person'
+-%}
+
+<div class="story full-width{% if section.settings.image != blank %} story--with-image{% endif %}" {% render 'section-attributes' %}>
+  <div class="story__inner">
+    <div class="story__copy" data-reveal>
+      {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading %}
+      {%- if section.settings.text != blank -%}
+        <div class="story__text">{{ section.settings.text }}</div>
+      {%- endif -%}
+
+      {%- if points.size > 0 -%}
+        <ol class="story__points" role="list">
+          {%- for block in points -%}
+            <li class="story__point" {{ block.shopify_attributes }}>
+              <span class="story__number mono" aria-hidden="true">{{ forloop.index | prepend: '0' }}</span>
+              <div>
+                <h3 class="story__point-title">{{ block.settings.title | escape }}</h3>
+                <p>{{ block.settings.text | escape }}</p>
+              </div>
+            </li>
+          {%- endfor -%}
+        </ol>
+      {%- endif -%}
+
+      {%- if people.size > 0 -%}
+        <ul class="story__people" role="list">
+          {%- for block in people -%}
+            <li class="story__person" {{ block.shopify_attributes }}>
+              <span class="story__avatar" aria-hidden="true">
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}
+                {%- else -%}
+                  {{ block.settings.name | slice: 0 | upcase }}
+                {%- endif -%}
+              </span>
+              <h3 class="story__person-name">{{ block.settings.name | escape }}</h3>
+              <p class="story__person-role mono">{{ block.settings.role | escape }}</p>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.image != blank -%}
+      {% render 'media-frame',
+        image: section.settings.image,
+        style: section.settings.media_style,
+        sunburst: true,
+        aspect_ratio: '4 / 5',
+        sizes: '(min-width: 900px) 45vw, 100vw',
+        class: 'story__media'
+      %}
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .story {
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+    }
+
+    .story__inner {
+      display: grid;
+      gap: clamp(2rem, 1.5rem + 3vw, 4.5rem);
+      align-items: center;
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .story__text {
+      color: var(--color-ink-muted);
+      font-size: 1.08em;
+    }
+
+    .story__text > * + * {
+      margin-block-start: 0.75em;
+    }
+
+    .story__points {
+      display: grid;
+      gap: 1rem;
+      margin: 2rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .story__point {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.9rem;
+    }
+
+    .story__number {
+      display: grid;
+      place-items: center;
+      inline-size: 2.5rem;
+      block-size: 2.5rem;
+      border: var(--border-ink);
+      border-radius: 50%;
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+    }
+
+    .story__point-title {
+      font-size: var(--step-1);
+    }
+
+    .story__point p {
+      margin: 0.25rem 0 0;
+      color: var(--color-ink-muted);
+    }
+
+    .story__people {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+      gap: 1rem;
+      margin: 2rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .story__person {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 1.15rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-m);
+      background-color: var(--color-surface);
+      transition:
+        translate 450ms var(--ease-spring),
+        box-shadow var(--dur-base);
+    }
+
+    .story__person:hover {
+      translate: -2px -4px;
+      box-shadow: var(--shadow-hard);
+    }
+
+    .story__avatar {
+      display: grid;
+      place-items: center;
+      inline-size: 64px;
+      block-size: 64px;
+      overflow: hidden;
+      border: var(--border-ink);
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 28%, var(--color-highlight) 0 32%, var(--color-accent) 100%);
+      color: var(--color-on-highlight);
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+    }
+
+    .story__avatar img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+
+    .story__person-name {
+      font-size: 1.35rem;
+    }
+
+    .story__person-role {
+      margin: 0;
+      color: var(--color-ink-muted);
+    }
+
+    @media (min-width: 56.25rem) {
+      .story--with-image .story__inner {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.story.name",
+  "class": "story-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.shared.eyebrow",
+      "default": "Our story"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.shared.heading",
+      "info": "t:sections.shared.heading_info",
+      "default": "Baked at home, <em>with care.</em>"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:sections.story.text",
+      "default": "<p>Tell people how your bakery started, what you love to bake and why it tastes the way it does.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.story.image"
+    },
+    {
+      "type": "select",
+      "id": "media_style",
+      "label": "t:sections.hero.media_style",
+      "options": [
+        {
+          "value": "plain",
+          "label": "t:blocks.image.frame_plain"
+        },
+        {
+          "value": "awning",
+          "label": "t:blocks.image.frame_awning"
+        }
+      ],
+      "default": "plain"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "point",
+      "name": "t:sections.story.point",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.story.point_title",
+          "default": "Small batches"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:sections.shared.text",
+          "default": "Every cake is baked to order, never from the freezer."
+        }
+      ]
+    },
+    {
+      "type": "person",
+      "name": "t:sections.story.person",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.story.person_image"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "t:sections.story.person_name",
+          "default": "Your name"
+        },
+        {
+          "type": "text",
+          "id": "role",
+          "label": "t:sections.story.person_role",
+          "default": "Head baker"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.story.name",
+      "blocks": [
+        {
+          "type": "point"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
