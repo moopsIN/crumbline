@@ -4,6 +4,15 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-10-25
+
+Phase 8: custom cake enquiries.
+
+### Added
+- Custom cake enquiry form in three steps (occasion, guests and flavours, date and contact) that emails every answer to you, with an optional "Send on WhatsApp" button. Works without JavaScript.
+- Contact form section.
+- "Contact" and "Custom cakes" page templates.
+
 ## [0.7.0] — 2026-10-25
 
 Phase 7: cake builder.
