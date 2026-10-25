@@ -1,0 +1,473 @@
+{% doc %}
+  Pickup/delivery choice and date selection for a cake order (guide §7.2,
+  D-33). Adds line item properties `Fulfilment` and `Date` (ISO yyyy-mm-dd).
+
+  The earliest date is computed here, in the store's time zone: today plus
+  the product's notice period (metafield, else the store default), plus one
+  day after the daily cut-off hour, skipping closed weekdays. The next 14
+  open days render as radio pills, so this works without JavaScript. With
+  JS, <fulfilment-fields> relabels the pills in the visitor's language and
+  adds "Pick another date" (a native date input) with friendly validation
+  for closed or too-early days.
+
+  @param {product} [product] - Product whose notice period applies
+  @param {string} id - Unique prefix for input ids, e.g. `section.id`
+  @param {string} [form_id] - Form the inputs belong to, when rendered outside it
+  @param {boolean} [required] - A date must be chosen before adding to basket
+  @param {boolean} [show_delivery] - Offer delivery as well as pickup
+
+  @example
+  {% render 'fulfilment-fields', product: product, id: section.id, required: true, show_delivery: true %}
+{% enddoc %}
+
+{%- liquid
+  assign lead_days = product.metafields.crumbline.lead_time_days.value | default: settings.lead_time_days
+  assign lead_days = lead_days | plus: 0
+  assign notice_days = lead_days
+  assign hour = 'now' | date: '%H' | plus: 0
+  if hour >= settings.cutoff_hour
+    assign lead_days = lead_days | plus: 1
+  endif
+
+  assign closed = ''
+  if settings.closed_sun
+    assign closed = closed | append: '0,'
+  endif
+  if settings.closed_mon
+    assign closed = closed | append: '1,'
+  endif
+  if settings.closed_tue
+    assign closed = closed | append: '2,'
+  endif
+  if settings.closed_wed
+    assign closed = closed | append: '3,'
+  endif
+  if settings.closed_thu
+    assign closed = closed | append: '4,'
+  endif
+  if settings.closed_fri
+    assign closed = closed | append: '5,'
+  endif
+  if settings.closed_sat
+    assign closed = closed | append: '6,'
+  endif
+  assign closed_days = closed | split: ','
+
+  assign now_seconds = 'now' | date: '%s' | plus: 0
+  assign day_seconds = 86400
+  assign start_seconds = lead_days | times: day_seconds | plus: now_seconds
+  assign min_iso = start_seconds | date: '%Y-%m-%d'
+
+  assign form_attr = ''
+  if form_id != blank
+    assign form_attr = 'form="' | append: form_id | append: '"'
+  endif
+
+  assign delivery = false
+  if show_delivery
+    assign delivery = true
+  endif
+-%}
+
+<fulfilment-fields class="fulfilment" data-closed="{{ closed }}">
+  {%- if delivery -%}
+    <fieldset class="fulfilment__group">
+      <legend class="fulfilment__legend">{{ 'products.fulfilment.method' | t }}</legend>
+      <div class="fulfilment__methods">
+        <label class="option-pill">
+          <input type="radio" name="properties[{{ 'products.fulfilment.property' | t }}]" value="{{ 'products.fulfilment.pickup' | t }}" checked {{ form_attr }} data-method="pickup">
+          <span>{% render 'icon', name: 'basket' %}{{ 'products.fulfilment.pickup' | t }}</span>
+        </label>
+        <label class="option-pill">
+          <input type="radio" name="properties[{{ 'products.fulfilment.property' | t }}]" value="{{ 'products.fulfilment.delivery' | t }}" {{ form_attr }} data-method="delivery">
+          <span>{% render 'icon', name: 'pin' %}{{ 'products.fulfilment.delivery' | t }}</span>
+        </label>
+      </div>
+      {%- if settings.pickup_address != blank -%}
+        <p class="fulfilment__help fulfilment__help--pickup">{{ 'products.fulfilment.pickup_from' | t: address: settings.pickup_address }}</p>
+      {%- endif -%}
+      {%- if settings.delivery_note != blank -%}
+        <p class="fulfilment__help fulfilment__help--delivery">{{ settings.delivery_note | escape }}</p>
+      {%- endif -%}
+    </fieldset>
+  {%- else -%}
+    <input type="hidden" name="properties[{{ 'products.fulfilment.property' | t }}]" value="{{ 'products.fulfilment.pickup' | t }}" {{ form_attr }}>
+  {%- endif -%}
+
+  <fieldset class="fulfilment__group" aria-describedby="{{ id }}-date-help">
+    <legend class="fulfilment__legend">
+      {{- 'products.fulfilment.date' | t -}}
+      {%- if required %} <span class="fulfilment__required" aria-hidden="true">*</span>{% endif -%}
+    </legend>
+    <p class="fulfilment__help" id="{{ id }}-date-help">{{ 'products.fulfilment.notice' | t: count: notice_days }}</p>
+
+    <div class="date-pills" role="presentation">
+      {%- assign shown = 0 -%}
+      {%- for i in (0..40) -%}
+        {%- liquid
+          assign day = i | times: day_seconds | plus: start_seconds
+          assign weekday = day | date: '%w'
+          if closed_days contains weekday
+            continue
+          endif
+          assign iso = day | date: '%Y-%m-%d'
+          assign shown = shown | plus: 1
+        -%}
+        <label class="date-pill">
+          <input
+            type="radio"
+            name="properties[{{ 'products.fulfilment.date_property' | t }}]"
+            value="{{ iso }}"
+            data-date="{{ iso }}"
+            {{ form_attr }}
+            {% if required and shown == 1 %}
+              required
+            {% endif %}
+          >
+          <span>
+            <small data-part="weekday">{{ day | date: '%a' }}</small>
+            <b data-part="day">{{ day | date: '%-d' }}</b>
+            <small data-part="month">{{ day | date: '%b' }}</small>
+          </span>
+        </label>
+        {%- if shown == 14 -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="fulfilment__other" data-other hidden>
+      <label for="{{ id }}-other-date">{{ 'products.fulfilment.other_date' | t }}</label>
+      <input
+        type="date"
+        id="{{ id }}-other-date"
+        min="{{ min_iso }}"
+        data-other-input
+        data-name="properties[{{ 'products.fulfilment.date_property' | t }}]"
+        data-closed-message="{{ 'products.fulfilment.closed_error' | t }}"
+        data-early-message="{{ 'products.fulfilment.early_error' | t: date: '__DATE__' }}"
+        aria-describedby="{{ id }}-other-error"
+        {{ form_attr }}
+      >
+      <p class="fulfilment__error" id="{{ id }}-other-error" role="alert" hidden>
+        {% render 'icon', name: 'alert' %}<span data-error-text></span>
+      </p>
+    </div>
+  </fieldset>
+</fulfilment-fields>
+
+{% stylesheet %}
+  @layer components {
+    .fulfilment {
+      display: grid;
+      gap: var(--space-s);
+    }
+
+    .fulfilment__group {
+      display: grid;
+      gap: 0.6rem;
+      min-inline-size: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .fulfilment__legend {
+      margin-block-end: 0.6rem;
+      padding: 0;
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      font-weight: var(--font-display-weight);
+    }
+
+    .fulfilment__required {
+      color: var(--color-error);
+    }
+
+    .fulfilment__methods {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .fulfilment__help {
+      margin: 0;
+      color: var(--color-ink-muted);
+      font-size: 0.9rem;
+    }
+
+    .fulfilment__help--delivery,
+    .fulfilment:has([data-method='delivery']:checked) .fulfilment__help--pickup {
+      display: none;
+    }
+
+    .fulfilment:has([data-method='delivery']:checked) .fulfilment__help--delivery {
+      display: block;
+    }
+
+    /* Option pills (guide §4.6), shared by the variant picker. */
+    .option-pill {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .option-pill input,
+    .date-pill input {
+      position: absolute;
+      opacity: 0;
+      inline-size: 1px;
+      block-size: 1px;
+    }
+
+    .option-pill > span {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.1rem;
+      min-inline-size: 88px;
+      min-block-size: 48px;
+      padding: 0.65rem 1rem;
+      border: var(--border-width) solid var(--color-border-control);
+      border-radius: var(--radius-m);
+      background-color: var(--color-surface-alt);
+      font-weight: var(--font-body-weight-bold);
+      text-align: center;
+      transition:
+        translate 450ms var(--ease-bounce),
+        border-color var(--dur-base),
+        background-color var(--dur-base),
+        box-shadow var(--dur-base);
+    }
+
+    .option-pill > span:has(> .icon) {
+      flex-direction: row;
+      gap: 0.5rem;
+    }
+
+    .option-pill .icon {
+      inline-size: 1.1rem;
+      block-size: 1.1rem;
+    }
+
+    .option-pill small {
+      color: var(--color-ink-muted);
+      font-family: var(--font-mono);
+      font-size: var(--text-micro);
+      font-weight: 400;
+      text-transform: uppercase;
+    }
+
+    .option-pill:hover > span,
+    .date-pill:hover > span {
+      border-color: var(--color-ink);
+    }
+
+    .option-pill:has(input:checked) > span {
+      border-color: var(--color-ink);
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+      box-shadow: var(--shadow-hard);
+      translate: -2px -2px;
+    }
+
+    .option-pill:has(input:checked) small {
+      color: inherit;
+    }
+
+    :is(.option-pill, .date-pill):has(input:focus-visible) > span {
+      outline: 3px solid var(--color-ink);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 6px var(--color-accent);
+    }
+
+    /* Date pills (Cute builder "Collect" step) */
+    .date-pills {
+      display: flex;
+      gap: 0.55rem;
+      margin-inline: calc(var(--space-2xs) * -1);
+      padding: 0.6rem var(--space-2xs) 0.9rem;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      scrollbar-width: thin;
+    }
+
+    .date-pill {
+      position: relative;
+      flex: none;
+      scroll-snap-align: start;
+      cursor: pointer;
+    }
+
+    .date-pill > span {
+      display: grid;
+      justify-items: center;
+      gap: 0.1rem;
+      inline-size: 64px;
+      padding: 0.65rem 0;
+      border: var(--border-width) solid var(--color-border-control);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-surface-alt);
+      transition:
+        translate 450ms var(--ease-bounce),
+        border-color var(--dur-base),
+        background-color var(--dur-base),
+        box-shadow var(--dur-base);
+    }
+
+    .date-pill b {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      line-height: 1.1;
+    }
+
+    .date-pill small {
+      color: var(--color-ink-muted);
+      font-family: var(--font-mono);
+      font-size: var(--text-micro);
+      text-transform: uppercase;
+    }
+
+    .date-pill:has(input:checked) > span {
+      border-color: var(--color-ink);
+      background-color: var(--color-accent);
+      color: var(--color-on-highlight);
+      box-shadow: var(--shadow-hard);
+      translate: -2px -2px;
+    }
+
+    .date-pill:has(input:checked) small {
+      color: inherit;
+    }
+
+    .fulfilment__other {
+      display: grid;
+      gap: 0.35rem;
+      font-size: 0.9rem;
+    }
+
+    .fulfilment__other input {
+      justify-self: start;
+      min-block-size: 48px;
+      padding: 0.5rem 1rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-surface-alt);
+      color: var(--color-ink);
+    }
+
+    .fulfilment__other-toggle {
+      justify-self: start;
+      min-block-size: 44px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--color-ink);
+      font-weight: var(--font-body-weight-bold);
+      text-decoration: underline 2px;
+      text-underline-offset: 4px;
+      cursor: pointer;
+    }
+
+    .fulfilment__error {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0;
+      color: var(--color-error);
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .fulfilment__error .icon {
+      inline-size: 1.1rem;
+      block-size: 1.1rem;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('fulfilment-fields')) {
+    customElements.define(
+      'fulfilment-fields',
+      class extends HTMLElement {
+        connectedCallback() {
+          this.closed = (this.dataset.closed || '').split(',').filter(Boolean).map(Number);
+          this.other = this.querySelector('[data-other-input]');
+          this.radios = [...this.querySelectorAll('.date-pill input')];
+          this.#relabel();
+          this.#addOtherToggle();
+          this.other?.addEventListener('change', () => this.#onOther());
+          this.radios.forEach((radio) => radio.addEventListener('change', () => this.#clearOther()));
+        }
+
+        /* Weekday and month names in the page language. */
+        #relabel() {
+          const lang = document.documentElement.lang || undefined;
+          const weekday = new Intl.DateTimeFormat(lang, { weekday: 'short', timeZone: 'UTC' });
+          const month = new Intl.DateTimeFormat(lang, { month: 'short', timeZone: 'UTC' });
+          const full = new Intl.DateTimeFormat(lang, { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+          this.radios.forEach((radio) => {
+            const date = new Date(`${radio.dataset.date}T00:00:00Z`);
+            const label = radio.closest('.date-pill');
+            label.querySelector('[data-part="weekday"]').textContent = weekday.format(date);
+            label.querySelector('[data-part="month"]').textContent = month.format(date);
+            radio.setAttribute('aria-label', full.format(date));
+          });
+        }
+
+        #addOtherToggle() {
+          const wrapper = this.querySelector('[data-other]');
+          if (!wrapper) return;
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'fulfilment__other-toggle';
+          button.textContent = wrapper.querySelector('label').textContent;
+          button.setAttribute('aria-expanded', 'false');
+          button.addEventListener('click', () => {
+            wrapper.hidden = false;
+            button.remove();
+            this.other.focus();
+          });
+          wrapper.before(button);
+        }
+
+        #onOther() {
+          const value = this.other.value;
+          const error = this.#validate(value);
+          const box = this.querySelector('.fulfilment__error');
+          this.other.setCustomValidity(error);
+          this.other.setAttribute('aria-invalid', error ? 'true' : 'false');
+          box.hidden = !error;
+          box.querySelector('[data-error-text]').textContent = error;
+          if (value && !error) {
+            this.radios.forEach((radio) => (radio.checked = false));
+            this.radios[0]?.removeAttribute('required');
+            this.other.name = this.other.dataset.name;
+          } else {
+            this.other.removeAttribute('name');
+          }
+        }
+
+        #clearOther() {
+          if (!this.other) return;
+          this.other.value = '';
+          this.other.removeAttribute('name');
+          this.other.setCustomValidity('');
+          this.querySelector('.fulfilment__error').hidden = true;
+        }
+
+        #validate(value) {
+          if (!value) return '';
+          if (value < this.other.min) {
+            const lang = document.documentElement.lang || undefined;
+            const earliest = new Intl.DateTimeFormat(lang, { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(`${this.other.min}T00:00:00Z`));
+            return this.other.dataset.earlyMessage.replace('__DATE__', earliest);
+          }
+          const day = new Date(`${value}T00:00:00Z`).getUTCDay();
+          if (this.closed.includes(day)) return this.other.dataset.closedMessage;
+          return '';
+        }
+      }
+    );
+  }
+{% endjavascript %}

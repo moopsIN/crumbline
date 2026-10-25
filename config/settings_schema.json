@@ -328,6 +328,95 @@
       },
       {
         "type": "header",
+        "content": "t:settings.cake.ordering_header"
+      },
+      {
+        "type": "range",
+        "id": "lead_time_days",
+        "label": "t:settings.cake.lead_time_days",
+        "info": "t:settings.cake.lead_time_days_info",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "unit": "t:settings.cake.days_unit",
+        "default": 2
+      },
+      {
+        "type": "range",
+        "id": "cutoff_hour",
+        "label": "t:settings.cake.cutoff_hour",
+        "info": "t:settings.cake.cutoff_hour_info",
+        "min": 0,
+        "max": 23,
+        "step": 1,
+        "default": 14
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings.cake.closed_days_info"
+      },
+      {
+        "type": "checkbox",
+        "id": "closed_mon",
+        "label": "t:settings.cake.closed_mon",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "closed_tue",
+        "label": "t:settings.cake.closed_tue",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "closed_wed",
+        "label": "t:settings.cake.closed_wed",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "closed_thu",
+        "label": "t:settings.cake.closed_thu",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "closed_fri",
+        "label": "t:settings.cake.closed_fri",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "closed_sat",
+        "label": "t:settings.cake.closed_sat",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "closed_sun",
+        "label": "t:settings.cake.closed_sun",
+        "default": false
+      },
+      {
+        "type": "textarea",
+        "id": "pickup_address",
+        "label": "t:settings.cake.pickup_address",
+        "info": "t:settings.cake.pickup_address_info"
+      },
+      {
+        "type": "text",
+        "id": "delivery_note",
+        "label": "t:settings.cake.delivery_note",
+        "default": "Delivery charges are confirmed by the baker."
+      },
+      {
+        "type": "text",
+        "id": "allergen_disclaimer",
+        "label": "t:settings.cake.allergen_disclaimer",
+        "default": "Made in a kitchen that handles nuts, gluten, egg and dairy."
+      },
+      {
+        "type": "header",
         "content": "t:settings.cake.allergens_header"
       },
       {

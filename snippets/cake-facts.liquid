@@ -1,0 +1,113 @@
+{% doc %}
+  The cake-facts card (guide §6.4): Serves, Notice, Allergens and Size, in
+  that order. Cells without data are left out; nothing renders when all
+  four are empty.
+
+  @param {product} product - The product
+  @param {variant} [variant] - Selected variant, for the Size cell (defaults to the selected or first available)
+
+  @example
+  {% render 'cake-facts', product: product, variant: product.selected_or_first_available_variant %}
+{% enddoc %}
+
+{%- liquid
+  assign current = variant | default: product.selected_or_first_available_variant
+  assign serves = product.metafields.crumbline.serves.value
+  assign lead_days = product.metafields.crumbline.lead_time_days.value | default: settings.lead_time_days
+
+  assign size = blank
+  for option in product.options_with_values
+    assign option_name = option.name | downcase
+    if option_name contains 'size' or option_name contains 'tier'
+      assign size = current.options[forloop.index0]
+    endif
+  endfor
+
+  capture allergens
+    render 'allergen-list', product: product
+  endcapture
+-%}
+
+{%- if serves != blank or lead_days > 0 or allergens != blank or size != blank -%}
+  <dl class="cake-facts">
+    {%- if serves != blank -%}
+      <div class="cake-facts__cell">
+        <dt class="mono">{{ 'products.facts.serves' | t }}</dt>
+        <dd>{{ serves | escape }}</dd>
+      </div>
+    {%- endif -%}
+    {%- if lead_days > 0 -%}
+      <div class="cake-facts__cell">
+        <dt class="mono">{{ 'products.facts.notice' | t }}</dt>
+        <dd>{{ 'products.facts.notice_days' | t: count: lead_days }}</dd>
+      </div>
+    {%- endif -%}
+    {%- if allergens != blank -%}
+      <div class="cake-facts__cell cake-facts__cell--allergens">
+        <dt class="mono">{{ 'products.facts.allergens' | t }}</dt>
+        <dd>{{ allergens }}</dd>
+      </div>
+    {%- endif -%}
+    {%- if size != blank -%}
+      <div class="cake-facts__cell">
+        <dt class="mono">{{ 'products.facts.size' | t }}</dt>
+        <dd>{{ size | escape }}</dd>
+      </div>
+    {%- endif -%}
+  </dl>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .cake-facts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin: 0;
+      border: var(--border-ink);
+      border-radius: var(--radius-m);
+      background-color: var(--color-surface);
+      overflow: hidden;
+    }
+
+    .cake-facts__cell {
+      display: grid;
+      align-content: start;
+      gap: 0.3rem;
+      padding: 0.85rem 1rem;
+      border-block-end: var(--border-divider);
+    }
+
+    .cake-facts__cell:nth-child(odd) {
+      border-inline-end: var(--border-divider);
+    }
+
+    .cake-facts dt {
+      color: var(--color-ink-muted);
+    }
+
+    .cake-facts dd {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      font-weight: var(--font-display-weight);
+      line-height: 1.15;
+    }
+
+    .cake-facts__cell--allergens dd {
+      font-family: var(--font-body);
+      font-size: 1rem;
+    }
+
+    /* No bottom rule on the last row. */
+    .cake-facts__cell:last-child,
+    .cake-facts__cell:nth-last-child(2):nth-child(odd) {
+      border-block-end: 0;
+    }
+
+    /* A lone last cell spans the row. */
+    .cake-facts__cell:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      border-inline-end: 0;
+    }
+  }
+{% endstylesheet %}
