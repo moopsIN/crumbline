@@ -87,9 +87,10 @@
             style: logo_style
         }}
       {%- elsif section.settings.logo_text != blank -%}
-        {{ section.settings.logo_text }}
+        {%- comment -%} A wrapper keeps the space before an italic word; the link is a flex container. {%- endcomment -%}
+        <span>{{ section.settings.logo_text }}</span>
       {%- else -%}
-        {{ shop.name | escape }}
+        <span>{{ shop.name | escape }}</span>
       {%- endif -%}
     </a>
 
