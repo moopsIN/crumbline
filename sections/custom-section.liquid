@@ -1,9 +1,18 @@
-<div class="custom-section full-width">
-  {% if section.settings.background_image %}
+{% comment %}
+  A free-form section: merchants stack any theme blocks inside it. Uses the
+  shared Style settings (colour scheme, padding) via section-attributes.
+{% endcomment %}
+
+<div class="custom-section full-width" {% render 'section-attributes' %}>
+  {%- if section.settings.background_image != blank -%}
     <div class="custom-section__background">
-      {{ section.settings.background_image | image_url: width: 2000 | image_tag }}
+      {{
+        section.settings.background_image
+        | image_url: width: 2000
+        | image_tag: widths: '720, 1200, 1600, 2000', sizes: '100vw', loading: 'lazy', alt: ''
+      }}
     </div>
-  {% endif %}
+  {%- endif -%}
 
   <div class="custom-section__content">
     {% content_for 'blocks' %}
@@ -11,49 +20,79 @@
 </div>
 
 {% stylesheet %}
-  .custom-section {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-  }
-  .custom-section__background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
-  }
-  .custom-section__background img {
-    position: absolute;
-    width: 100%;
-    height: auto;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .custom-section__content {
-    display: grid;
-    grid-template-columns: var(--content-grid);
-  }
-  .custom-section__content > * {
-    grid-column: 2;
+  @layer components {
+    .custom-section {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+    }
+
+    .custom-section__background {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+    }
+
+    .custom-section__background img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+
+    .custom-section__content {
+      display: grid;
+      grid-template-columns: var(--content-grid);
+      row-gap: var(--space-s);
+    }
+
+    .custom-section__content > * {
+      grid-column: 2;
+    }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.custom_section",
-  "blocks": [{ "type": "@theme" }],
+  "name": "t:sections.custom_section.name",
+  "blocks": [{ "type": "@theme" }, { "type": "@app" }],
   "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
     {
       "type": "image_picker",
       "id": "background_image",
-      "label": "t:labels.background"
+      "label": "t:sections.custom_section.background_image",
+      "info": "t:sections.custom_section.background_image_info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        { "value": "0", "label": "t:sections.shared.padding_none" },
+        { "value": "0.5", "label": "t:sections.shared.padding_small" },
+        { "value": "1", "label": "t:sections.shared.padding_default" },
+        { "value": "1.5", "label": "t:sections.shared.padding_large" }
+      ],
+      "default": "1"
     }
   ],
   "presets": [
     {
-      "name": "t:general.custom_section"
+      "name": "t:sections.custom_section.name"
     }
   ]
 }

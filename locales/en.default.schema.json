@@ -140,5 +140,23 @@
       "enabled": "Show stickers and speech bubbles",
       "enabled_info": "Turns on playful extras such as speech bubbles. Off keeps the store clean and simple."
     }
+  },
+  "sections": {
+    "shared": {
+      "content": "Content",
+      "layout": "Layout",
+      "style": "Style",
+      "color_scheme": "Colour scheme",
+      "padding": "Top and bottom space",
+      "padding_none": "None",
+      "padding_small": "Small",
+      "padding_default": "Default",
+      "padding_large": "Large"
+    },
+    "custom_section": {
+      "name": "Custom section",
+      "background_image": "Background image",
+      "background_image_info": "Decorative only; make sure text on top stays readable."
+    }
   }
 }
