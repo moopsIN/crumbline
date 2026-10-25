@@ -159,7 +159,7 @@ Crumbline is built in phases, and each one ends with a tagged pre-release (`v0.N
 - [x] Phase 9: search, blog, pages, customer accounts, 404, password and gift card
 - [x] Phase 10: localisation (Spanish)
 - [x] Phase 11: performance and accessibility hardening
-- [ ] Phase 12: demo store content and documentation
+- [x] Phase 12: demo store content and documentation
 - [ ] Phase 13: v1.0.0 release
 - [ ] Phase 14 (stretch): Shopify Theme Store readiness
 
