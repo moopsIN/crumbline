@@ -1,0 +1,162 @@
+{% comment %}
+  One-line notice above the header (ink ribbon). Optional link. When
+  dismissible, the choice is kept for the browser session; a tiny inline
+  script hides a dismissed bar before first paint, so it never shifts the
+  layout. The key includes the text, so a new message shows again.
+{% endcomment %}
+
+{%- liquid
+  assign text = section.settings.text
+  assign storage_key = 'crumbline:announcement:' | append: text | md5
+-%}
+
+{%- if text != blank -%}
+  <announcement-bar
+    class="announcement-bar full-width"
+    {% render 'section-attributes' %}
+    data-key="{{ storage_key }}"
+  >
+    {%- if section.settings.dismissible -%}
+      <script>
+        try {
+          if (sessionStorage.getItem('{{ storage_key }}')) document.currentScript.parentElement.hidden = true;
+        } catch (e) {}
+      </script>
+    {%- endif -%}
+    <div class="announcement-bar__inner">
+      <p class="announcement-bar__text">
+        {%- if section.settings.link != blank -%}
+          <a href="{{ section.settings.link }}">{{ text }}</a>
+        {%- else -%}
+          {{ text }}
+        {%- endif -%}
+      </p>
+      {%- if section.settings.dismissible -%}
+        <button type="button" class="announcement-bar__close" data-dismiss>
+          {% render 'icon', name: 'close' %}
+          <span class="visually-hidden">{{ 'sections.announcement.dismiss' | t }}</span>
+        </button>
+      {%- endif -%}
+    </div>
+  </announcement-bar>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .announcement-bar {
+      display: block;
+      background-color: var(--color-bg);
+      color: var(--color-ink);
+    }
+
+    .announcement-bar__inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-block-size: 2.5rem;
+      padding: 0.4rem 3rem;
+    }
+
+    .announcement-bar__text {
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: max(0.75rem, var(--text-micro));
+      letter-spacing: 0.05em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .announcement-bar__text a {
+      text-decoration: underline 1px;
+    }
+
+    .announcement-bar__close {
+      position: absolute;
+      inset-inline-end: 0.25rem;
+      display: grid;
+      place-items: center;
+      inline-size: 44px;
+      block-size: 44px;
+      border: 0;
+      border-radius: 50%;
+      background: none;
+      color: inherit;
+    }
+
+    .announcement-bar__close .icon {
+      inline-size: 1.1rem;
+      block-size: 1.1rem;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('announcement-bar')) {
+    customElements.define(
+      'announcement-bar',
+      class extends HTMLElement {
+        connectedCallback() {
+          this.querySelector('[data-dismiss]')?.addEventListener('click', () => {
+            this.hidden = true;
+            try {
+              sessionStorage.setItem(this.dataset.key, '1');
+            } catch (e) {}
+          });
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.announcement.name",
+  "tag": "aside",
+  "class": "announcement-bar-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "text",
+      "label": "t:sections.announcement.text",
+      "info": "t:sections.announcement.text_info"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:sections.announcement.link"
+    },
+    {
+      "type": "checkbox",
+      "id": "dismissible",
+      "label": "t:sections.announcement.dismissible",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-2"
+    }
+  ],
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "presets": [
+    {
+      "name": "t:sections.announcement.name",
+      "settings": {
+        "text": "Order 2 days ahead for celebration cakes"
+      }
+    }
+  ]
+}
+{% endschema %}
