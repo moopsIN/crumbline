@@ -205,13 +205,6 @@
       display: block;
     }
 
-    /* Option pills (guide §4.6), shared by the variant picker. */
-    .option-pill {
-      position: relative;
-      cursor: pointer;
-    }
-
-    .option-pill input,
     .date-pill input {
       position: absolute;
       opacity: 0;
@@ -219,63 +212,11 @@
       block-size: 1px;
     }
 
-    .option-pill > span {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.1rem;
-      min-inline-size: 88px;
-      min-block-size: 48px;
-      padding: 0.65rem 1rem;
-      border: var(--border-width) solid var(--color-border-control);
-      border-radius: var(--radius-m);
-      background-color: var(--color-surface-alt);
-      font-weight: var(--font-body-weight-bold);
-      text-align: center;
-      transition:
-        translate 450ms var(--ease-bounce),
-        border-color var(--dur-base),
-        background-color var(--dur-base),
-        box-shadow var(--dur-base);
-    }
-
-    .option-pill > span:has(> .icon) {
-      flex-direction: row;
-      gap: 0.5rem;
-    }
-
-    .option-pill .icon {
-      inline-size: 1.1rem;
-      block-size: 1.1rem;
-    }
-
-    .option-pill small {
-      color: var(--color-ink-muted);
-      font-family: var(--font-mono);
-      font-size: var(--text-micro);
-      font-weight: 400;
-      text-transform: uppercase;
-    }
-
-    .option-pill:hover > span,
     .date-pill:hover > span {
       border-color: var(--color-ink);
     }
 
-    .option-pill:has(input:checked) > span {
-      border-color: var(--color-ink);
-      background-color: var(--color-highlight);
-      color: var(--color-on-highlight);
-      box-shadow: var(--shadow-hard);
-      translate: -2px -2px;
-    }
-
-    .option-pill:has(input:checked) small {
-      color: inherit;
-    }
-
-    :is(.option-pill, .date-pill):has(input:focus-visible) > span {
+    .date-pill:has(input:focus-visible) > span {
       outline: 3px solid var(--color-ink);
       outline-offset: 3px;
       box-shadow: 0 0 0 6px var(--color-accent);

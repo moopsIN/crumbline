@@ -27,7 +27,15 @@
   },
   "forms": {
     "email": "Email",
-    "email_placeholder": "Your email"
+    "email_placeholder": "Your email",
+    "name": "Name",
+    "phone": "Phone",
+    "message": "Message",
+    "send": "Send",
+    "contact": {
+      "success": "Thanks! We'll get back to you soon.",
+      "error": "Please check the form:"
+    }
   },
   "products": {
     "price": {
@@ -214,6 +222,37 @@
       "error_size": "Choose a size to continue.",
       "error_flavour": "Choose a flavour to continue.",
       "error_date": "Pick a day for your cake."
+    },
+    "commission_form": {
+      "enquiry_type": "Custom cake enquiry",
+      "step_occasion": "Occasion",
+      "step_guests": "Guests & flavours",
+      "step_contact": "Date & contact",
+      "legend_occasion": "What's the occasion?",
+      "legend_guests": "Who's it for?",
+      "legend_contact": "When, and how can we reach you?",
+      "other": "Something else",
+      "occasion_details": "Tell us more (optional)",
+      "guests": "How many guests?",
+      "flavours": "Flavours you like",
+      "not_sure": "Not sure yet",
+      "yes": "Yes",
+      "dietary": "Dietary needs",
+      "dietary_hint": "E.g. eggless, nut-free, vegan.",
+      "ideas": "Design ideas",
+      "inspiration": "Link to a photo you love",
+      "date": "Date needed",
+      "date_hint": {
+        "one": "We need at least 1 day's notice.",
+        "other": "We need at least {{ count }} days' notice."
+      },
+      "anything_else": "Anything else?",
+      "send": "Send enquiry",
+      "success_title": "Thanks! Your enquiry is on its way.",
+      "success_text": "We'll reply by email, usually within a day.",
+      "whatsapp_hint": "Prefer chatting? Send the same details on WhatsApp.",
+      "whatsapp_cta": "Send on WhatsApp",
+      "whatsapp_intro": "Hi {{ shop }}! I'd like a custom cake:"
     }
   },
   "404": {

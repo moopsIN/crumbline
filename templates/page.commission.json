@@ -1,0 +1,71 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "page",
+      "settings": {}
+    },
+    "form": {
+      "type": "commission-form",
+      "blocks": {
+        "o0": {
+          "type": "occasion",
+          "settings": {
+            "label": "Birthday"
+          }
+        },
+        "o1": {
+          "type": "occasion",
+          "settings": {
+            "label": "Wedding"
+          }
+        },
+        "o2": {
+          "type": "occasion",
+          "settings": {
+            "label": "Anniversary"
+          }
+        },
+        "o3": {
+          "type": "occasion",
+          "settings": {
+            "label": "Baby shower"
+          }
+        },
+        "o4": {
+          "type": "occasion",
+          "settings": {
+            "label": "Celebration"
+          }
+        }
+      },
+      "block_order": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "settings": {
+        "eyebrow": "Custom cakes",
+        "heading": "Tell us about <em>your cake</em>",
+        "text": "Three quick steps. We'll reply by email with ideas and a price.",
+        "flavours": "Vanilla, Chocolate, Lemon, Red velvet",
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "form"
+  ]
+}
