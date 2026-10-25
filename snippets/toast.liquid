@@ -7,7 +7,13 @@
   {% render 'toast' %}
 {% enddoc %}
 
-<crumbline-toast class="toast" role="status"></crumbline-toast>
+<crumbline-toast
+  class="toast"
+  role="status"
+  data-added="{{ 'cart.added' | t: title: '__TITLE__' }}"
+  data-view="{{ 'cart.view' | t }}"
+  data-error="{{ 'cart.error' | t }}"
+></crumbline-toast>
 
 {% stylesheet %}
   @layer components {
