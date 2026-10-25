@@ -9,12 +9,378 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "custom-section",
-      "settings": {}
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "media_style": "awning",
+        "sunburst": true,
+        "image_fit": "cover",
+        "stamp_text": "Baked fresh to order",
+        "ticket_label": "Today's bake",
+        "bubble_1": "Fresh out of the oven!",
+        "bubble_2": "",
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      },
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "eyebrow": "Baked to order",
+            "heading": "Cakes baked <em>just for you</em>",
+            "level": "h1",
+            "size": "hero",
+            "alignment": "left"
+          }
+        },
+        "intro": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Small-batch cakes for birthdays, weddings and ordinary Tuesdays. Pick a size, a flavour and a day.</p>",
+            "style": "lead",
+            "alignment": "left"
+          }
+        },
+        "buttons": {
+          "type": "group",
+          "settings": {
+            "direction": "row",
+            "alignment": "flex-start",
+            "gap": "s"
+          },
+          "blocks": {
+            "order": {
+              "type": "button",
+              "settings": {
+                "label": "Order a cake",
+                "link": "/collections/all",
+                "style": "primary",
+                "show_arrow": true
+              }
+            },
+            "custom": {
+              "type": "button",
+              "settings": {
+                "label": "Ask about a custom cake",
+                "link": "/pages/contact",
+                "style": "secondary",
+                "show_arrow": false
+              }
+            }
+          },
+          "block_order": [
+            "order",
+            "custom"
+          ]
+        },
+        "chips": {
+          "type": "chip-row",
+          "settings": {},
+          "blocks": {
+            "c1": {
+              "type": "_chip",
+              "settings": {
+                "label": "Baked to order",
+                "icon": "cake",
+                "style": "label"
+              }
+            },
+            "c2": {
+              "type": "_chip",
+              "settings": {
+                "label": "Local pickup",
+                "icon": "pin",
+                "style": "label"
+              }
+            }
+          },
+          "block_order": [
+            "c1",
+            "c2"
+          ]
+        }
+      },
+      "block_order": [
+        "heading",
+        "intro",
+        "buttons",
+        "chips"
+      ]
+    },
+    "marquee": {
+      "type": "marquee",
+      "settings": {
+        "separator": "✺",
+        "speed": 35,
+        "tilt": true,
+        "color_scheme": "scheme-2",
+        "padding": "1"
+      },
+      "blocks": {
+        "m0": {
+          "type": "item",
+          "settings": {
+            "text": "Baked to order"
+          }
+        },
+        "m1": {
+          "type": "item",
+          "settings": {
+            "text": "Birthday cakes"
+          }
+        },
+        "m2": {
+          "type": "item",
+          "settings": {
+            "text": "Celebration bakes"
+          }
+        },
+        "m3": {
+          "type": "item",
+          "settings": {
+            "text": "Local pickup"
+          }
+        }
+      },
+      "block_order": [
+        "m0",
+        "m1",
+        "m2",
+        "m3"
+      ]
+    },
+    "occasions": {
+      "type": "occasions",
+      "settings": {
+        "eyebrow": "Shop",
+        "heading": "What's the <em>occasion?</em>",
+        "text": "Pick a moment and we'll show you the right bakes.",
+        "mode": "filter",
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      },
+      "blocks": {
+        "o1": {
+          "type": "occasion",
+          "settings": {
+            "label": "Birthday",
+            "tag": "birthday",
+            "icon": "cake",
+            "color": "strawberry"
+          }
+        },
+        "o2": {
+          "type": "occasion",
+          "settings": {
+            "label": "Wedding",
+            "tag": "wedding",
+            "icon": "check",
+            "color": "2"
+          }
+        },
+        "o3": {
+          "type": "occasion",
+          "settings": {
+            "label": "Just because",
+            "tag": "just-because",
+            "icon": "shop",
+            "color": "4"
+          }
+        },
+        "o4": {
+          "type": "occasion",
+          "settings": {
+            "label": "Say sorry",
+            "tag": "sorry",
+            "icon": "basket",
+            "color": "3"
+          }
+        }
+      },
+      "block_order": [
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ]
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "text": "",
+        "collection": "all",
+        "products_to_show": 6,
+        "show_view_all": true,
+        "columns_mobile": "2",
+        "columns_desktop": 3,
+        "color_scheme": "scheme-1",
+        "padding": "0.5"
+      }
+    },
+    "visit": {
+      "type": "visit",
+      "settings": {
+        "eyebrow": "Find us",
+        "heading": "Come say <em>hello.</em>",
+        "text": "Collect your order or find us at a market near you.",
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      },
+      "blocks": {
+        "l1": {
+          "type": "location",
+          "settings": {
+            "tag": "Pickup",
+            "name": "Our kitchen",
+            "address": "",
+            "note": "Collections by arrangement.",
+            "stamp_text": "Baked with love",
+            "icon": "home",
+            "color": "butter"
+          }
+        },
+        "call": {
+          "type": "call",
+          "settings": {
+            "tag": "Talk to us",
+            "heading": "Got a cake idea?",
+            "phone": "",
+            "text": "Call, text or WhatsApp. Custom orders welcome.",
+            "show_whatsapp": true
+          }
+        }
+      },
+      "block_order": [
+        "l1",
+        "call"
+      ]
+    },
+    "story": {
+      "type": "story",
+      "settings": {
+        "eyebrow": "Our story",
+        "heading": "Baked at home, <em>with care.</em>",
+        "text": "<p>Tell people how your bakery started, what you love to bake and why it tastes the way it does.</p>",
+        "media_style": "plain",
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      },
+      "blocks": {
+        "p1": {
+          "type": "point",
+          "settings": {
+            "title": "Small batches",
+            "text": "Every cake is baked to order, never from the freezer."
+          }
+        },
+        "p2": {
+          "type": "point",
+          "settings": {
+            "title": "Real ingredients",
+            "text": "Proper butter, free-range eggs and no shortcuts."
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2"
+      ]
+    },
+    "reviews": {
+      "type": "reviews",
+      "settings": {
+        "eyebrow": "Kind words",
+        "heading": "What people <em>are saying</em>",
+        "text": "",
+        "chat_title": "Messages from customers",
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      },
+      "blocks": {
+        "r1": {
+          "type": "review",
+          "settings": {
+            "quote": "The birthday cake was perfect, and it tasted even better than it looked.",
+            "name": "A happy customer",
+            "context": "Birthday order",
+            "reply": false
+          }
+        },
+        "r2": {
+          "type": "review",
+          "settings": {
+            "quote": "Thank you! It was a joy to bake.",
+            "name": "The bakery",
+            "context": "",
+            "reply": true
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2"
+      ]
+    },
+    "social": {
+      "type": "social-grid",
+      "settings": {
+        "eyebrow": "Share the sweetness",
+        "heading": "Cake tastes better <em>shared.</em>",
+        "text": "Follow along for new bakes and behind-the-scenes kitchen chaos.",
+        "handle": "",
+        "button_label": "Follow us",
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      },
+      "blocks": {
+        "s0": {
+          "type": "post",
+          "settings": {
+            "caption": "Birthday wishes"
+          }
+        },
+        "s1": {
+          "type": "post",
+          "settings": {
+            "caption": "Cupcake Friday"
+          }
+        },
+        "s2": {
+          "type": "post",
+          "settings": {
+            "caption": "Fresh today"
+          }
+        }
+      },
+      "block_order": [
+        "s0",
+        "s1",
+        "s2"
+      ]
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "eyebrow": "Bake news",
+        "heading": "Fresh bakes, <em>first.</em>",
+        "text": "New flavours and holiday order dates, now and then. No spam.",
+        "consent": "You can unsubscribe at any time.",
+        "color_scheme": "scheme-1",
+        "padding": "1"
+      }
     }
   },
   "order": [
-    "main"
+    "hero",
+    "marquee",
+    "occasions",
+    "featured",
+    "visit",
+    "story",
+    "reviews",
+    "social",
+    "newsletter"
   ]
 }

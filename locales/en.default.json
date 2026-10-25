@@ -181,6 +181,16 @@
       "language": "Language",
       "update": "Update",
       "back_to_top": "Back to top ↑"
+    },
+    "occasions": {
+      "all": "Everything",
+      "count": "Cakes shown: {{ number }}"
+    },
+    "featured_collection": {
+      "view_all": "View all"
+    },
+    "visit": {
+      "directions": "Get directions"
     }
   },
   "404": {
