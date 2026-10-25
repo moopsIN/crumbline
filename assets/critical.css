@@ -229,9 +229,26 @@
     text-wrap: balance;
   }
 
+  h1,
+  h2 {
+    font-size: var(--step-3);
+  }
+
+  h3 {
+    font-size: var(--step-2);
+  }
+
+  h4 {
+    font-size: var(--step-1);
+  }
+
   :is(h1, h2, h3, h4) em {
     font-style: italic;
     font-weight: 400;
+  }
+
+  /* Accent text is 3.4:1, so only h1–h3 (always ≥ 25.6px) get the colour. */
+  :is(h1, h2, h3) em {
     color: var(--color-accent-text);
   }
 
