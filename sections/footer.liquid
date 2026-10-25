@@ -1,56 +1,762 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+{% comment %}
+  Site footer (Cute): a scalloped "cake tin" top edge; an optional hero
+  with kicker, big wordmark, tagline and buttons; a grid of cards (text,
+  menu, contact, social, newsletter); then country/language selectors,
+  payment icons, the legal line and "Back to top".
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+  On phones the footer runs under the floating bottom nav (it pulls itself
+  into the body's bottom-nav padding), so the ink band reaches the edge.
+{% endcomment %}
 
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
-    {% endif %}
+{%- capture whatsapp_url -%}{% render 'whatsapp-url' %}{%- endcapture -%}
+{%- assign whatsapp_label = 'general.whatsapp.cta' | t -%}
+{%- assign social_networks = 'instagram,facebook,tiktok,pinterest,youtube' | split: ',' -%}
+
+<footer class="site-footer full-width" {% render 'section-attributes' %}>
+  <div class="site-footer__inner">
+    {%- if section.settings.show_hero -%}
+      <div class="site-footer__hero">
+        {%- if section.settings.kicker != blank -%}
+          <p class="site-footer__kicker mono">{{ section.settings.kicker | escape }}</p>
+        {%- endif -%}
+        <p class="site-footer__wordmark" aria-hidden="true">
+          {%- if section.settings.wordmark != blank -%}
+            {{ section.settings.wordmark }}
+          {%- else -%}
+            {{ shop.name | escape }}
+          {%- endif -%}
+        </p>
+        {%- if section.settings.tagline != blank -%}
+          <p class="site-footer__tagline">{{ section.settings.tagline | escape }}</p>
+        {%- endif -%}
+        <div class="site-footer__ctas">
+          {%- if section.settings.button_label != blank -%}
+            {% render 'button',
+              label: section.settings.button_label,
+              url: section.settings.button_link,
+              icon: 'arrow-right'
+            %}
+          {%- endif -%}
+          {%- if section.settings.show_whatsapp and whatsapp_url != blank -%}
+            {% render 'button',
+              label: whatsapp_label,
+              url: whatsapp_url,
+              style: 'secondary',
+              attributes: 'target="_blank" rel="noopener"'
+            %}
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="site-footer__cards">
+        {%- for block in section.blocks -%}
+          {%- capture card_body -%}
+            {%- case block.type -%}
+              {%- when 'text' -%}
+                <div class="footer-card__body">{{ block.settings.text }}</div>
+
+              {%- when 'menu' -%}
+                {%- if block.settings.menu.links.size > 0 -%}
+                  <ul class="footer-card__links" role="list">
+                    {%- for link in block.settings.menu.links -%}
+                      <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+
+              {%- when 'contact' -%}
+                {%- capture contact_details -%}
+                  {%- if block.settings.address != blank -%}
+                    <address>{{ block.settings.address | escape | newline_to_br }}</address>
+                  {%- endif -%}
+                  {%- if block.settings.phone != blank -%}
+                    {%- assign tel = block.settings.phone | remove: ' ' -%}
+                    <p><a href="tel:{{ tel }}">{{ block.settings.phone | escape }}</a></p>
+                  {%- endif -%}
+                  {%- if block.settings.email != blank -%}
+                    <p><a href="mailto:{{ block.settings.email }}">{{ block.settings.email | escape }}</a></p>
+                  {%- endif -%}
+                  {%- if block.settings.show_whatsapp and whatsapp_url != blank -%}
+                    <p>
+                      <a href="{{ whatsapp_url }}" target="_blank" rel="noopener">
+                        {{- 'general.whatsapp.cta' | t -}}
+                      </a>
+                    </p>
+                  {%- endif -%}
+                {%- endcapture -%}
+                {%- if contact_details != blank -%}
+                  <div class="footer-card__body">{{ contact_details }}</div>
+                {%- endif -%}
+
+              {%- when 'social' -%}
+                {%- capture social_links -%}
+                  {%- for network in social_networks -%}
+                    {%- assign setting_id = 'social_' | append: network -%}
+                    {%- assign network_url = settings[setting_id] -%}
+                    {%- if network_url != blank -%}
+                      {%- assign network_key = 'general.social.' | append: network -%}
+                      <li>
+                        <a href="{{ network_url }}" target="_blank" rel="noopener">
+                          {% render 'icon', name: network %}
+                          {{ network_key | t }}
+                        </a>
+                      </li>
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endcapture -%}
+                {%- if social_links != blank -%}
+                  <ul class="footer-card__chips" role="list">{{ social_links }}</ul>
+                {%- elsif request.design_mode -%}
+                  <p class="footer-card__body">{{ 'sections.footer.social_empty' | t }}</p>
+                {%- endif -%}
+
+              {%- when 'newsletter' -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="footer-card__body">{{ block.settings.text }}</div>
+                {%- endif -%}
+                {%- form 'customer', id: 'FooterNewsletter', class: 'footer-newsletter' -%}
+                  <input type="hidden" name="contact[tags]" value="newsletter">
+                  {%- if form.posted_successfully? -%}
+                    <p class="footer-newsletter__status" role="status">{{ 'sections.footer.newsletter_success' | t }}</p>
+                  {%- else -%}
+                    <label class="visually-hidden" for="FooterNewsletterEmail">{{ 'forms.email' | t }}</label>
+                    <div class="footer-newsletter__field">
+                      <input
+                        id="FooterNewsletterEmail"
+                        type="email"
+                        name="contact[email]"
+                        autocomplete="email"
+                        required
+                        placeholder="{{ 'forms.email_placeholder' | t }}"
+                        {% if form.errors %}
+                          aria-invalid="true" aria-describedby="FooterNewsletterError"
+                        {% endif %}
+                      >
+                      <button type="submit" class="footer-newsletter__submit">
+                        {% render 'icon', name: 'arrow-right' %}
+                        <span class="visually-hidden">{{ 'sections.footer.newsletter_submit' | t }}</span>
+                      </button>
+                    </div>
+                    {%- if form.errors -%}
+                      <p id="FooterNewsletterError" class="footer-newsletter__status">
+                        {{ form.errors.translated_fields.email | capitalize }}
+                        {{ form.errors.messages.email }}
+                      </p>
+                    {%- endif -%}
+                  {%- endif -%}
+                {%- endform -%}
+            {%- endcase -%}
+          {%- endcapture -%}
+          {%- comment -%} Skip cards with nothing to show, except in the editor. {%- endcomment -%}
+          {%- if card_body != blank or request.design_mode -%}
+            <div class="footer-card footer-card--{{ block.type }}" {{ block.shopify_attributes }}>
+              {%- if block.settings.icon != 'none' -%}
+                <span class="footer-card__icon" aria-hidden="true">{% render 'icon', name: block.settings.icon %}</span>
+              {%- endif -%}
+              {%- if block.settings.title != blank -%}
+                <h2 class="footer-card__title mono">{{ block.settings.title | escape }}</h2>
+              {%- endif -%}
+              {{ card_body }}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="site-footer__bottom">
+      {%- if localization.available_countries.size > 1 or localization.available_languages.size > 1 -%}
+        {%- form 'localization', class: 'footer-localization', data-auto-submit: '' -%}
+          {%- if localization.available_countries.size > 1 -%}
+            <div class="footer-localization__field">
+              <label for="FooterCountry" class="mono">{{ 'sections.footer.country' | t }}</label>
+              <select id="FooterCountry" name="country_code">
+                {%- for country in localization.available_countries -%}
+                  <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+                    {{- country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endif -%}
+          {%- if localization.available_languages.size > 1 -%}
+            <div class="footer-localization__field">
+              <label for="FooterLanguage" class="mono">{{ 'sections.footer.language' | t }}</label>
+              <select id="FooterLanguage" name="language_code">
+                {%- for language in localization.available_languages -%}
+                  <option value="{{ language.iso_code }}" lang="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>
+                    {{- language.endonym_name | capitalize -}}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endif -%}
+          <button type="submit" class="footer-localization__submit">{{ 'sections.footer.update' | t }}</button>
+        {%- endform -%}
+      {%- endif -%}
+
+      {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+        <ul class="site-footer__payments" role="list">
+          {%- for type in shop.enabled_payment_types -%}
+            <li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <p class="site-footer__legal mono">
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name | link_to: routes.root_url }} · {{ powered_by_link }}
+      </p>
+      <a href="#main" class="site-footer__top mono">
+        {{- 'sections.footer.back_to_top' | t -}}
+      </a>
+    </div>
   </div>
 </footer>
 
 {% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-  }
-  footer a {
-    text-decoration: none;
-    color: var(--color-ink);
-  }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
+  @layer components {
+    .site-footer {
+      --scallop: 22px;
+
+      position: relative;
+      margin-block: calc(2rem + var(--scallop)) calc(var(--bottom-nav-h) * -1);
+      padding: clamp(3rem, 2rem + 4vw, 5.5rem) var(--gutter) calc(2rem + var(--bottom-nav-h));
+    }
+
+    /* Scalloped cake-tin edge in the section's own background colour. */
+    .site-footer::before {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      inset-block-end: calc(100% - 1px);
+      block-size: var(--scallop);
+      background: radial-gradient(circle at 50% 100%, var(--color-bg) calc(var(--scallop) - 0.5px), transparent var(--scallop)) 0 0 / calc(var(--scallop) * 2) 100% repeat-x;
+    }
+
+    .site-footer__inner {
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+    }
+
+    .site-footer__hero {
+      text-align: center;
+    }
+
+    .site-footer__kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin: 0 0 1.25rem;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-pill);
+      color: var(--color-highlight);
+    }
+
+    .site-footer__kicker::before {
+      content: '';
+      inline-size: 8px;
+      block-size: 8px;
+      border-radius: 50%;
+      background-color: var(--color-accent);
+    }
+
+    .site-footer__wordmark {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 1rem + 10vw, 9rem);
+      font-weight: var(--font-display-weight);
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      overflow-wrap: anywhere;
+    }
+
+    .site-footer__wordmark em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--color-accent-text);
+    }
+
+    .site-footer__tagline {
+      max-inline-size: 34ch;
+      margin: 1.25rem auto 0;
+      color: var(--color-ink-muted);
+      font-size: var(--step-1);
+      line-height: 1.4;
+    }
+
+    .site-footer__ctas {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.9rem;
+      margin-block-start: 1.75rem;
+    }
+
+    .site-footer__cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-block: clamp(2.5rem, 2rem + 3vw, 4.5rem) 2.5rem;
+    }
+
+    .footer-card {
+      padding: 1.1rem 1rem 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-s);
+      background-color: color-mix(in oklch, var(--color-ink) 4%, transparent);
+      transition:
+        translate 450ms var(--ease-spring),
+        border-color var(--dur-base);
+    }
+
+    .footer-card--newsletter {
+      grid-column: 1 / -1;
+    }
+
+    @media (hover: hover) {
+      .footer-card:hover {
+        translate: 0 -4px;
+        border-color: color-mix(in oklch, var(--color-highlight) 45%, transparent);
+      }
+    }
+
+    .footer-card__icon {
+      display: grid;
+      place-items: center;
+      inline-size: 40px;
+      block-size: 40px;
+      margin-block-end: 0.75rem;
+      border: var(--border-width) solid var(--color-ink);
+      border-radius: 14px;
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+      box-shadow: 3px 3px 0 var(--color-accent);
+      rotate: -6deg;
+    }
+
+    .footer-card:nth-child(4n + 2) .footer-card__icon {
+      background-color: var(--color-highlight-2);
+    }
+
+    .footer-card:nth-child(4n + 3) .footer-card__icon {
+      background-color: var(--color-pastel-2);
+    }
+
+    .footer-card:nth-child(4n + 4) .footer-card__icon {
+      background-color: var(--color-pastel-4);
+    }
+
+    .footer-card__icon .icon {
+      inline-size: 1.2rem;
+      block-size: 1.2rem;
+    }
+
+    .footer-card__title {
+      margin: 0 0 0.5rem;
+      color: var(--color-highlight);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: var(--font-mono-weight-medium);
+      letter-spacing: 0.08em;
+    }
+
+    .footer-card__body,
+    .footer-card__links {
+      color: var(--color-ink-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .footer-card__body address {
+      font-style: normal;
+    }
+
+    .footer-card__body p {
+      margin: 0;
+    }
+
+    .footer-card__links {
+      display: grid;
+      gap: 0.1rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .footer-card a {
+      display: inline-block;
+      padding-block: 0.3rem;
+      color: inherit;
+      text-underline-offset: 4px;
+    }
+
+    .footer-card a:hover {
+      color: var(--color-accent);
+    }
+
+    .footer-card__chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin: 0.2rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .footer-card__chips a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      min-block-size: 44px;
+      padding: 0.3rem 0.8rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-pill);
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+
+    .footer-card__chips a:hover {
+      border-color: var(--color-highlight);
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+    }
+
+    .footer-card__chips .icon {
+      inline-size: 1rem;
+      block-size: 1rem;
+    }
+
+    .footer-newsletter__field {
+      display: flex;
+      gap: 0.5rem;
+      margin-block-start: 0.75rem;
+    }
+
+    .footer-newsletter__field input {
+      flex: 1;
+      min-inline-size: 0;
+      min-block-size: 48px;
+      padding: 0.6rem 1.1rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-surface-alt);
+      color: var(--color-ink);
+    }
+
+    .footer-newsletter__submit {
+      display: grid;
+      place-items: center;
+      flex: none;
+      inline-size: 48px;
+      block-size: 48px;
+      border: var(--border-width) solid var(--color-button);
+      border-radius: 50%;
+      background-color: var(--color-button);
+      color: var(--color-button-label);
+      box-shadow: 3px 3px 0 var(--color-accent);
+    }
+
+    .footer-newsletter__status {
+      margin: 0.5rem 0 0;
+      color: var(--color-ink);
+      font-size: 0.9rem;
+    }
+
+    .site-footer__bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding-block-start: 1.5rem;
+      border-block-start: 1px dashed var(--color-border);
+      text-align: center;
+    }
+
+    .footer-localization {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: end;
+      gap: 0.75rem;
+    }
+
+    .footer-localization__field {
+      display: grid;
+      gap: 0.25rem;
+      text-align: start;
+    }
+
+    .footer-localization select {
+      min-block-size: 44px;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--color-border-control);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+    }
+
+    .footer-localization__submit {
+      min-block-size: 44px;
+      padding: 0.4rem 1rem;
+      border: 1px solid var(--color-border-control);
+      border-radius: var(--radius-pill);
+      background: none;
+    }
+
+    .js .footer-localization[data-auto-submit] .footer-localization__submit {
+      display: none;
+    }
+
+    .site-footer__payments {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .payment-icon {
+      inline-size: 38px;
+      block-size: 24px;
+    }
+
+    .site-footer__legal {
+      margin: 0;
+      color: var(--color-ink-muted);
+    }
+
+    .site-footer__legal a {
+      color: inherit;
+    }
+
+    .site-footer__top {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: 44px;
+      padding: 0.45rem 0.9rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+    }
+
+    .site-footer__top:hover {
+      background-color: var(--color-ink);
+      color: var(--color-bg);
+    }
+
+    @media (min-width: 56.25rem) {
+      .site-footer {
+        padding-inline: max(var(--gutter), 6vw);
+      }
+
+      .site-footer__cards {
+        grid-template-columns: repeat(auto-fit, minmax(13.75rem, 1fr));
+        gap: 1rem;
+      }
+
+      .footer-card {
+        padding: 1.5rem 1.4rem 1.4rem;
+        border-radius: var(--radius-m);
+      }
+
+      .footer-card--newsletter {
+        grid-column: auto;
+      }
+
+      .footer-card__icon {
+        inline-size: 44px;
+        block-size: 44px;
+        margin-block-end: 1rem;
+      }
+
+      .site-footer__bottom {
+        flex-flow: row wrap;
+        justify-content: space-between;
+        text-align: start;
+      }
+    }
   }
 {% endstylesheet %}
 
+{% javascript %}
+  document.querySelectorAll('.footer-localization[data-auto-submit]').forEach((form) => {
+    form.addEventListener('change', () => form.submit());
+  });
+{% endjavascript %}
+
 {% schema %}
 {
-  "name": "t:general.footer",
+  "name": "t:sections.footer.name",
+  "class": "footer-section",
   "settings": [
     {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
+      "type": "header",
+      "content": "t:sections.footer.hero"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hero",
+      "label": "t:sections.footer.show_hero",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "t:sections.footer.kicker",
+      "default": "Baked to order",
+      "visible_if": "{{ section.settings.show_hero }}"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "wordmark",
+      "label": "t:sections.footer.wordmark",
+      "info": "t:sections.footer.wordmark_info",
+      "visible_if": "{{ section.settings.show_hero }}"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "t:sections.footer.tagline",
+      "default": "Fancy a slice? Order ahead and we'll have it ready.",
+      "visible_if": "{{ section.settings.show_hero }}"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.footer.button_label",
+      "default": "Order a cake",
+      "visible_if": "{{ section.settings.show_hero }}"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.footer.button_link",
+      "default": "/collections/all",
+      "visible_if": "{{ section.settings.show_hero }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_whatsapp",
+      "label": "t:sections.footer.show_whatsapp",
+      "info": "t:sections.footer.show_whatsapp_info",
+      "default": true,
+      "visible_if": "{{ section.settings.show_hero }}"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
     },
     {
       "type": "checkbox",
       "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
+      "label": "t:sections.footer.show_payment_icons",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "t:sections.footer.block_text",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "t:sections.footer.icon", "options": [
+          { "value": "none", "label": "t:sections.footer.icon_none" },
+          { "value": "cake", "label": "t:sections.footer.icon_cake" },
+          { "value": "pin", "label": "t:sections.footer.icon_pin" },
+          { "value": "phone", "label": "t:sections.footer.icon_phone" },
+          { "value": "mail", "label": "t:sections.footer.icon_mail" },
+          { "value": "calendar", "label": "t:sections.footer.icon_calendar" },
+          { "value": "basket", "label": "t:sections.footer.icon_basket" }
+        ], "default": "cake" },
+        { "type": "text", "id": "title", "label": "t:sections.footer.title", "default": "About us" },
+        { "type": "richtext", "id": "text", "label": "t:sections.footer.text", "default": "<p>Small-batch cakes, baked to order.</p>" }
+      ]
+    },
+    {
+      "type": "menu",
+      "name": "t:sections.footer.block_menu",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "t:sections.footer.icon", "options": [
+          { "value": "none", "label": "t:sections.footer.icon_none" },
+          { "value": "shop", "label": "t:sections.footer.icon_shop" },
+          { "value": "cake", "label": "t:sections.footer.icon_cake" },
+          { "value": "basket", "label": "t:sections.footer.icon_basket" }
+        ], "default": "shop" },
+        { "type": "text", "id": "title", "label": "t:sections.footer.title", "default": "Shop" },
+        { "type": "link_list", "id": "menu", "label": "t:sections.footer.menu", "default": "footer" }
+      ]
+    },
+    {
+      "type": "contact",
+      "name": "t:sections.footer.block_contact",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "t:sections.footer.icon", "options": [
+          { "value": "none", "label": "t:sections.footer.icon_none" },
+          { "value": "pin", "label": "t:sections.footer.icon_pin" },
+          { "value": "phone", "label": "t:sections.footer.icon_phone" },
+          { "value": "mail", "label": "t:sections.footer.icon_mail" }
+        ], "default": "pin" },
+        { "type": "text", "id": "title", "label": "t:sections.footer.title", "default": "Visit" },
+        { "type": "textarea", "id": "address", "label": "t:sections.footer.address" },
+        { "type": "text", "id": "phone", "label": "t:sections.footer.phone" },
+        { "type": "text", "id": "email", "label": "t:sections.footer.email" },
+        { "type": "checkbox", "id": "show_whatsapp", "label": "t:sections.footer.show_whatsapp", "default": true }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "t:sections.footer.block_social",
+      "limit": 1,
+      "settings": [
+        { "type": "paragraph", "content": "t:sections.footer.social_info" },
+        { "type": "select", "id": "icon", "label": "t:sections.footer.icon", "options": [
+          { "value": "none", "label": "t:sections.footer.icon_none" },
+          { "value": "instagram", "label": "t:sections.footer.icon_instagram" },
+          { "value": "mail", "label": "t:sections.footer.icon_mail" }
+        ], "default": "instagram" },
+        { "type": "text", "id": "title", "label": "t:sections.footer.title", "default": "Follow" }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "t:sections.footer.block_newsletter",
+      "limit": 1,
+      "settings": [
+        { "type": "select", "id": "icon", "label": "t:sections.footer.icon", "options": [
+          { "value": "none", "label": "t:sections.footer.icon_none" },
+          { "value": "mail", "label": "t:sections.footer.icon_mail" }
+        ], "default": "mail" },
+        { "type": "text", "id": "title", "label": "t:sections.footer.title", "default": "Bake news" },
+        { "type": "richtext", "id": "text", "label": "t:sections.footer.text", "default": "<p>New bakes and holiday dates, now and then.</p>" }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "groups": ["footer"]
+  },
+  "presets": [
+    {
+      "name": "t:sections.footer.name",
+      "blocks": [
+        { "type": "contact" },
+        { "type": "menu" },
+        { "type": "social" },
+        { "type": "newsletter" }
+      ]
     }
   ]
 }
