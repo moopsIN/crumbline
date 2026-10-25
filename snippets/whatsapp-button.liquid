@@ -1,0 +1,58 @@
+{% doc %}
+  Floating WhatsApp button, bottom-right and above the bottom nav. Shown only
+  when Theme settings → Cake options has a WhatsApp number and the floating
+  button is switched on. On product pages the message names the product.
+
+  @param {string} [product_title] - Product to mention in the prefilled message
+
+  @example
+  {% render 'whatsapp-button', product_title: product.title %}
+{% enddoc %}
+
+{%- if settings.whatsapp_floating -%}
+  {%- capture url -%}{% render 'whatsapp-url', product_title: product_title %}{%- endcapture -%}
+  {%- if url != blank -%}
+    <aside aria-label="{{ 'general.whatsapp.cta' | t }}">
+      <a class="whatsapp-float" href="{{ url }}" target="_blank" rel="noopener">
+        {% render 'icon', name: 'whatsapp' %}
+        <span class="visually-hidden">{{ 'general.whatsapp.cta' | t }} {{ 'accessibility.new_window' | t }}</span>
+      </a>
+    </aside>
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    /* WhatsApp's own green, kept for instant recognition (D-35). Ink icon: 10:1. */
+    .whatsapp-float {
+      position: fixed;
+      z-index: var(--z-bottom-nav);
+      inset-inline-end: var(--gutter);
+      inset-block-end: calc(var(--bottom-nav-h) + 1rem);
+      display: grid;
+      place-items: center;
+      inline-size: 56px;
+      block-size: 56px;
+      border: var(--border-ink);
+      border-radius: 50%;
+      background-color: #25D366;
+      color: var(--color-on-highlight);
+      box-shadow: var(--shadow-hard);
+      transition:
+        translate 400ms var(--ease-spring),
+        box-shadow var(--dur-base);
+    }
+
+    .whatsapp-float .icon {
+      inline-size: 1.75rem;
+      block-size: 1.75rem;
+    }
+
+    @media (hover: hover) {
+      .whatsapp-float:hover {
+        translate: -2px -2px;
+        box-shadow: 6px 6px 0 var(--color-ink);
+      }
+    }
+  }
+{% endstylesheet %}
