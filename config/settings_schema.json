@@ -239,6 +239,42 @@
           }
         ],
         "default": "bottom"
+      },
+      {
+        "type": "header",
+        "content": "t:settings.layout.cards_header"
+      },
+      {
+        "type": "select",
+        "id": "card_aspect",
+        "label": "t:settings.layout.card_aspect",
+        "info": "t:settings.layout.card_aspect_info",
+        "options": [
+          {
+            "value": "4 / 5",
+            "label": "t:settings.layout.aspect_portrait"
+          },
+          {
+            "value": "3 / 4",
+            "label": "t:settings.layout.aspect_tall"
+          },
+          {
+            "value": "1 / 1",
+            "label": "t:settings.layout.aspect_square"
+          },
+          {
+            "value": "4 / 3",
+            "label": "t:settings.layout.aspect_landscape"
+          }
+        ],
+        "default": "4 / 5"
+      },
+      {
+        "type": "checkbox",
+        "id": "card_quick_add",
+        "label": "t:settings.layout.card_quick_add",
+        "info": "t:settings.layout.card_quick_add_info",
+        "default": true
       }
     ]
   },
@@ -289,6 +325,24 @@
         "id": "whatsapp_floating",
         "label": "t:settings.cake.whatsapp_floating",
         "default": false
+      },
+      {
+        "type": "header",
+        "content": "t:settings.cake.allergens_header"
+      },
+      {
+        "type": "text",
+        "id": "allergen_list",
+        "label": "t:settings.cake.allergen_list",
+        "info": "t:settings.cake.allergen_list_info",
+        "default": "Gluten, Egg, Dairy, Nuts, Soy"
+      },
+      {
+        "type": "text",
+        "id": "allergen_highlight",
+        "label": "t:settings.cake.allergen_highlight",
+        "info": "t:settings.cake.allergen_highlight_info",
+        "default": "Nuts"
       }
     ]
   },
