@@ -1,0 +1,162 @@
+{% doc %}
+  Variant picker: one fieldset of option pills per product option (guide
+  §4.6). Each pill carries the id of the variant it would select, combined
+  with the other current choices (`product_option_value.variant`), so the
+  page script can switch variants without guessing. Values with nothing in
+  stock are marked and announced as sold out but stay selectable.
+
+  Without JavaScript the pills are hidden and a plain variant <select>
+  drives the form; with JavaScript the select is hidden and kept in sync.
+
+  @param {product} product - The product
+  @param {string} id - Unique prefix for input ids, e.g. `section.id`
+  @param {string} [form_id] - Product form id, when rendered outside the form
+
+  @example
+  {% render 'variant-picker', product: product, id: section.id, form_id: 'ProductForm-' | append: section.id %}
+{% enddoc %}
+
+{%- liquid
+  assign current = product.selected_or_first_available_variant
+-%}
+
+{%- unless product.has_only_default_variant -%}
+  <div class="variant-picker" data-variant-picker>
+    <div class="variant-picker__options">
+      {%- for option in product.options_with_values -%}
+        {%- assign option_index = forloop.index -%}
+        <fieldset class="variant-picker__option">
+          <legend class="variant-picker__legend">
+            {{- option.name | escape -}}
+            <span class="variant-picker__selected">{{ option.selected_value | escape }}</span>
+          </legend>
+          <div class="variant-picker__values">
+            {%- for value in option.values -%}
+              {%- assign input_id = id | append: '-option-' | append: option_index | append: '-' | append: forloop.index -%}
+              <label class="option-pill{% unless value.available %} option-pill--unavailable{% endunless %}" for="{{ input_id }}">
+                <input
+                  type="radio"
+                  id="{{ input_id }}"
+                  name="{{ id }}-option-{{ option_index }}"
+                  value="{{ value.name | escape }}"
+                  data-variant-id="{{ value.variant.id }}"
+                  {% if value.selected %}
+                    checked
+                  {% endif %}
+                >
+                <span>
+                  {{- value.name | escape -}}
+                  {%- unless value.available -%}
+                    <small>{{ 'products.variant.sold_out' | t }}</small>
+                  {%- endunless -%}
+                </span>
+              </label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+      {%- endfor -%}
+    </div>
+
+    <div class="variant-picker__fallback">
+      <label for="{{ id }}-variant-select">{{ 'products.variant.choose' | t }}</label>
+      <select
+        id="{{ id }}-variant-select"
+        name="id"
+        data-variant-select
+        {% if form_id != blank %}
+          form="{{ form_id }}"
+        {% endif %}
+      >
+        {%- for variant in product.variants -%}
+          <option value="{{ variant.id }}" {% if variant.id == current.id %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+            {{- variant.title | escape }} · {{ variant.price | money -}}
+            {%- unless variant.available %} · {{ 'products.variant.sold_out' | t }}{% endunless -%}
+          </option>
+        {%- endfor -%}
+      </select>
+    </div>
+  </div>
+{%- else -%}
+  <input
+    type="hidden"
+    name="id"
+    value="{{ current.id }}"
+    data-variant-select
+    {% if form_id != blank %}
+      form="{{ form_id }}"
+    {% endif %}
+  >
+{%- endunless -%}
+
+{% stylesheet %}
+  @layer components {
+    .variant-picker,
+    .variant-picker__options {
+      display: grid;
+      gap: var(--space-s);
+    }
+
+    .variant-picker__option {
+      display: grid;
+      gap: 0.6rem;
+      min-inline-size: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .variant-picker__legend {
+      display: flex;
+      align-items: baseline;
+      gap: 0.55rem;
+      margin-block-end: 0.6rem;
+      padding: 0;
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      font-weight: var(--font-display-weight);
+    }
+
+    .variant-picker__selected {
+      color: var(--color-ink-muted);
+      font-family: var(--font-mono);
+      font-size: var(--text-micro);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .variant-picker__values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .option-pill--unavailable > span {
+      opacity: 0.55;
+      text-decoration: line-through;
+    }
+
+    .option-pill--unavailable:has(input:checked) > span {
+      opacity: 1;
+    }
+
+    .variant-picker__fallback {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .variant-picker__fallback select {
+      min-block-size: 48px;
+      padding: 0.5rem 1rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-surface-alt);
+      color: var(--color-ink);
+    }
+
+    .no-js .variant-picker__options,
+    .js .variant-picker__fallback {
+      display: none;
+    }
+  }
+{% endstylesheet %}
