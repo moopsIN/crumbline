@@ -404,6 +404,86 @@
 
 }
 
+/* Form fields, status messages and the narrow form card (customer, search, password pages). */
+@layer components {
+  .form-field {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .form-field > label {
+    font-weight: var(--font-body-weight-bold);
+  }
+
+  .form-field :is(input, textarea, select) {
+    min-block-size: 48px;
+    padding: 0.6rem 1.1rem;
+    border: var(--border-ink);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-surface-alt);
+    color: var(--color-ink);
+  }
+
+  .form-field textarea {
+    border-radius: var(--radius-s);
+  }
+
+  .form-status {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.9rem 1.1rem;
+    border: var(--border-ink);
+    border-radius: var(--radius-m);
+    font-weight: var(--font-body-weight-bold);
+  }
+
+  .form-status--success {
+    background-color: var(--color-highlight);
+    color: var(--color-on-highlight);
+  }
+
+  .form-status--error {
+    border-color: var(--color-error);
+    color: var(--color-error);
+  }
+
+  .form-status ul {
+    margin: 0.25rem 0 0;
+    padding-inline-start: 1.2rem;
+    font-weight: 400;
+  }
+
+  .form-card {
+    display: grid;
+    gap: var(--space-s);
+    inline-size: min(100%, 28rem);
+    margin-inline: auto;
+    padding: clamp(1.25rem, 1rem + 1vw, 2rem);
+    border: var(--border-ink);
+    border-radius: var(--radius-l);
+    background-color: var(--color-surface);
+  }
+
+  .page-width {
+    max-inline-size: var(--content-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .page-pad {
+    padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+  }
+
+  .rte > * + * {
+    margin-block-start: 0.85em;
+  }
+
+  .rte img {
+    border-radius: var(--radius-m);
+  }
+}
+
 /* ---------- Utilities ---------- */
 @layer utilities {
   .visually-hidden {
