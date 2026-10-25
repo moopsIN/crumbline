@@ -1,0 +1,83 @@
+{% doc %}
+  Lists a product's allergens as chips, plus one sentence for screen readers
+  ("Contains: gluten, egg, dairy").
+
+  Reads the `crumbline.allergens` list metafield, falling back to
+  `allergen:<name>` tags. Only allergens in Theme settings → Cake options →
+  "Allergens you track" are shown, which keeps spelling consistent; those in
+  "Highlight these allergens" get the warning style. Renders nothing when a
+  product has no tracked allergens.
+
+  @param {product} product - The product
+  @param {string} [class] - Extra classes
+
+  @example
+  {% render 'allergen-list', product: product %}
+{% enddoc %}
+
+{%- liquid
+  assign tracked = settings.allergen_list | downcase | split: ','
+  assign highlighted = settings.allergen_highlight | downcase | split: ','
+
+  assign source = product.metafields.crumbline.allergens.value
+  if source == blank
+    assign source = ''
+    for tag in product.tags
+      assign tag_lower = tag | downcase
+      if tag_lower contains 'allergen:'
+        assign source = source | append: ',' | append: tag_lower | remove_first: 'allergen:'
+      endif
+    endfor
+    assign source = source | split: ','
+  endif
+
+  assign names = ''
+  for item in source
+    assign name = item | downcase | strip
+    if name == blank
+      continue
+    endif
+    for allowed in tracked
+      assign allowed_name = allowed | strip
+      if allowed_name == name
+        assign names = names | append: ',' | append: name
+      endif
+    endfor
+  endfor
+  assign names = names | remove_first: ',' | split: ',' | uniq
+  assign names_sentence = names | join: ', '
+-%}
+
+{%- if names.size > 0 -%}
+  <div class="allergen-list {{ class }}">
+    <p class="visually-hidden">{{ 'products.allergens.contains' | t: list: names_sentence }}</p>
+    <ul class="allergen-list__chips" role="list" aria-hidden="true">
+      {%- for name in names -%}
+        {%- liquid
+          assign style = 'allergen'
+          for warn in highlighted
+            assign warn_name = warn | strip
+            if warn_name == name
+              assign style = 'allergen-warn'
+            endif
+          endfor
+          assign label = name | capitalize
+        -%}
+        {% render 'chip', label: label, style: style, tag: 'li' %}
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .allergen-list__chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
+{% endstylesheet %}
