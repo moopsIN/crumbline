@@ -51,7 +51,11 @@
       "section_spacing": "Space between sections",
       "spacing_compact": "Compact",
       "spacing_default": "Default",
-      "spacing_roomy": "Roomy"
+      "spacing_roomy": "Roomy",
+      "mobile_nav": "Mobile navigation",
+      "mobile_nav_info": "The bottom bar shows on phones only. Edit its links in the header's Bottom navigation section.",
+      "mobile_nav_bottom": "Bottom bar",
+      "mobile_nav_drawer": "Menu drawer"
     },
     "buttons": {
       "name": "Buttons",
@@ -65,6 +69,22 @@
       "name": "Decorations",
       "enabled": "Show stickers and speech bubbles",
       "enabled_info": "Turns on playful extras such as speech bubbles. Off keeps the store clean and simple."
+    },
+    "cake": {
+      "name": "Cake options",
+      "whatsapp_header": "WhatsApp",
+      "whatsapp_number": "WhatsApp number",
+      "whatsapp_number_info": "Include the country code, e.g. +91 98765 43210. Used for WhatsApp buttons across the store.",
+      "whatsapp_floating": "Show floating WhatsApp button"
+    },
+    "social": {
+      "name": "Social media",
+      "info": "Links show in the footer's Follow card.",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "pinterest": "Pinterest",
+      "youtube": "YouTube"
     }
   },
   "sections": {
@@ -83,6 +103,86 @@
       "name": "Custom section",
       "background_image": "Background image",
       "background_image_info": "Decorative only; make sure text on top stays readable."
+    },
+    "groups": {
+      "header": "Header",
+      "footer": "Footer"
+    },
+    "announcement": {
+      "name": "Announcement bar",
+      "text": "Message",
+      "text_info": "Leave blank to hide the bar.",
+      "link": "Link",
+      "dismissible": "Visitors can close it"
+    },
+    "header": {
+      "name": "Header",
+      "logo": "Logo image",
+      "logo_width": "Logo width",
+      "logo_text": "Logo text",
+      "logo_text_info": "Shown when there's no logo image. Leave blank to use your store name. Make a word italic to give it the accent colour.",
+      "menu_setting": "Menu",
+      "menu_info": "Up to 5 top-level links show on desktop.",
+      "show_search": "Show search",
+      "sticky": "Sticky header",
+      "sticky_always": "Always",
+      "sticky_scroll_up": "When scrolling up",
+      "sticky_never": "Never"
+    },
+    "bottom_nav": {
+      "name": "Bottom navigation",
+      "info": "Shown on phones only, when Theme settings → Layout → Mobile navigation is set to Bottom bar.",
+      "item": "Link",
+      "kind": "Type",
+      "kind_link": "Link",
+      "kind_basket": "Basket (raised centre button)",
+      "item_label": "Label",
+      "item_link": "Link",
+      "icon": "Icon",
+      "icon_home": "Home",
+      "icon_shop": "Cupcake",
+      "icon_basket": "Basket",
+      "icon_cake": "Cake",
+      "icon_pin": "Location",
+      "icon_search": "Search",
+      "icon_account": "Account",
+      "icon_calendar": "Calendar"
+    },
+    "footer": {
+      "name": "Footer",
+      "hero": "Top of footer",
+      "show_hero": "Show big name and buttons",
+      "kicker": "Label",
+      "wordmark": "Big name",
+      "wordmark_info": "Leave blank to use your store name. Make a word italic to give it the accent colour.",
+      "tagline": "Tagline",
+      "button_label": "Button label",
+      "button_link": "Button link",
+      "show_whatsapp": "Show WhatsApp link",
+      "show_whatsapp_info": "Needs a number in Theme settings → Cake options.",
+      "show_payment_icons": "Show payment icons",
+      "block_text": "Text",
+      "block_menu": "Menu",
+      "block_contact": "Contact",
+      "block_social": "Social links",
+      "block_newsletter": "Newsletter",
+      "icon": "Icon",
+      "icon_none": "None",
+      "icon_cake": "Cake",
+      "icon_pin": "Location",
+      "icon_phone": "Phone",
+      "icon_mail": "Envelope",
+      "icon_calendar": "Calendar",
+      "icon_basket": "Basket",
+      "icon_shop": "Cupcake",
+      "icon_instagram": "Instagram",
+      "title": "Heading",
+      "text": "Text",
+      "menu": "Menu",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "social_info": "Uses the links in Theme settings → Social media."
     }
   },
   "blocks": {
@@ -197,8 +297,6 @@
     "cart": "Cart",
     "collection": "Collection",
     "collections_grid": "Collections grid",
-    "footer": "Footer",
-    "header": "Header",
     "page": "Page",
     "password": "Password",
     "product": "Product",
@@ -206,9 +304,7 @@
   },
   "labels": {
     "grid_gap": "Grid spacing",
-    "grid_item_width": "Grid item width",
-    "menu": "Menu",
-    "show_payment_icons": "Show payment icons"
+    "grid_item_width": "Grid item width"
   },
   "options": {
     "size": {

@@ -4,6 +4,18 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-10-25
+
+Phase 2: header, bottom navigation and footer.
+
+### Added
+- Announcement bar: one-line message with optional link; visitors can dismiss it for the session.
+- Header with logo or styled store name, desktop menu, search, account and a basket pill with item count; sticky options (always, when scrolling up, never).
+- Mobile navigation: a floating bottom bar (Home, Shop, Basket, Search, Find us by default) or a slide-in menu drawer, chosen in Theme settings → Layout.
+- Footer with the store name in large type, order and WhatsApp buttons, and cards for contact details, menus, social links, a newsletter sign-up and free text; country and language selectors; payment icons.
+- WhatsApp: store number setting, prefilled messages (naming the product on product pages) and an optional floating button.
+- Social media settings, and a shared toast for short confirmations.
+
 ## [0.1.0] — 2026-10-25
 
 Phase 1: design tokens and foundation.

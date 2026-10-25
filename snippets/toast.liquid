@@ -1,0 +1,63 @@
+{% doc %}
+  Renders the page's single toast region. Behaviour lives in
+  assets/components.js (`<crumbline-toast>`); trigger it with
+  `Crumbline.toast(message, { label, url })`.
+
+  @example
+  {% render 'toast' %}
+{% enddoc %}
+
+<crumbline-toast class="toast" role="status"></crumbline-toast>
+
+{% stylesheet %}
+  @layer components {
+    .toast {
+      position: fixed;
+      z-index: var(--z-toast);
+      inset-inline: var(--gutter);
+      inset-block-end: calc(var(--bottom-nav-h) + 1rem);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem 1rem;
+      inline-size: fit-content;
+      max-inline-size: min(28rem, calc(100% - var(--gutter) * 2));
+      margin-inline: auto;
+      padding: 0.75rem 1.25rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-m);
+      background-color: var(--color-ink);
+      color: var(--color-bg);
+      font-weight: var(--font-body-weight-bold);
+      box-shadow: var(--shadow-hard-accent), var(--shadow-soft);
+      opacity: 0;
+      translate: 0 1rem;
+      pointer-events: none;
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        translate var(--dur-slow) var(--ease-spring);
+    }
+
+    .toast:empty {
+      padding: 0;
+      border: 0;
+    }
+
+    .toast[data-open] {
+      opacity: 1;
+      translate: 0 0;
+      pointer-events: auto;
+    }
+
+    .toast__message {
+      margin: 0;
+    }
+
+    .toast__action {
+      color: var(--color-highlight);
+      text-decoration: underline 2px;
+      text-underline-offset: 4px;
+    }
+  }
+{% endstylesheet %}

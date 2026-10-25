@@ -1,0 +1,234 @@
+{% comment %}
+  Mobile bottom navigation (Cute floating pill, guide §4.7, D-24). Up to
+  five items; an item set to "Basket" becomes the raised centre button with
+  the live count. Hidden from 900px up, and entirely when the global
+  "Mobile navigation" setting is the menu drawer.
+{% endcomment %}
+
+{%- if settings.mobile_nav != 'drawer' and section.blocks.size > 0 -%}
+  <nav
+    class="bottom-nav"
+    aria-label="{{ 'sections.bottom_nav.label' | t }}"
+    data-scheme="{{ section.settings.color_scheme.id }}"
+  >
+    {%- for block in section.blocks limit: 5 -%}
+      {%- liquid
+        assign url = block.settings.link
+        if block.settings.kind == 'basket'
+          assign url = routes.cart_url
+        endif
+
+        assign current = false
+        if url == request.path
+          assign current = true
+        elsif url != routes.root_url and url != blank
+          assign prefix = url | append: '/'
+          if request.path contains prefix
+            assign current = true
+          endif
+        endif
+      -%}
+      <a
+        href="{{ url | default: routes.root_url }}"
+        class="bottom-nav__item{% if block.settings.kind == 'basket' %} bottom-nav__item--basket{% endif %}"
+        {% if current %}
+          aria-current="page"
+        {% endif %}
+        {{ block.shopify_attributes }}
+      >
+        {% render 'icon', name: block.settings.icon %}
+        <span class="bottom-nav__label">{{ block.settings.label | escape }}</span>
+        {%- if block.settings.kind == 'basket' -%}
+          <span class="bottom-nav__count" data-cart-count aria-hidden="true">{{ cart.item_count }}</span>
+          <span class="visually-hidden">{{ 'sections.header.basket_count' | t: count: cart.item_count }}</span>
+        {%- endif -%}
+      </a>
+    {%- endfor -%}
+  </nav>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .bottom-nav {
+      position: fixed;
+      z-index: var(--z-bottom-nav);
+      inset-inline: 0;
+      inset-block-end: max(0.85rem, env(safe-area-inset-bottom));
+      display: grid;
+      grid-auto-columns: 1fr;
+      grid-auto-flow: column;
+      align-items: end;
+      inline-size: min(calc(100% - 1.5rem), 440px);
+      margin-inline: auto;
+      padding: 0.35rem;
+      border: var(--border-ink);
+      border-radius: 26px;
+      background-color: var(--color-surface);
+      box-shadow: var(--shadow-hard), var(--shadow-soft);
+    }
+
+    .bottom-nav__item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.15rem;
+      min-block-size: 56px;
+      padding: 0.35rem 0.2rem;
+      border: var(--border-width) solid transparent;
+      border-radius: 18px;
+      color: var(--color-ink-muted);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      transition:
+        background-color var(--dur-base),
+        border-color var(--dur-base),
+        color var(--dur-base);
+    }
+
+    .bottom-nav__label {
+      font-family: var(--font-mono);
+      font-size: var(--text-micro);
+      font-weight: var(--font-mono-weight-medium);
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      text-align: center;
+    }
+
+    .bottom-nav__item[aria-current='page'] {
+      border-color: var(--color-ink);
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+    }
+
+    .bottom-nav__item--basket {
+      justify-self: center;
+      inline-size: 64px;
+      min-block-size: 64px;
+      margin-block-start: -1.9rem;
+      border: var(--border-ink);
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 28%, var(--color-highlight) 0 32%, var(--color-accent) 100%);
+      box-shadow:
+        3px 3px 0 var(--color-ink),
+        0 0 0 5px var(--color-surface);
+      color: var(--color-on-highlight);
+    }
+
+    .bottom-nav__item--basket[aria-current='page'] {
+      background: radial-gradient(circle at 32% 28%, var(--color-highlight) 0 32%, var(--color-accent) 100%);
+    }
+
+    .bottom-nav__item--basket:active {
+      translate: 2px 2px;
+      box-shadow:
+        1px 1px 0 var(--color-ink),
+        0 0 0 5px var(--color-surface);
+    }
+
+    .bottom-nav__count {
+      position: absolute;
+      inset-block-start: -6px;
+      inset-inline-end: -8px;
+      display: grid;
+      place-items: center;
+      min-inline-size: 22px;
+      block-size: 22px;
+      padding-inline: 5px;
+      border: var(--border-ink);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-highlight-2);
+      color: var(--color-on-highlight);
+      font-family: var(--font-mono);
+      font-size: var(--text-micro);
+    }
+
+    @media (min-width: 56.25rem) {
+      .bottom-nav {
+        display: none;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.bottom_nav.name",
+  "class": "bottom-nav-section",
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.bottom_nav.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "t:sections.bottom_nav.item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "kind",
+          "label": "t:sections.bottom_nav.kind",
+          "options": [
+            { "value": "link", "label": "t:sections.bottom_nav.kind_link" },
+            { "value": "basket", "label": "t:sections.bottom_nav.kind_basket" }
+          ],
+          "default": "link"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.bottom_nav.item_label",
+          "default": "Shop"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.bottom_nav.item_link",
+          "visible_if": "{{ block.settings.kind == 'link' }}"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:sections.bottom_nav.icon",
+          "options": [
+            { "value": "home", "label": "t:sections.bottom_nav.icon_home" },
+            { "value": "shop", "label": "t:sections.bottom_nav.icon_shop" },
+            { "value": "basket", "label": "t:sections.bottom_nav.icon_basket" },
+            { "value": "cake", "label": "t:sections.bottom_nav.icon_cake" },
+            { "value": "pin", "label": "t:sections.bottom_nav.icon_pin" },
+            { "value": "search", "label": "t:sections.bottom_nav.icon_search" },
+            { "value": "account", "label": "t:sections.bottom_nav.icon_account" },
+            { "value": "calendar", "label": "t:sections.bottom_nav.icon_calendar" }
+          ],
+          "default": "shop"
+        }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "presets": [
+    {
+      "name": "t:sections.bottom_nav.name",
+      "blocks": [
+        { "type": "item", "settings": { "kind": "link", "label": "Home", "link": "/", "icon": "home" } },
+        { "type": "item", "settings": { "kind": "link", "label": "Shop", "link": "/collections/all", "icon": "shop" } },
+        { "type": "item", "settings": { "kind": "basket", "label": "Basket", "icon": "basket" } },
+        { "type": "item", "settings": { "kind": "link", "label": "Search", "link": "/search", "icon": "search" } },
+        { "type": "item", "settings": { "kind": "link", "label": "Find us", "link": "/pages/contact", "icon": "pin" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

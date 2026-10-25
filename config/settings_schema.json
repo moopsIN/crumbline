@@ -222,6 +222,23 @@
           }
         ],
         "default": "1"
+      },
+      {
+        "type": "select",
+        "id": "mobile_nav",
+        "label": "t:settings.layout.mobile_nav",
+        "info": "t:settings.layout.mobile_nav_info",
+        "options": [
+          {
+            "value": "bottom",
+            "label": "t:settings.layout.mobile_nav_bottom"
+          },
+          {
+            "value": "drawer",
+            "label": "t:settings.layout.mobile_nav_drawer"
+          }
+        ],
+        "default": "bottom"
       }
     ]
   },
@@ -254,6 +271,28 @@
     ]
   },
   {
+    "name": "t:settings.cake.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:settings.cake.whatsapp_header"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "t:settings.cake.whatsapp_number",
+        "info": "t:settings.cake.whatsapp_number_info",
+        "placeholder": "+91 98765 43210"
+      },
+      {
+        "type": "checkbox",
+        "id": "whatsapp_floating",
+        "label": "t:settings.cake.whatsapp_floating",
+        "default": false
+      }
+    ]
+  },
+  {
     "name": "t:settings.decorations.name",
     "settings": [
       {
@@ -262,6 +301,40 @@
         "label": "t:settings.decorations.enabled",
         "info": "t:settings.decorations.enabled_info",
         "default": false
+      }
+    ]
+  },
+  {
+    "name": "t:settings.social.name",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:settings.social.info"
+      },
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "t:settings.social.instagram"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "t:settings.social.facebook"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok",
+        "label": "t:settings.social.tiktok"
+      },
+      {
+        "type": "url",
+        "id": "social_pinterest",
+        "label": "t:settings.social.pinterest"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube",
+        "label": "t:settings.social.youtube"
       }
     ]
   }

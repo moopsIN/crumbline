@@ -9,13 +9,62 @@
  */
 {
   "type": "footer",
-  "name": "t:general.footer",
+  "name": "t:sections.groups.footer",
   "sections": {
     "footer": {
       "type": "footer",
+      "blocks": {
+        "contact": {
+          "type": "contact",
+          "settings": {
+            "icon": "pin",
+            "title": "Visit",
+            "address": "",
+            "phone": "",
+            "email": "",
+            "show_whatsapp": true
+          }
+        },
+        "menu": {
+          "type": "menu",
+          "settings": {
+            "icon": "shop",
+            "title": "Shop",
+            "menu": "footer"
+          }
+        },
+        "social": {
+          "type": "social",
+          "settings": {
+            "icon": "instagram",
+            "title": "Follow"
+          }
+        },
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {
+            "icon": "mail",
+            "title": "Bake news",
+            "text": "<p>New bakes and holiday dates, now and then.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "contact",
+        "menu",
+        "social",
+        "newsletter"
+      ],
       "settings": {
-        "menu": "",
-        "show_payment_icons": true
+        "show_hero": true,
+        "kicker": "Baked to order",
+        "wordmark": "",
+        "tagline": "Fancy a slice? Order ahead and we'll have it ready.",
+        "button_label": "Order a cake",
+        "button_link": "/collections/all",
+        "show_whatsapp": true,
+        "show_payment_icons": true,
+        "color_scheme": "scheme-2"
       }
     }
   },

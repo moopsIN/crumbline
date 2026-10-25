@@ -1,0 +1,33 @@
+{% doc %}
+  Outputs a wa.me link to the store's WhatsApp number (Theme settings →
+  Cake options) with a prefilled, URL-encoded message. Outputs nothing when
+  no number is set, so wrap the link in a `!= blank` check.
+
+  The default message comes from the `general.whatsapp` translations, so it
+  can be translated per language.
+
+  @param {string} [product_title] - Mention this product in the message
+  @param {string} [message] - Use this text instead of the default message
+
+  @example
+  {%- capture whatsapp_url -%}{% render 'whatsapp-url', product_title: product.title %}{%- endcapture -%}
+  {% if whatsapp_url != blank %}<a href="{{ whatsapp_url }}">WhatsApp us</a>{% endif %}
+{% enddoc %}
+
+{%- liquid
+  assign digits = settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-' | remove: '(' | remove: ')' | remove: '.'
+  unless digits == blank
+    if message != blank
+      assign text = message
+    elsif product_title != blank
+      assign text = 'general.whatsapp.message_product' | t: shop: shop.name, product: product_title
+    else
+      assign text = 'general.whatsapp.message' | t: shop: shop.name
+    endif
+
+    # Translations come back HTML-escaped; WhatsApp needs the plain characters.
+    assign text = text | replace: '&#39;', "'" | replace: '&quot;', '"' | replace: '&lt;', '<' | replace: '&gt;', '>' | replace: '&amp;', '&'
+    assign encoded = text | url_encode
+    echo 'https://wa.me/' | append: digits | append: '?text=' | append: encoded
+  endunless
+-%}

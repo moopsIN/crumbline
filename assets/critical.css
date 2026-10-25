@@ -87,6 +87,11 @@
     }
   }
 
+  /* No bottom bar to make room for when merchants choose the menu drawer. */
+  :root:has(body[data-mobile-nav='drawer']) {
+    --bottom-nav-h: 0px;
+  }
+
   /* Declared per scheme so var() resolves against the element's own scheme colours. */
   :root,
   [data-scheme] {
