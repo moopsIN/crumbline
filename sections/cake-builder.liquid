@@ -1,0 +1,759 @@
+{% comment %}
+  Cake builder (guide §7.4): four steps, Size → Flavour → Message → Collect,
+  for a merchant-chosen product whose variants combine size and flavour.
+  The message and the date are line item properties, using the same fields
+  as the product page. A typographic summary card shows the cake as it
+  comes together (no illustration).
+
+  Variant choice needs JavaScript; without it the section shows a short
+  note and a link to the product page, which offers the same options.
+{% endcomment %}
+
+{%- liquid
+  assign product = section.settings.product
+  assign form_id = 'BuilderForm-' | append: section.id
+  assign size_name = section.settings.size_option | downcase | strip
+  assign flavour_name = section.settings.flavour_option | downcase | strip
+  assign size_index = -1
+  assign flavour_index = -1
+  for option in product.options_with_values
+    assign option_name = option.name | downcase | strip
+    if option_name == size_name
+      assign size_index = forloop.index0
+    elsif option_name == flavour_name
+      assign flavour_index = forloop.index0
+    endif
+  endfor
+  assign current = product.selected_or_first_available_variant
+  assign step_names = 'sections.cake_builder.step_size,sections.cake_builder.step_flavour,sections.cake_builder.step_message,sections.cake_builder.step_collect' | split: ','
+-%}
+
+{%- if product == blank -%}
+  {%- if request.design_mode -%}
+    <div class="cake-builder full-width" {% render 'section-attributes' %}>
+      <div class="cake-builder__inner">
+        {%- assign setup_title = 'sections.cake_builder.setup_title' | t -%}
+        {%- assign setup_text = 'sections.cake_builder.setup_text' | t -%}
+        {% render 'empty-state', title: setup_title, text: setup_text %}
+      </div>
+    </div>
+  {%- endif -%}
+{%- else -%}
+  <cake-builder
+    class="cake-builder full-width"
+    data-size-index="{{ size_index }}"
+    data-flavour-index="{{ flavour_index }}"
+    data-money-format="{{ shop.money_format | escape }}"
+    data-step-label="{{ 'sections.cake_builder.step_count' | t: current: '__CURRENT__', total: 4 }}"
+    data-unavailable="{{ 'products.buy.unavailable' | t }}"
+    data-serves-label="{{ 'products.card.serves' | t: people: '__SERVES__' }}"
+    data-error-0="{{ 'sections.cake_builder.error_size' | t }}"
+    data-error-1="{{ 'sections.cake_builder.error_flavour' | t }}"
+    data-error-3="{{ 'sections.cake_builder.error_date' | t }}"
+    {% render 'section-attributes' %}
+  >
+    <script type="application/json" data-variants>
+      {{ product.variants | json }}
+    </script>
+    <script type="application/json" data-serves>
+      {
+        {%- for block in section.blocks -%}
+          {{ block.settings.size | json }}: {{ block.settings.serves | json }}{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      }
+    </script>
+
+    <div class="cake-builder__inner">
+      {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
+
+      <div class="cake-builder__fallback no-js-only">
+        <p>{{ 'sections.cake_builder.no_js' | t }}</p>
+        {%- assign fallback_label = 'sections.cake_builder.no_js_cta' | t -%}
+        {% render 'button', label: fallback_label, url: product.url, icon: 'arrow-right' %}
+      </div>
+
+      <div class="cake-builder__app js-only">
+        <div class="cake-builder__preview" aria-live="polite">
+          <p class="cake-builder__price-bubble"><span class="mono">{{ 'sections.cake_builder.total' | t }}</span> <strong data-summary="price">{{ current.price | money }}</strong></p>
+          <div class="cake-builder__card">
+            <p class="cake-builder__card-kicker mono">{{ product.title | escape }}</p>
+            <p class="cake-builder__card-main">
+              <span data-summary="size">{% if size_index >= 0 %}{{ current.options[size_index] }}{% endif %}</span>
+              <em data-summary="flavour">{% if flavour_index >= 0 %}{{ current.options[flavour_index] }}{% endif %}</em>
+            </p>
+            <p class="cake-builder__card-message" data-summary="message" data-empty="{{ 'sections.cake_builder.message_empty' | t }}">{{ 'sections.cake_builder.message_empty' | t }}</p>
+            <p class="cake-builder__card-date mono" data-summary="date" data-empty="{{ 'sections.cake_builder.date_empty' | t }}">{{ 'sections.cake_builder.date_empty' | t }}</p>
+          </div>
+          <p class="cake-builder__serves mono" data-summary="serves" hidden></p>
+        </div>
+
+        {%- form 'product', product, id: form_id, class: 'cake-builder__form', data-product-form: '', novalidate: 'novalidate' -%}
+          <input type="hidden" name="id" value="{{ current.id }}" data-variant-input>
+          <input type="hidden" name="quantity" value="1">
+
+          <ol class="cake-builder__steps" role="list">
+            {%- for key in step_names -%}
+              <li>
+                <button type="button" class="cake-builder__pip" data-goto="{{ forloop.index0 }}" {% if forloop.first %}aria-current="step"{% else %}disabled{% endif %}>
+                  <b class="mono">0{{ forloop.index }}</b>
+                  <span>{{ key | t }}</span>
+                  <em data-pip-summary="{{ forloop.index0 }}"></em>
+                </button>
+              </li>
+            {%- endfor -%}
+          </ol>
+
+          {%- for option in product.options_with_values -%}
+            {%- assign idx = forloop.index0 -%}
+            {%- if idx == size_index or idx == flavour_index -%}
+              {%- liquid
+                if idx == size_index
+                  assign step = 0
+                  assign legend = 'sections.cake_builder.legend_size' | t
+                else
+                  assign step = 1
+                  assign legend = 'sections.cake_builder.legend_flavour' | t
+                endif
+              -%}
+              <fieldset class="cake-builder__panel" data-step="{{ step }}" {% unless step == 0 %}hidden{% endunless %}>
+                <legend class="cake-builder__legend" tabindex="-1">{{ legend }}</legend>
+                <div class="cake-builder__pills">
+                  {%- for value in option.values -%}
+                    {%- assign pill_id = section.id | append: '-o' | append: idx | append: '-' | append: forloop.index -%}
+                    <label class="option-pill" for="{{ pill_id }}">
+                      <input type="radio" id="{{ pill_id }}" name="{{ section.id }}-option-{{ idx }}" value="{{ value.name | escape }}" data-option-index="{{ idx }}" {% if value.selected %}checked{% endif %}>
+                      <span>{{ value.name | escape }}<small data-pill-serves="{{ value.name | escape }}"></small></span>
+                    </label>
+                  {%- endfor -%}
+                </div>
+              </fieldset>
+            {%- endif -%}
+          {%- endfor -%}
+
+          <fieldset class="cake-builder__panel" data-step="2" hidden>
+            <legend class="cake-builder__legend" tabindex="-1">{{ 'sections.cake_builder.legend_message' | t }}</legend>
+            {%- assign message_label = 'products.message.label' | t -%}
+            {% render 'cake-message-field', id: section.id, max_length: section.settings.message_length, label: message_label %}
+          </fieldset>
+
+          <fieldset class="cake-builder__panel" data-step="3" hidden>
+            <legend class="cake-builder__legend" tabindex="-1">{{ 'sections.cake_builder.legend_collect' | t }}</legend>
+            {% render 'fulfilment-fields', product: product, id: section.id, required: true, show_delivery: section.settings.show_delivery %}
+          </fieldset>
+
+          <p class="cake-builder__error" role="alert" data-step-error hidden>{% render 'icon', name: 'alert' %}<span></span></p>
+
+          <div class="cake-builder__nav">
+            {%- assign back_label = 'sections.cake_builder.back' | t -%}
+            {%- assign next_label = 'sections.cake_builder.next' | t -%}
+            {% render 'button', label: back_label, style: 'secondary', size: 'small', attributes: 'data-back disabled' %}
+            <span class="cake-builder__count mono" data-step-count aria-live="polite">{{ 'sections.cake_builder.step_count' | t: current: 1, total: 4 }}</span>
+            {% render 'button', label: next_label, size: 'small', icon: 'arrow-right', attributes: 'data-next' %}
+            <button type="submit" class="cake-builder__submit" data-submit hidden>
+              {{- 'products.buy.add' | t }} · <span data-summary="price">{{ current.price | money }}</span>
+            </button>
+          </div>
+        {%- endform -%}
+      </div>
+    </div>
+  </cake-builder>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .cake-builder {
+      display: block;
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+    }
+
+    .cake-builder__inner {
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .cake-builder__fallback {
+      display: grid;
+      justify-items: start;
+      gap: 1rem;
+    }
+
+    .cake-builder__app {
+      display: grid;
+      gap: clamp(1.5rem, 1rem + 3vw, 3rem);
+      align-items: start;
+    }
+
+    /* Preview (typographic cake card on the Cute sunburst panel) */
+    .cake-builder__preview {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-block-size: clamp(320px, 40vw, 500px);
+      padding: 4.5rem 1.5rem;
+      overflow: hidden;
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-highlight-2);
+      isolation: isolate;
+    }
+
+    .cake-builder__preview::before {
+      content: '';
+      position: absolute;
+      inset: -20%;
+      z-index: -1;
+      background: repeating-conic-gradient(from 0deg at 50% 50%, var(--color-highlight-2) 0 10deg, color-mix(in oklch, var(--color-highlight-2) 70%, white) 10deg 20deg);
+    }
+
+    .cake-builder__price-bubble {
+      position: absolute;
+      inset-block-start: 1.25rem;
+      inset-inline-start: 1.25rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 0.5rem 1rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-m);
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+      box-shadow: var(--shadow-hard);
+    }
+
+    .cake-builder__price-bubble strong {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+    }
+
+    .cake-builder__card {
+      display: grid;
+      justify-items: center;
+      gap: 0.6rem;
+      inline-size: min(100%, 22rem);
+      padding: 1.75rem 1.5rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+      text-align: center;
+      box-shadow: var(--shadow-hard-lg);
+      rotate: -2deg;
+    }
+
+    .cake-builder__card-kicker,
+    .cake-builder__card-date {
+      margin: 0;
+      color: var(--color-ink-muted);
+    }
+
+    .cake-builder__card-main {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--step-3);
+      font-weight: var(--font-display-weight);
+      line-height: 1;
+    }
+
+    .cake-builder__card-main em {
+      display: block;
+      color: var(--color-accent-text);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .cake-builder__card-message {
+      margin: 0;
+      padding: 0.5rem 1.2rem;
+      border-radius: var(--radius-pill);
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      font-style: italic;
+      overflow-wrap: anywhere;
+    }
+
+    .cake-builder__serves {
+      position: absolute;
+      inset-block-end: 1.25rem;
+      inset-inline-end: 1.25rem;
+      margin: 0;
+      padding: 0.35rem 0.8rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+    }
+
+    /* Form */
+    .cake-builder__form {
+      display: grid;
+      gap: var(--space-s);
+      padding: clamp(1.25rem, 1rem + 1vw, 2rem);
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-surface);
+    }
+
+    .cake-builder__steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.4rem;
+      margin: 0;
+      padding: 0 0 1.1rem;
+      border-block-end: var(--border-divider);
+      list-style: none;
+    }
+
+    .cake-builder__pip {
+      position: relative;
+      display: grid;
+      justify-items: start;
+      gap: 0.1rem;
+      inline-size: 100%;
+      min-block-size: 44px;
+      padding: 0.7rem 0.1rem 0;
+      border: 0;
+      background: none;
+      color: var(--color-ink-muted);
+      text-align: start;
+      cursor: pointer;
+    }
+
+    .cake-builder__pip::before {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: 0;
+      block-size: 5px;
+      border-radius: var(--radius-pill);
+      background-color: var(--color-border);
+    }
+
+    .cake-builder__pip b {
+      font-size: var(--text-micro);
+      font-weight: var(--font-mono-weight-medium);
+    }
+
+    .cake-builder__pip span {
+      font-weight: var(--font-body-weight-bold);
+      font-size: 0.86rem;
+      line-height: 1.2;
+    }
+
+    .cake-builder__pip em {
+      max-inline-size: 100%;
+      overflow: hidden;
+      font-size: 0.72rem;
+      font-style: normal;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .cake-builder__pip:disabled {
+      cursor: default;
+    }
+
+    .cake-builder__pip.is-done {
+      color: var(--color-ink);
+    }
+
+    .cake-builder__pip.is-done::before {
+      background-color: var(--color-ink);
+    }
+
+    .cake-builder__pip[aria-current='step'] {
+      color: var(--color-ink);
+    }
+
+    .cake-builder__pip[aria-current='step']::before {
+      background-color: var(--color-accent);
+    }
+
+    .cake-builder__panel {
+      min-inline-size: 0;
+      min-block-size: 9.5rem;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .cake-builder__legend {
+      margin-block-end: 0.8rem;
+      padding: 0;
+      font-family: var(--font-display);
+      font-size: var(--step-1);
+      font-weight: var(--font-display-weight);
+    }
+
+    .cake-builder__legend:focus-visible {
+      outline-offset: 6px;
+    }
+
+    .cake-builder__pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .cake-builder__panel .cake-message__label,
+    .cake-builder__panel .fulfilment > .fulfilment__group:last-child > .fulfilment__legend {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    .cake-builder__error {
+      display: flex;
+      gap: 0.4rem;
+      margin: 0;
+      color: var(--color-error);
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .cake-builder__error .icon {
+      inline-size: 1.1rem;
+      block-size: 1.1rem;
+    }
+
+    .cake-builder__nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding-block-start: 1.1rem;
+      border-block-start: var(--border-divider);
+    }
+
+    .cake-builder__count {
+      color: var(--color-ink-muted);
+    }
+
+    .cake-builder__submit {
+      min-block-size: 44px;
+      padding: 0.5rem 1rem;
+      border: var(--border-width) solid var(--color-button);
+      border-radius: var(--button-radius);
+      background-color: var(--color-button);
+      color: var(--color-button-label);
+      font-weight: var(--font-body-weight-bold);
+      box-shadow: 4px 4px 0 var(--color-accent);
+    }
+
+    .cake-builder__submit:disabled {
+      opacity: 0.4;
+      box-shadow: none;
+    }
+
+    .cake-builder__submit[aria-busy='true'] {
+      opacity: 0.7;
+    }
+
+    @media (min-width: 56.25rem) {
+      .cake-builder__app {
+        grid-template-columns: 1fr 1.05fr;
+      }
+
+      .cake-builder__preview {
+        position: sticky;
+        inset-block-start: calc(var(--header-h) + 1.5rem);
+      }
+
+      .cake-builder__form {
+        margin-block-start: clamp(3rem, 1rem + 4vw, 5.5rem);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cake-builder__card {
+        rotate: 0deg;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('cake-builder')) {
+    customElements.define(
+      'cake-builder',
+      class extends HTMLElement {
+        #step = 0;
+
+        connectedCallback() {
+          this.variants = JSON.parse(this.querySelector('[data-variants]').textContent);
+          this.serves = JSON.parse(this.querySelector('[data-serves]').textContent || '{}');
+          this.sizeIndex = Number(this.dataset.sizeIndex);
+          this.flavourIndex = Number(this.dataset.flavourIndex);
+          this.form = this.querySelector('form');
+          this.panels = [...this.querySelectorAll('.cake-builder__panel')].sort((a, b) => a.dataset.step - b.dataset.step);
+          this.pips = [...this.querySelectorAll('[data-goto]')];
+          this.current = this.variants.find((v) => String(v.id) === this.querySelector('[data-variant-input]').value) ?? this.variants[0];
+
+          this.querySelectorAll('[data-pill-serves]').forEach((small) => {
+            const serves = this.serves[small.dataset.pillServes];
+            if (serves) small.textContent = serves;
+          });
+          this.form.addEventListener('change', () => this.#update());
+          this.form.addEventListener('input', () => this.#update());
+          this.querySelector('[data-next]').addEventListener('click', () => this.#next());
+          this.querySelector('[data-back]').addEventListener('click', () => this.#go(this.#step - 1));
+          this.pips.forEach((pip) => pip.addEventListener('click', () => this.#go(Number(pip.dataset.goto))));
+          this.form.addEventListener('submit', (event) => {
+            if (!this.#validate(3)) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+            }
+          }, true);
+
+          const fromHash = Number((location.hash.match(/^#step-(\d)$/) || [])[1]) - 1;
+          this.#update();
+          if (fromHash > 0 && this.panels.slice(0, fromHash).every((_, i) => this.#validate(i, false))) this.#go(fromHash, false);
+        }
+
+        #selected(index) {
+          return this.form.querySelector(`input[data-option-index="${index}"]:checked`)?.value;
+        }
+
+        #update() {
+          const size = this.#selected(this.sizeIndex);
+          const flavour = this.#selected(this.flavourIndex);
+          const variant = this.variants.find((v) =>
+            v.options.every((value, i) => {
+              if (i === this.sizeIndex) return value === size;
+              if (i === this.flavourIndex) return value === flavour;
+              return value === this.current.options[i];
+            })
+          );
+          const submit = this.querySelector('[data-submit]');
+          if (variant) {
+            this.current = variant;
+            this.querySelector('[data-variant-input]').value = variant.id;
+          }
+          submit.disabled = !variant || !variant.available;
+          this.querySelectorAll('[data-summary="price"]').forEach((el) => (el.textContent = variant ? this.#money(variant.price) : this.dataset.unavailable));
+          this.#set('size', size ?? '');
+          this.#set('flavour', flavour ?? '');
+          const serves = this.serves[size];
+          const servesEl = this.querySelector('[data-summary="serves"]');
+          servesEl.hidden = !serves;
+          if (serves) servesEl.textContent = this.dataset.servesLabel.replace('__SERVES__', serves);
+          const message = this.form.querySelector('.cake-message input')?.value.trim();
+          this.#set('message', message || this.querySelector('[data-summary="message"]').dataset.empty);
+          const date = this.#dateValue();
+          this.#set('date', date ? this.#formatDate(date) : this.querySelector('[data-summary="date"]').dataset.empty);
+          this.#pipSummary(0, size);
+          this.#pipSummary(1, flavour);
+          this.#pipSummary(2, message);
+          this.#pipSummary(3, date ? this.#formatDate(date) : '');
+          if (!this.querySelector('[data-step-error]').hidden && this.#validate(this.#step, false)) {
+            this.querySelector('[data-step-error]').hidden = true;
+          }
+        }
+
+        #set(key, value) {
+          const el = this.querySelector(`[data-summary="${key}"]`);
+          if (el) el.textContent = value;
+        }
+
+        #pipSummary(step, text) {
+          const el = this.querySelector(`[data-pip-summary="${step}"]`);
+          if (el) el.textContent = text ?? '';
+        }
+
+        #dateValue() {
+          const pill = this.form.querySelector('.date-pill input:checked');
+          const other = this.form.querySelector('[data-other-input][name]');
+          return pill?.value || other?.value || '';
+        }
+
+        #formatDate(iso) {
+          const lang = document.documentElement.lang || undefined;
+          return new Intl.DateTimeFormat(lang, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(`${iso}T00:00:00Z`));
+        }
+
+        #money(cents) {
+          const format = this.dataset.moneyFormat || '\u007B\u007Bamount\u007D\u007D';
+          const number = (value, decimals, thousands, decimal) =>
+            (value / 100).toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, thousands).replace(/\.(\d+)$/, `${decimal}$1`);
+          return format.replace(/\{\{\s*(\w+)\s*\}\}/, (_, key) => {
+            if (key === 'amount_no_decimals') return number(cents, 0, ',', '.');
+            if (key === 'amount_with_comma_separator') return number(cents, 2, '.', ',');
+            if (key === 'amount_no_decimals_with_comma_separator') return number(cents, 0, '.', ',');
+            return number(cents, 2, ',', '.');
+          });
+        }
+
+        /* Size and flavour need a choice; Collect needs a valid date. */
+        #validate(step, show = true) {
+          let ok = true;
+          if (step === 0) ok = Boolean(this.#selected(this.sizeIndex));
+          if (step === 1) ok = Boolean(this.#selected(this.flavourIndex));
+          if (step === 3) {
+            const other = this.form.querySelector('[data-other-input]');
+            ok = Boolean(this.#dateValue()) && (!other || other.checkValidity());
+          }
+          const error = this.querySelector('[data-step-error]');
+          if (show) {
+            error.hidden = ok;
+            if (!ok) error.querySelector('span').textContent = this.dataset[`error-${step}`] ?? '';
+          }
+          return ok;
+        }
+
+        #next() {
+          if (!this.#validate(this.#step)) return;
+          this.#go(this.#step + 1);
+        }
+
+        #go(step, focus = true) {
+          if (step < 0 || step > 3) return;
+          this.#step = step;
+          this.panels.forEach((panel, i) => (panel.hidden = i !== step));
+          this.pips.forEach((pip, i) => {
+            pip.toggleAttribute('aria-current', i === step);
+            if (i === step) pip.setAttribute('aria-current', 'step');
+            pip.classList.toggle('is-done', i < step);
+            pip.disabled = i > step && !this.pips[i - 1].classList.contains('is-done') && i !== step;
+          });
+          this.querySelector('[data-back]').disabled = step === 0;
+          this.querySelector('[data-next]').hidden = step === 3;
+          this.querySelector('[data-submit]').hidden = step !== 3;
+          this.querySelector('[data-step-error]').hidden = true;
+          this.querySelector('[data-step-count]').textContent = this.dataset.stepLabel.replace('__CURRENT__', step + 1);
+          history.replaceState(history.state, '', `#step-${step + 1}`);
+          if (focus) this.panels[step].querySelector('legend').focus();
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.cake_builder.name",
+  "class": "cake-builder-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.shared.eyebrow",
+      "default": "Build a cake"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.shared.heading",
+      "info": "t:sections.shared.heading_info",
+      "default": "Dream it, <em>we'll bake it.</em>"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:sections.shared.text",
+      "default": "Pick a size, a flavour and a message, then watch it come together."
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "t:sections.cake_builder.product",
+      "info": "t:sections.cake_builder.product_info"
+    },
+    {
+      "type": "text",
+      "id": "size_option",
+      "label": "t:sections.cake_builder.size_option",
+      "info": "t:sections.cake_builder.option_info",
+      "default": "Size"
+    },
+    {
+      "type": "text",
+      "id": "flavour_option",
+      "label": "t:sections.cake_builder.flavour_option",
+      "default": "Flavour"
+    },
+    {
+      "type": "range",
+      "id": "message_length",
+      "label": "t:sections.main_product.max_length",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "default": 40
+    },
+    {
+      "type": "checkbox",
+      "id": "show_delivery",
+      "label": "t:sections.main_product.fulfilment_delivery",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "serves",
+      "name": "t:sections.cake_builder.serves_block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "size",
+          "label": "t:sections.cake_builder.serves_size",
+          "info": "t:sections.cake_builder.serves_size_info",
+          "default": "8\""
+        },
+        {
+          "type": "text",
+          "id": "serves",
+          "label": "t:sections.cake_builder.serves_people",
+          "default": "12–16"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.cake_builder.name"
+    }
+  ]
+}
+{% endschema %}

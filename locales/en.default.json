@@ -191,6 +191,29 @@
     },
     "visit": {
       "directions": "Get directions"
+    },
+    "cake_builder": {
+      "setup_title": "Choose a builder product",
+      "setup_text": "Pick a product whose variants combine size and flavour in this section's settings.",
+      "no_js": "The cake builder needs JavaScript. You can choose the same options on the cake's page.",
+      "no_js_cta": "Build your cake",
+      "total": "Total",
+      "message_empty": "Your message here",
+      "date_empty": "Pick a day",
+      "step_size": "Size",
+      "step_flavour": "Flavour",
+      "step_message": "Message",
+      "step_collect": "Collect",
+      "legend_size": "How big are we going?",
+      "legend_flavour": "Pick a flavour",
+      "legend_message": "What should it say?",
+      "legend_collect": "When are you collecting?",
+      "step_count": "Step {{ current }} of {{ total }}",
+      "back": "Back",
+      "next": "Next",
+      "error_size": "Choose a size to continue.",
+      "error_flavour": "Choose a flavour to continue.",
+      "error_date": "Pick a day for your cake."
     }
   },
   "404": {
