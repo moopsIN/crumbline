@@ -57,6 +57,7 @@
     --color-error: #B3261E;
     --color-allergen-warn-bg: #FFE1D1;
     --color-allergen-warn-fg: #9A3A10;
+    --color-awning-light: #FFFDF9; /* awning stripes stay light on every scheme */
     --color-on-highlight: #1B1714; /* text on butter/strawberry in every scheme */
 
     /* Motion (guide §3.5) */

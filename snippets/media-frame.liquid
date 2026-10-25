@@ -10,6 +10,8 @@
   @param {string} [style] - `plain` (default) or `awning`
   @param {boolean} [sunburst] - Awning only: draw the sunburst behind the image
   @param {string} [fit] - `cover` (default, photos) or `contain` (cut-outs)
+  @param {string} [aspect_ratio] - Plain only: crop to a ratio such as `4 / 5`; natural ratio when blank
+  @param {string} [focus] - CSS `object-position` for cropped images (default `center 20%`)
   @param {string} [sizes] - The `sizes` attribute for the layout slot
   @param {boolean} [priority] - Mark as the LCP image: eager loading and high fetch priority
   @param {string} [class] - Extra classes
@@ -30,7 +32,10 @@
   endif
 -%}
 
-<div class="media-frame media-frame--{{ style }} {{ class }}" style="--media-fit: {{ fit }};">
+<div
+  class="media-frame media-frame--{{ style }}{% if aspect_ratio != blank %} media-frame--cropped{% endif %} {{ class }}"
+  style="--media-fit: {{ fit }}; --media-focus: {{ focus | default: 'center 20%' }};{% if aspect_ratio != blank %} --media-aspect: {{ aspect_ratio }};{% endif %}"
+>
   {%- if style == 'awning' -%}
     <div class="media-frame__awning" aria-hidden="true"></div>
   {%- endif -%}
@@ -74,16 +79,32 @@
       block-size: auto;
     }
 
+    .media-frame--cropped .media-frame__window {
+      aspect-ratio: var(--media-aspect);
+    }
+
+    .media-frame--cropped .media-frame__image {
+      block-size: 100%;
+      object-fit: var(--media-fit, cover);
+      object-position: var(--media-focus);
+    }
+
     .media-frame__placeholder {
       aspect-ratio: 4 / 3;
       background-color: var(--color-accent-soft);
       fill: color-mix(in oklch, var(--color-ink) 30%, transparent);
     }
 
+    /* Side padding holds the awning's overhang, so it never widens the page. */
     .media-frame--awning {
-      inline-size: min(100%, 470px);
+      inline-size: min(100%, 500px);
       margin-inline: auto;
       padding-block-start: 52px;
+      padding-inline: 6%;
+    }
+
+    .media-frame--awning .media-frame__placeholder {
+      background-color: transparent;
     }
 
     .media-frame--awning .media-frame__window {
@@ -98,6 +119,7 @@
       inset: 0;
       block-size: 100%;
       object-fit: var(--media-fit, cover);
+      object-position: var(--media-focus);
     }
 
     .media-frame__window--sunburst::before {
@@ -115,12 +137,12 @@
       position: absolute;
       z-index: 1;
       inset-block-start: 0;
-      inset-inline: -7%;
+      inset-inline: 0;
       block-size: 74px;
       border: var(--border-ink);
       border-block-end: 0;
       border-radius: 14px 14px 0 0;
-      background: repeating-linear-gradient(90deg, var(--color-highlight-2) 0 34px, var(--color-surface) 34px 68px);
+      background: repeating-linear-gradient(90deg, var(--color-highlight-2) 0 34px, var(--color-awning-light) 34px 68px);
       mask:
         radial-gradient(circle at 17px 0, #000 16px, transparent 17px) 0 100% / 34px 17px repeat-x,
         linear-gradient(#000, #000) 0 0 / 100% calc(100% - 17px) no-repeat;
