@@ -1,0 +1,207 @@
+{% doc %}
+  Renders a button or a link styled as a button.
+
+  A `url` makes it an `<a>`; without one it's a `<button>`. Colours come from
+  the current colour scheme's button settings, so the same markup works on
+  cream and ink-band sections. A disabled link drops its href and gets
+  `aria-disabled`; a disabled button gets the `disabled` attribute.
+
+  @param {string} label - Visible text (or the accessible name when `icon_only` is true)
+  @param {string} [url] - Destination; renders an `<a>` when present
+  @param {string} [style] - `primary` (default), `secondary` or `tertiary`
+  @param {string} [size] - `default` or `small`
+  @param {string} [icon] - Trailing icon name from the icon snippet, e.g. `arrow-right`
+  @param {boolean} [icon_only] - Circular 44px icon button; `label` becomes visually hidden
+  @param {string} [type] - Button type: `button` (default) or `submit`
+  @param {boolean} [disabled] - Renders the disabled state
+  @param {boolean} [loading] - Renders the loading state and sets `aria-busy`
+  @param {string} [class] - Extra classes
+  @param {string} [attributes] - Extra raw attributes, e.g. `form="product-form" name="add"`
+
+  @example
+  {% render 'button', label: 'Order a cake', url: routes.all_products_collection_url, icon: 'arrow-right' %}
+  {% render 'button', label: 'Add to basket', type: 'submit', loading: true %}
+  {% render 'button', label: 'Close', icon: 'close', icon_only: true, style: 'secondary' %}
+{% enddoc %}
+
+{%- liquid
+  assign style = style | default: 'primary'
+  assign classes = 'button button--' | append: style
+  if size == 'small'
+    assign classes = classes | append: ' button--small'
+  endif
+  if icon_only
+    assign classes = classes | append: ' button--icon'
+  endif
+  if class != blank
+    assign classes = classes | append: ' ' | append: class
+  endif
+-%}
+
+{%- capture content -%}
+  <span class="button__label{% if icon_only %} visually-hidden{% endif %}">{{ label }}</span>
+  {%- if icon != blank -%}
+    {% render 'icon', name: icon, class: 'button__icon' %}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- if url != blank -%}
+  <a
+    class="{{ classes }}"
+    {% if disabled %}
+      role="link" aria-disabled="true"
+    {% else %}
+      href="{{ url }}"
+    {% endif %}
+    {% if loading %}
+      aria-busy="true"
+    {% endif %}
+    {{ attributes }}
+  >
+    {{- content -}}
+  </a>
+{%- else -%}
+  <button
+    class="{{ classes }}"
+    type="{{ type | default: 'button' }}"
+    {% if disabled %}
+      disabled
+    {% endif %}
+    {% if loading %}
+      aria-busy="true"
+    {% endif %}
+    {{ attributes }}
+  >
+    {{- content -}}
+  </button>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .button {
+      --lift: 0px;
+      --button-bg: var(--color-button);
+      --button-fg: var(--color-button-label);
+      --button-border: var(--color-button);
+      --button-shadow-color: var(--color-accent);
+
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-block-size: 48px;
+      padding: 0.75rem 1.4rem;
+      border: var(--border-width) solid var(--button-border);
+      border-radius: var(--button-radius);
+      background-color: var(--button-bg);
+      color: var(--button-fg);
+      font-family: var(--font-body);
+      font-weight: var(--font-body-weight-bold);
+      line-height: 1.2;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: var(--button-shadow-offset) var(--button-shadow-offset) 0 var(--button-shadow-color);
+      translate: var(--lift) var(--lift);
+      transition:
+        translate 450ms var(--ease-spring),
+        box-shadow var(--dur-base) var(--ease-out),
+        background-color var(--dur-base);
+    }
+
+    .button--secondary {
+      --button-bg: var(--color-button-secondary);
+      --button-fg: var(--color-button-secondary-label);
+      --button-border: var(--color-button-secondary-label);
+      --button-shadow-color: var(--color-button-secondary-label);
+    }
+
+    .button--tertiary {
+      min-block-size: 44px;
+      padding-inline: 0.25rem;
+      border-color: transparent;
+      background: none;
+      color: var(--color-ink);
+      text-decoration: underline 2px;
+      text-underline-offset: 4px;
+      box-shadow: none;
+    }
+
+    .button--small {
+      min-block-size: 44px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .button--icon {
+      inline-size: 44px;
+      min-block-size: 44px;
+      padding: 0;
+      border-radius: 50%;
+    }
+
+    .button__icon {
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+    }
+
+    @media (hover: hover) {
+      .button:not(.button--tertiary):hover {
+        --lift: -2px;
+
+        box-shadow: calc(var(--button-shadow-offset) * 1.5) calc(var(--button-shadow-offset) * 1.5) 0 var(--button-shadow-color);
+      }
+
+      .button--tertiary:hover {
+        text-decoration-color: var(--color-accent);
+      }
+    }
+
+    .button:not(.button--tertiary):active {
+      --lift: var(--button-shadow-offset);
+
+      box-shadow: 0 0 0 var(--button-shadow-color);
+      transition-duration: 80ms;
+    }
+
+    .button:is([disabled], [aria-disabled='true']) {
+      --lift: 0px;
+
+      opacity: 0.4;
+      box-shadow: none;
+      pointer-events: none;
+    }
+
+    .button[aria-busy='true'] {
+      pointer-events: none;
+    }
+
+    .button[aria-busy='true'] > * {
+      visibility: hidden;
+    }
+
+    .button[aria-busy='true']::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+      border: var(--border-width) solid currentColor;
+      border-inline-end-color: transparent;
+      border-radius: 50%;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .button[aria-busy='true']::after {
+        animation: button-spin 700ms linear infinite;
+      }
+    }
+
+    @keyframes button-spin {
+      to {
+        rotate: 1turn;
+      }
+    }
+  }
+{% endstylesheet %}
