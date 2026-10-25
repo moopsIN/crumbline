@@ -1,6 +1,8 @@
 {
   "accessibility": {
-    "skip_to_content": "Skip to content"
+    "skip_to_content": "Skip to content",
+    "account": "Account",
+    "basket": "Basket"
   },
   "404": {
     "title": "404",
