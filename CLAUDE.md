@@ -1,1 +1,0 @@
-/Users/prateek/Projects/crumbline/AGENTS.md
