@@ -4,8 +4,8 @@ Guides for merchants setting up Crumbline and developers working on it. This fol
 
 | Guide | For | Status |
 |---|---|---|
+| [Setting up Crumbline](./setup.md) | Merchants | Available |
 | [Metafield setup](./metafields.md) | Merchants | Available |
 | [Cake builder setup](./cake-builder.md) | Merchants | Available |
-| Theme setup (`setup.md`) | Merchants | Coming in v1.0.0 |
 
-Until then, the [project README](../README.md) has a quick product-data table and setup steps for developers.
+Developers: the [project README](../README.md) covers running the theme locally.

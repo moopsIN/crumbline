@@ -30,7 +30,7 @@ Open a product in admin, scroll to **Metafields**, and fill in what applies:
 - **Ingredients:** the full list, as you'd print it on a label.
 - **Image focus:** pick `center 20%` for tall, tiered cakes so the top tier isn't cut off when photos are cropped to a portrait card. `center` suits flat bakes such as brownies.
 - **Occasions:** for example `birthday`, `wedding`, `anniversary`. Used by the occasion filter chips.
-- **Use in cake builder:** turn on for the product the cake builder should sell (see the builder setup guide, coming in a later release).
+- **Use in cake builder:** turn on for the product the cake builder should sell (see the [cake builder guide](./cake-builder.md)).
 
 ## 3. No metafields? Use tags
 
