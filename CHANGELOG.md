@@ -4,6 +4,20 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-10-25
+
+Phase 5: cart and cart drawer.
+
+### Added
+- Cart drawer that slides in (a bottom sheet on phones) when something is added or the basket is tapped; or, if you prefer, an "Added to your basket" message (Theme settings → Cart).
+- Cart page with each cake's chosen date, pickup or delivery and message, an order note, a reminder of how much notice the cakes need, discounts, subtotal and express checkout.
+- Add to basket, change quantities and remove items without reloading; everything still works without JavaScript.
+- Live basket counts in the header and bottom navigation.
+- Friendly empty states shared by the cart and collections.
+
+### Removed
+- Skeleton's cart section.
+
 ## [0.4.0] — 2026-10-25
 
 Phase 4: product page.
