@@ -1,0 +1,60 @@
+{% doc %}
+  A friendly typographic empty state: a display-font title, one line of
+  text and an optional button, in a dashed rounded box (Q-07
+  recommendation).
+
+  @param {string} title - Short heading, e.g. "Your basket is empty"
+  @param {string} [text] - One supporting sentence
+  @param {string} [button_label] - Button text
+  @param {string} [button_url] - Button link
+  @param {string} [button_style] - `primary` (default) or `secondary`
+  @param {string} [button_attributes] - Extra raw attributes for the button
+  @param {string} [class] - Extra classes
+
+  @example
+  {% render 'empty-state', title: title, text: text, button_label: label, button_url: routes.all_products_collection_url %}
+{% enddoc %}
+
+<div class="empty-state {{ class }}">
+  <p class="empty-state__title">{{ title | escape }}</p>
+  {%- if text != blank -%}
+    <p class="empty-state__text">{{ text | escape }}</p>
+  {%- endif -%}
+  {%- if button_label != blank and button_url != blank -%}
+    {% render 'button',
+      label: button_label,
+      url: button_url,
+      style: button_style,
+      icon: 'arrow-right',
+      attributes: button_attributes
+    %}
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .empty-state {
+      display: grid;
+      justify-items: center;
+      gap: 0.75rem;
+      padding: var(--space-xl) var(--space-s);
+      border: var(--border-dashed);
+      border-radius: var(--radius-l);
+      text-align: center;
+    }
+
+    .empty-state__title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--step-2);
+      font-weight: var(--font-display-weight);
+      line-height: 1.1;
+    }
+
+    .empty-state__text {
+      margin: 0;
+      max-inline-size: 40ch;
+      color: var(--color-ink-muted);
+    }
+  }
+{% endstylesheet %}
