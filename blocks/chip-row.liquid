@@ -5,9 +5,10 @@
   {% content_for 'block', type: 'chip-row', id: 'chips' %}
 {% enddoc %}
 
-<ul class="chip-row" {{ block.shopify_attributes }} role="list">
+{% comment %} A div, not a list: Shopify wraps each child block in its own div. {% endcomment %}
+<div class="chip-row" {{ block.shopify_attributes }}>
   {% content_for 'blocks' %}
-</ul>
+</div>
 
 {% stylesheet %}
   @layer components {
@@ -15,9 +16,6 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-      margin: 0;
-      padding: 0;
-      list-style: none;
     }
   }
 {% endstylesheet %}
