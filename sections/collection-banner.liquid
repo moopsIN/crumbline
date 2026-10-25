@@ -1,0 +1,212 @@
+{% comment %}
+  Collection page banner: the collection title (the page's h1), its
+  description, an optional framed image, and an optional row of links to
+  sibling collections from a menu (e.g. Birthday · Wedding · Everyday).
+{% endcomment %}
+
+{%- liquid
+  assign show_image = false
+  if section.settings.show_image and collection.image
+    assign show_image = true
+  endif
+-%}
+
+<div class="collection-banner full-width{% if show_image %} collection-banner--with-image{% endif %}" {% render 'section-attributes' %}>
+  <div class="collection-banner__inner">
+    <div class="collection-banner__copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="collection-banner__eyebrow mono">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      <h1 class="collection-banner__title">{{ collection.title | escape }}</h1>
+      {%- if section.settings.show_description and collection.description != blank -%}
+        <div class="collection-banner__description">{{ collection.description }}</div>
+      {%- endif -%}
+
+      {%- assign nav = section.settings.menu -%}
+      {%- if nav.links.size > 0 -%}
+        <nav class="collection-banner__nav" aria-label="{{ 'collections.banner.nav_label' | t }}">
+          <ul role="list">
+            {%- for link in nav.links -%}
+              <li>
+                <a href="{{ link.url }}" class="collection-banner__link" {% if link.current %}aria-current="page"{% endif %}>
+                  {{- link.title | escape -}}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </nav>
+      {%- endif -%}
+    </div>
+
+    {%- if show_image -%}
+      {% render 'media-frame',
+        image: collection.image,
+        style: section.settings.media_style,
+        sunburst: true,
+        aspect_ratio: '4 / 3',
+        sizes: '(min-width: 900px) 40vw, 100vw',
+        priority: true,
+        class: 'collection-banner__media'
+      %}
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .collection-banner {
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1) * 0.6);
+    }
+
+    .collection-banner__inner {
+      display: grid;
+      gap: var(--space-l);
+      align-items: center;
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .collection-banner__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-block-end: 1rem;
+      color: var(--color-ink-muted);
+    }
+
+    .collection-banner__eyebrow::before {
+      content: '';
+      inline-size: 11px;
+      block-size: 11px;
+      border: var(--border-ink);
+      border-radius: 50%;
+      background-color: var(--color-accent);
+    }
+
+    .collection-banner__title {
+      font-size: var(--step-3);
+    }
+
+    .collection-banner__description {
+      max-inline-size: 60ch;
+      margin-block-start: 0.9rem;
+      color: var(--color-ink-muted);
+      font-size: 1.08em;
+    }
+
+    .collection-banner__nav ul {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1.5rem calc(var(--gutter) * -1) 0;
+      padding: 0.25rem var(--gutter) 0.5rem;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+      list-style: none;
+    }
+
+    .collection-banner__link {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: 44px;
+      padding: 0.5rem 1rem;
+      border: var(--border-width) solid var(--color-border-control);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-surface-alt);
+      font-weight: var(--font-body-weight-bold);
+      white-space: nowrap;
+      text-decoration: none;
+      scroll-snap-align: start;
+    }
+
+    .collection-banner__link:hover {
+      border-color: var(--color-ink);
+    }
+
+    .collection-banner__link[aria-current='page'] {
+      border-color: var(--color-ink);
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+      box-shadow: var(--shadow-hard);
+    }
+
+    @media (min-width: 56.25rem) {
+      .collection-banner--with-image .collection-banner__inner {
+        grid-template-columns: 1.2fr 1fr;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.collection_banner.name",
+  "class": "collection-banner-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.collection_banner.eyebrow"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "t:sections.collection_banner.show_description",
+      "default": true
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "t:sections.collection_banner.menu",
+      "info": "t:sections.collection_banner.menu_info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "t:sections.collection_banner.show_image",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "media_style",
+      "label": "t:sections.collection_banner.media_style",
+      "options": [
+        { "value": "plain", "label": "t:blocks.image.frame_plain" },
+        { "value": "awning", "label": "t:blocks.image.frame_awning" }
+      ],
+      "default": "plain",
+      "visible_if": "{{ section.settings.show_image }}"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        { "value": "0", "label": "t:sections.shared.padding_none" },
+        { "value": "0.5", "label": "t:sections.shared.padding_small" },
+        { "value": "1", "label": "t:sections.shared.padding_default" },
+        { "value": "1.5", "label": "t:sections.shared.padding_large" }
+      ],
+      "default": "1"
+    }
+  ],
+  "enabled_on": {
+    "templates": ["collection"]
+  }
+}
+{% endschema %}

@@ -17,11 +17,61 @@
       "tiktok": "TikTok",
       "pinterest": "Pinterest",
       "youtube": "YouTube"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous page",
+      "next": "Next page",
+      "page": "Page"
     }
   },
   "forms": {
     "email": "Email",
     "email_placeholder": "Your email"
+  },
+  "products": {
+    "price": {
+      "from": "From {{ price }}",
+      "sale": "Sale price",
+      "regular": "Regular price"
+    },
+    "allergens": {
+      "contains": "Contains: {{ list }}."
+    },
+    "card": {
+      "sold_out": "Sold out",
+      "sale": "Sale",
+      "serves": "Serves {{ people }}",
+      "add": "Add {{ title }} to basket",
+      "placeholder_title": "Your cake here"
+    }
+  },
+  "collections": {
+    "product_count": {
+      "zero": "No cakes",
+      "one": "1 cake",
+      "other": "{{ count }} cakes"
+    },
+    "banner": {
+      "nav_label": "More collections"
+    },
+    "filters": {
+      "toggle": "Filter and sort",
+      "price_from": "From",
+      "price_to": "To",
+      "sort": "Sort by",
+      "apply": "Show results",
+      "remove": "Remove filter",
+      "clear": "Clear filters"
+    },
+    "empty": {
+      "title": "Nothing here yet",
+      "text": "Fresh bakes are on their way. Have a look at everything else in the meantime.",
+      "cta": "Browse all cakes",
+      "filtered_title": "No cakes match",
+      "filtered_text": "Try removing a filter or two."
+    },
+    "title": "Collections"
   },
   "sections": {
     "announcement": {
@@ -70,9 +120,6 @@
     "title": "Cart",
     "update": "Update",
     "remove": "Remove"
-  },
-  "collections": {
-    "title": "Collections"
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",

@@ -1,0 +1,72 @@
+{% doc %}
+  Renders a product or variant price with money formatting from the shop's
+  currency settings. Shows "From …" when variant prices differ, and the
+  compare-at price when on sale, with screen-reader labels for both.
+
+  @param {product} [product] - Product to price (uses its price range)
+  @param {variant} [variant] - Price this variant instead of the product
+  @param {string} [class] - Extra classes
+
+  @example
+  {% render 'price', product: product %}
+  {% render 'price', variant: product.selected_or_first_available_variant %}
+{% enddoc %}
+
+{%- liquid
+  if variant
+    assign price = variant.price
+    assign compare_at = variant.compare_at_price
+    assign varies = false
+  else
+    assign price = product.price_min
+    assign compare_at = product.compare_at_price_min
+    assign varies = product.price_varies
+  endif
+
+  assign on_sale = false
+  if compare_at > price
+    assign on_sale = true
+  endif
+
+  assign formatted = price | money
+-%}
+
+<div class="price{% if on_sale %} price--sale{% endif %} {{ class }}">
+  {%- if on_sale -%}
+    <span class="visually-hidden">{{ 'products.price.sale' | t }}</span>
+  {%- endif -%}
+  <span class="price__current">
+    {%- if varies -%}
+      {{ 'products.price.from' | t: price: formatted }}
+    {%- else -%}
+      {{ formatted }}
+    {%- endif -%}
+  </span>
+  {%- if on_sale -%}
+    <span class="visually-hidden">{{ 'products.price.regular' | t }}</span>
+    <s class="price__compare">{{ compare_at | money }}</s>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .price {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.4rem;
+      font-size: 1.05rem;
+      font-weight: 500;
+    }
+
+    .price__compare {
+      color: var(--color-ink-muted);
+      font-size: 0.85em;
+      font-weight: 400;
+    }
+
+    .price--sale .price__current {
+      color: var(--color-error);
+    }
+  }
+{% endstylesheet %}

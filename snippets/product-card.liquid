@@ -1,0 +1,336 @@
+{% doc %}
+  Renders a product card (Cute "tile"): portrait media cropped from the
+  product's image focus, an optional badge, title, "Serves N" or a short
+  description, allergen chips, price, and an action.
+
+  The whole card is one link (the title link is stretched over it); the
+  action is a separate control above it:
+  - quick add form (works without JS) for available single-option products
+    when Theme settings → Layout → "Quick add on cards" is on;
+  - otherwise a "choose options" link to the product;
+  - nothing when sold out.
+
+  @param {product} [product] - The product; a placeholder card renders when blank
+  @param {string} [sizes] - `sizes` for the image, matching the grid slot
+  @param {boolean} [priority] - Eager-load the image (first visible row only)
+  @param {number} [index] - Position in the grid; picks the pastel placeholder ground
+  @param {string} [heading_level] - `h2` or `h3` (default) for the title
+
+  @example
+  {% render 'product-card', product: product, sizes: '(min-width: 900px) 30vw, 50vw', index: forloop.index %}
+{% enddoc %}
+
+{%- liquid
+  assign level = heading_level | default: 'h3'
+  assign pastel = index | default: 1 | modulo: 5 | plus: 1
+  assign sizes = sizes | default: '(min-width: 900px) 30vw, 50vw'
+  assign focus = product.metafields.crumbline.image_focus.value | default: 'center 20%'
+
+  assign badge_label = blank
+  assign badge_style = 'badge'
+  if product != blank
+    if product.available == false
+      assign badge_label = 'products.card.sold_out' | t
+      assign badge_style = 'solid'
+    elsif product.compare_at_price_min > product.price_min
+      assign badge_label = 'products.card.sale' | t
+    else
+      for tag in product.tags
+        assign tag_lower = tag | downcase
+        if tag_lower contains 'badge:'
+          assign badge_label = tag | remove_first: 'badge:' | remove_first: 'Badge:' | replace: '-', ' ' | capitalize
+          break
+        endif
+      endfor
+    endif
+  endif
+
+  assign serves = product.metafields.crumbline.serves.value
+-%}
+
+<article class="product-card{% if product.available == false %} product-card--sold-out{% endif %}" style="--card-pastel: var(--color-pastel-{{ pastel }});">
+  <div class="product-card__media">
+    {%- if product.featured_media -%}
+      {%- liquid
+        assign loading = 'lazy'
+        assign fetchpriority = 'auto'
+        if priority
+          assign loading = 'eager'
+          assign fetchpriority = 'high'
+        endif
+        assign alt = product.featured_media.alt | default: product.title
+      -%}
+      {%- capture media_style -%}object-position: {{ focus }}{%- endcapture -%}
+      {{
+        product.featured_media
+        | image_url: width: 900
+        | image_tag:
+          widths: '240, 360, 480, 640, 900',
+          sizes: sizes,
+          loading: loading,
+          fetchpriority: fetchpriority,
+          alt: alt,
+          class: 'product-card__image',
+          style: media_style
+      }}
+    {%- else -%}
+      {{ 'image' | placeholder_svg_tag: 'product-card__image product-card__placeholder' }}
+    {%- endif -%}
+  </div>
+
+  <div class="product-card__body">
+    {%- if badge_label != blank -%}
+      {% render 'chip', label: badge_label, style: badge_style, class: 'product-card__badge' %}
+    {%- endif -%}
+
+    <{{ level }} class="product-card__title">
+      {%- if product != blank -%}
+        <a href="{{ product.url }}" class="product-card__link">{{ product.title | escape }}</a>
+      {%- else -%}
+        <span>{{ 'products.card.placeholder_title' | t }}</span>
+      {%- endif -%}
+    </{{ level }}>
+
+    {%- if serves != blank -%}
+      <p class="product-card__meta">{{ 'products.card.serves' | t: people: serves }}</p>
+    {%- elsif product.description != blank -%}
+      <p class="product-card__meta">{{ product.description | strip_html | truncatewords: 14 }}</p>
+    {%- endif -%}
+
+    {%- if product != blank -%}
+      {% render 'allergen-list', product: product, class: 'product-card__allergens' %}
+    {%- endif -%}
+
+    <div class="product-card__foot">
+      {%- if product != blank -%}
+        {% render 'price', product: product %}
+      {%- else -%}
+        <span class="price">{{ 1999 | money }}</span>
+      {%- endif -%}
+
+      {%- if product.available -%}
+        {%- if settings.card_quick_add and product.has_only_default_variant -%}
+          {%- form 'product', product, class: 'product-card__quick-add', data-quick-add: '' -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <button type="submit" class="product-card__action">
+              {% render 'icon', name: 'plus' %}
+              <span class="visually-hidden">{{ 'products.card.add' | t: title: product.title }}</span>
+            </button>
+          {%- endform -%}
+        {%- else -%}
+          {%- comment -%} Decorative: the stretched title link already goes to the product. {%- endcomment -%}
+          <span class="product-card__action" aria-hidden="true">
+            {% render 'icon', name: 'arrow-right' %}
+          </span>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </div>
+</article>
+
+{% stylesheet %}
+  @layer components {
+    .product-card {
+      container-type: inline-size;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      block-size: 100%;
+      overflow: hidden;
+      border: var(--border-ink);
+      border-radius: var(--radius-m);
+      background-color: var(--color-surface);
+      transition:
+        translate 450ms var(--ease-spring),
+        box-shadow var(--dur-base) var(--ease-out);
+    }
+
+    .product-card__media {
+      position: relative;
+      aspect-ratio: var(--card-aspect, 4 / 5);
+      overflow: hidden;
+      background-color: var(--card-pastel);
+    }
+
+    .product-card__image {
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+
+    .product-card__placeholder {
+      fill: color-mix(in oklch, var(--color-on-highlight) 25%, transparent);
+    }
+
+    .product-card__body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 0.75rem 0.75rem 0.8rem;
+      border-block-start: var(--border-ink);
+    }
+
+    .product-card__badge {
+      align-self: flex-start;
+    }
+
+    .product-card__title {
+      display: -webkit-box;
+      overflow: hidden;
+      font-size: 1.02rem;
+      line-height: 1.15;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+    }
+
+    .product-card__link {
+      text-decoration: none;
+    }
+
+    /* One link for the whole card. */
+    .product-card__link::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .product-card__link:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .product-card:has(.product-card__link:focus-visible) {
+      outline: 3px solid var(--color-ink);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 6px var(--color-accent);
+    }
+
+    .product-card__meta {
+      display: -webkit-box;
+      overflow: hidden;
+      margin: 0;
+      color: var(--color-ink-muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+    }
+
+    .product-card__foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-block-start: auto;
+      padding-block-start: 0.4rem;
+    }
+
+    .product-card__foot .price {
+      font-size: 0.95rem;
+    }
+
+    .product-card__quick-add {
+      position: relative;
+      z-index: 2;
+    }
+
+    .product-card__action {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      flex: none;
+      inline-size: 44px;
+      block-size: 44px;
+      padding: 0;
+      border: var(--border-width) solid var(--color-button);
+      border-radius: 50%;
+      background-color: var(--color-button);
+      color: var(--color-button-label);
+      box-shadow: 3px 3px 0 var(--color-accent);
+      transition:
+        transform 450ms var(--ease-bounce),
+        box-shadow var(--dur-fast);
+    }
+
+    span.product-card__action {
+      pointer-events: none;
+    }
+
+    .product-card__action .icon {
+      inline-size: 1.3rem;
+      block-size: 1.3rem;
+    }
+
+    .product-card__action:active {
+      transform: scale(0.88);
+      box-shadow: 0 0 0 var(--color-accent);
+    }
+
+    .product-card--sold-out .product-card__image {
+      opacity: 0.6;
+      filter: saturate(0.6);
+    }
+
+    @media (hover: hover) {
+      .product-card:hover {
+        translate: -3px -3px;
+        box-shadow: 7px 7px 0 var(--color-ink);
+      }
+
+      .product-card:hover .product-card__action {
+        transform: rotate(90deg);
+      }
+
+      .product-card:hover span.product-card__action {
+        transform: translateX(3px);
+      }
+    }
+
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .product-card__image {
+        transition: scale 900ms var(--ease-out);
+      }
+
+      .product-card:hover .product-card__image {
+        scale: 1.06;
+      }
+    }
+
+    @container (min-width: 15rem) {
+      .product-card__body {
+        gap: 0.5rem;
+        padding: 1.1rem 1.25rem 1.25rem;
+      }
+
+      .product-card__title {
+        font-size: clamp(1.15rem, 0.9rem + 2.5cqi, 1.6rem);
+      }
+
+      .product-card__meta {
+        font-size: 0.95rem;
+      }
+
+      .product-card__foot .price {
+        font-size: 1.05rem;
+      }
+
+      .product-card__action {
+        inline-size: 48px;
+        block-size: 48px;
+      }
+    }
+
+    @media (min-width: 45rem) {
+      .product-card {
+        border-radius: var(--radius-l);
+      }
+    }
+  }
+{% endstylesheet %}
