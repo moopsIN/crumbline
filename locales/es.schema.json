@@ -39,8 +39,6 @@
       "body_font": "Cuerpo",
       "mono_font": "Etiquetas",
       "mono_font_info": "Etiquetas pequeñas en mayúsculas, chips y números de paso.",
-      "hand_font": "Manuscrita",
-      "hand_font_info": "Solo para leyendas decorativas y bocadillos.",
       "body_scale": "Tamaño del texto"
     },
     "layout": {

@@ -150,7 +150,7 @@
         "id": "type_display_font",
         "label": "t:settings.typography.display_font",
         "info": "t:settings.typography.display_font_info",
-        "default": "fraunces_n6"
+        "default": "dm_serif_display_n4"
       },
       {
         "type": "font_picker",
@@ -164,13 +164,6 @@
         "label": "t:settings.typography.mono_font",
         "info": "t:settings.typography.mono_font_info",
         "default": "ibm_plex_mono_n4"
-      },
-      {
-        "type": "font_picker",
-        "id": "type_hand_font",
-        "label": "t:settings.typography.hand_font",
-        "info": "t:settings.typography.hand_font_info",
-        "default": "caveat_n5"
       },
       {
         "type": "range",

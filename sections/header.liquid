@@ -221,8 +221,8 @@
       align-items: center;
       margin-inline-end: auto;
       font-family: var(--font-display);
-      font-size: 1.4rem;
-      font-weight: 700;
+      font-size: 1.5rem; /* 24px: the accent word's 3.4:1 contrast needs large text */
+      font-weight: var(--font-display-weight);
       letter-spacing: -0.02em;
       line-height: 1;
       text-decoration: none;
@@ -336,7 +336,7 @@
       color: var(--color-on-highlight);
       font-family: var(--font-mono);
       font-size: 0.75rem;
-      font-weight: var(--font-mono-weight-medium);
+      font-weight: var(--font-mono-weight);
     }
 
     @media (hover: hover) {
@@ -407,7 +407,7 @@
       position: fixed;
       inset: 0;
       z-index: calc(var(--z-toast) - 1);
-      background-color: rgb(27 23 20 / 0.4);
+      background-color: rgb(var(--ink-rgb) / 0.4);
     }
 
     .menu-drawer__head {

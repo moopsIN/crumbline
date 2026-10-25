@@ -2,11 +2,11 @@
   Renders a speech-bubble sticker ("Fresh out the oven!").
 
   Decorative extra: it renders nothing unless the global Decorations setting
-  is on (off by default). The handwriting variant loads the hand font's face
-  here, so pages without bubbles never download it.
+  is on (off by default). The handwritten variant uses the display italic,
+  which every page already loads.
 
   @param {string} text - Bubble text; keep it short
-  @param {boolean} [hand] - Use the handwriting font
+  @param {boolean} [hand] - Use the display italic for a handwritten feel
   @param {string} [tail] - Tail side: `start` (default) or `end`
   @param {string} [class] - Extra classes, e.g. for positioning
 
@@ -15,11 +15,6 @@
 {% enddoc %}
 
 {%- if settings.decorations_enabled and text != blank -%}
-  {%- if hand -%}
-    {% style %}
-      {{ settings.type_hand_font | font_face: font_display: 'swap' }}
-    {% endstyle %}
-  {%- endif -%}
   <p class="speech-bubble speech-bubble--tail-{{ tail | default: 'start' }}{% if hand %} speech-bubble--hand{% endif %} {{ class }}">
     {{- text | escape -}}
   </p>
@@ -46,9 +41,10 @@
     }
 
     .speech-bubble--hand {
-      font-family: var(--font-hand);
+      font-family: var(--font-display);
       font-size: 1.25rem;
-      font-weight: 500;
+      font-style: italic;
+      font-weight: 400;
     }
 
     /* Tail: an ink triangle with a surface triangle inset to draw the border. */

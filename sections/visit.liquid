@@ -173,7 +173,7 @@
       color: var(--color-on-highlight);
     }
 
-    .visit-card__stamp svg {
+    .visit-card__stamp svg:not(.icon) {
       position: absolute;
       inset: 0;
       overflow: visible;
@@ -208,7 +208,7 @@
       color: var(--color-highlight);
       font-family: var(--font-display);
       font-size: var(--step-3);
-      font-weight: 500;
+      font-weight: var(--font-display-weight);
       line-height: 1;
       letter-spacing: -0.03em;
       text-decoration: none;

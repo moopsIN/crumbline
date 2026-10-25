@@ -190,8 +190,16 @@
             <li class="product-grid__item">
               {%- liquid
                 assign priority = false
+                comment
+                  The first two cards get priority unless a banner image above them already has it.
+                endcomment
                 if paginate.current_page == 1 and forloop.index <= 2
-                  assign priority = true
+                  if collection.image == blank
+                    assign priority = true
+                  endif
+                  unless section.index > 1
+                    assign priority = true
+                  endunless
                 endif
               -%}
               {% render 'product-card',

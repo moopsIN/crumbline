@@ -7,8 +7,7 @@
   (borders, shadows) are declared on `:root, [data-scheme]` in critical.css so
   they resolve against the scheme of the element they're used in.
 
-  Font files: display 600 + italic 400, body 400 + 600, mono 400 + 500. The
-  hand font is only declared here; components that use it load its face.
+  Font files: display regular + italic 400, body 400 + 600, mono regular.
 
   @example
   {% render 'css-variables' %}
@@ -17,7 +16,6 @@
 {%- liquid
   assign display_italic = settings.type_display_font | font_modify: 'style', 'italic' | font_modify: 'weight', '400'
   assign body_bold = settings.type_body_font | font_modify: 'weight', '600'
-  assign mono_medium = settings.type_mono_font | font_modify: 'weight', '500'
 
   assign button_radius = '999px'
   if settings.button_shape == 'rounded'
@@ -36,7 +34,6 @@
   {{ settings.type_body_font | font_face: font_display: 'swap' }}
   {%- if body_bold %}{{ body_bold | font_face: font_display: 'swap' }}{% endif %}
   {{ settings.type_mono_font | font_face: font_display: 'swap' }}
-  {%- if mono_medium %}{{ mono_medium | font_face: font_display: 'swap' }}{% endif %}
 
   :root {
     --font-display: {{ settings.type_display_font.family }}, {{ settings.type_display_font.fallback_families }};
@@ -45,8 +42,7 @@
     --font-body-weight: {{ settings.type_body_font.weight }};
     --font-body-weight-bold: {% if body_bold %}{{ body_bold.weight }}{% else %}700{% endif %};
     --font-mono: {{ settings.type_mono_font.family }}, {{ settings.type_mono_font.fallback_families }};
-    --font-mono-weight-medium: {% if mono_medium %}{{ mono_medium.weight }}{% else %}{{ settings.type_mono_font.weight }}{% endif %};
-    --font-hand: {{ settings.type_hand_font.family }}, {{ settings.type_hand_font.fallback_families }};
+    --font-mono-weight: {{ settings.type_mono_font.weight }};
     --font-scale: {{ settings.type_body_scale | divided_by: 100.0 }};
 
     --content-max: {{ settings.page_width }};

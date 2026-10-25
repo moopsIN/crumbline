@@ -323,6 +323,15 @@
       inline-size: 1.1rem;
       block-size: 1.1rem;
     }
+  
+    @media (forced-colors: active) {
+      .date-pill:has(input:checked) > span {
+        forced-color-adjust: none;
+        border-color: Highlight;
+        background-color: Highlight;
+        color: HighlightText;
+      }
+    }
   }
 {% endstylesheet %}
 

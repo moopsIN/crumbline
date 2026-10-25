@@ -13,8 +13,8 @@
   {%- if predictive_search.performed and total > 0 -%}
     <ul class="predictive-results__list" role="listbox" id="PredictiveSearchResults" aria-label="{{ 'search.suggestions' | t }}">
       {%- for product in results.products limit: 5 -%}
-        <li role="option" id="predictive-product-{{ forloop.index }}" aria-selected="false">
-          <a href="{{ product.url }}" class="predictive-results__item" tabindex="-1">
+        <li role="none">
+          <a href="{{ product.url }}" class="predictive-results__item" role="option" id="predictive-product-{{ forloop.index }}" aria-selected="false" tabindex="-1">
             <span class="predictive-results__thumb">
               {%- if product.featured_media -%}
                 {{ product.featured_media | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}
@@ -28,22 +28,22 @@
         </li>
       {%- endfor -%}
       {%- for item in results.collections limit: 3 -%}
-        <li role="option" id="predictive-collection-{{ forloop.index }}" aria-selected="false">
-          <a href="{{ item.url }}" class="predictive-results__item" tabindex="-1">
+        <li role="none">
+          <a href="{{ item.url }}" class="predictive-results__item" role="option" id="predictive-collection-{{ forloop.index }}" aria-selected="false" tabindex="-1">
             <span class="predictive-results__text"><span class="predictive-results__title">{{ item.title | escape }}</span><span class="predictive-results__meta mono">{{ 'search.collection' | t }}</span></span>
           </a>
         </li>
       {%- endfor -%}
       {%- for item in results.pages limit: 3 -%}
-        <li role="option" id="predictive-page-{{ forloop.index }}" aria-selected="false">
-          <a href="{{ item.url }}" class="predictive-results__item" tabindex="-1">
+        <li role="none">
+          <a href="{{ item.url }}" class="predictive-results__item" role="option" id="predictive-page-{{ forloop.index }}" aria-selected="false" tabindex="-1">
             <span class="predictive-results__text"><span class="predictive-results__title">{{ item.title | escape }}</span><span class="predictive-results__meta mono">{{ 'search.page' | t }}</span></span>
           </a>
         </li>
       {%- endfor -%}
       {%- for item in results.articles limit: 3 -%}
-        <li role="option" id="predictive-article-{{ forloop.index }}" aria-selected="false">
-          <a href="{{ item.url }}" class="predictive-results__item" tabindex="-1">
+        <li role="none">
+          <a href="{{ item.url }}" class="predictive-results__item" role="option" id="predictive-article-{{ forloop.index }}" aria-selected="false" tabindex="-1">
             <span class="predictive-results__text"><span class="predictive-results__title">{{ item.title | escape }}</span><span class="predictive-results__meta mono">{{ 'search.article' | t }}</span></span>
           </a>
         </li>
@@ -76,7 +76,7 @@
       text-decoration: none;
     }
 
-    [aria-selected='true'] > .predictive-results__item,
+    .predictive-results__item[aria-selected='true'],
     .predictive-results__item:hover {
       border-color: var(--color-ink);
       background-color: var(--color-highlight);

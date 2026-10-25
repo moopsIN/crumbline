@@ -4,6 +4,23 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.11.0] — 2026-10-25
+
+Phase 11: performance and accessibility hardening.
+
+### Changed
+- Headings use DM Serif Display instead of Fraunces, at about a third of the download size.
+- Social photo captions and speech bubbles use the heading italic. The separate handwriting font (Caveat) and its setting are gone.
+- Small uppercase labels use a single mono weight, which saves another font file. Every page now loads 5 font files (123 KB).
+- Only the first section on a page loads its image at high priority, so a hero moved further down no longer competes with what shoppers see first.
+- Colours in component styles now come from theme tokens.
+- The text logo is slightly larger (24px), so a coloured italic word in it stays readable.
+
+### Fixed
+- The icon inside the "Find us" stamp is centred again.
+- Search suggestions are announced correctly by screen readers.
+- In Windows high contrast mode, the selected size, flavour and date, and the step progress in the cake builder and custom cake form, stay visible.
+
 ## [0.10.0] — 2026-10-25
 
 Phase 10: localisation.

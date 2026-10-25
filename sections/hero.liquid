@@ -19,6 +19,13 @@
     </div>
 
     <div class="hero__media">
+      {%- comment -%} Only the first section loads its image at high priority; section.index is nil in the editor, which counts as first. {%- endcomment -%}
+      {%- liquid
+        assign is_first = false
+        unless section.index > 1
+          assign is_first = true
+        endunless
+      -%}
       {% render 'media-frame',
         image: section.settings.image,
         style: section.settings.media_style,
@@ -26,7 +33,7 @@
         fit: section.settings.image_fit,
         focus: 'center',
         sizes: '(min-width: 900px) 500px, 92vw',
-        priority: true
+        priority: is_first
       %}
 
       {%- if section.settings.stamp_text != blank -%}
