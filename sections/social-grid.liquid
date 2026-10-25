@@ -1,0 +1,330 @@
+{% comment %}
+  Social photo wall (Cute sticky notes): up to six photos on tilted
+  pastel notes with washi tape and handwritten captions, each optionally
+  linking to a post, plus a "Follow" button to the Instagram link in Theme
+  settings → Social media. Images are uploaded by the merchant; there is no
+  live feed (that would need an app).
+{% endcomment %}
+
+{%- liquid
+  assign tilts = '-3,2,-1.5,3,-2.5,1.5' | split: ','
+  assign colours = 'strawberry,butter,1,2,3,4' | split: ','
+-%}
+
+<div class="social-grid full-width" {% render 'section-attributes' %}>
+  <div class="social-grid__inner">
+    {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
+    <ul class="social-grid__posts" role="list">
+      {%- for block in section.blocks limit: 6 -%}
+        {%- liquid
+          assign i = forloop.index0
+          assign colour = colours[i]
+          if colour == 'butter'
+            assign note = 'var(--color-highlight)'
+          elsif colour == 'strawberry'
+            assign note = 'var(--color-highlight-2)'
+          else
+            assign note = 'var(--color-pastel-' | append: colour | append: ')'
+          endif
+        -%}
+        <li class="post" style="--note: {{ note }}; --tilt: {{ tilts[i] }}deg;" data-reveal {{ block.shopify_attributes }}>
+          {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="post__link" target="_blank" rel="noopener">{%- endif -%}
+          <figure class="post__note">
+            <span class="post__tape" aria-hidden="true"></span>
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 600 | image_tag: widths: '240, 360, 480, 600', sizes: '(min-width: 1100px) 15vw, (min-width: 720px) 30vw, 45vw', loading: 'lazy', class: 'post__photo' }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'post__photo post__placeholder' }}
+            {%- endif -%}
+            {%- if block.settings.caption != blank -%}
+              <figcaption class="post__caption">{{ block.settings.caption | escape }}</figcaption>
+            {%- endif -%}
+          </figure>
+          {%- if block.settings.link != blank -%}</a>{%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- if settings.social_instagram != blank and section.settings.button_label != blank -%}
+      <div class="social-grid__follow">
+        {%- if section.settings.handle != blank -%}
+          <p class="social-grid__handle mono">{{ section.settings.handle | escape }}</p>
+        {%- endif -%}
+        {% render 'button', label: section.settings.button_label, url: settings.social_instagram, icon: 'arrow-right', attributes: 'target="_blank" rel="noopener"' %}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .social-grid {
+      padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+      overflow-x: clip;
+    }
+
+    .social-grid__inner {
+      max-inline-size: var(--content-max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .social-grid__posts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.6rem 1.1rem;
+      margin: 0;
+      padding: 0.75rem 0 0;
+      list-style: none;
+    }
+
+    .post {
+      rotate: var(--tilt);
+      transition:
+        rotate 500ms var(--ease-bounce),
+        scale 500ms var(--ease-bounce);
+    }
+
+    .post:nth-child(even) {
+      translate: 0 14px;
+    }
+
+    .post__link {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .post__note {
+      position: relative;
+      margin: 0;
+      padding: 11% 10% 6%;
+      border-radius: 3px 3px 26px 3px / 3px 3px 9px 3px;
+      background:
+        linear-gradient(rgb(27 23 20 / 0.07), transparent 12%),
+        linear-gradient(-45deg, rgb(27 23 20 / 0.1), transparent 18%),
+        var(--note);
+      box-shadow:
+        0 1px 2px rgb(27 23 20 / 0.14),
+        0 6px 14px -8px rgb(60 30 10 / 0.3);
+      color: var(--color-on-highlight);
+    }
+
+    .post__tape {
+      position: absolute;
+      z-index: 1;
+      inset-block-start: 2px;
+      inset-inline-start: 50%;
+      inline-size: 46%;
+      block-size: 22px;
+      translate: -50% 0;
+      rotate: -4deg;
+      background:
+        repeating-linear-gradient(90deg, rgb(255 255 255 / 0.35) 0 6px, transparent 6px 12px),
+        rgb(255 253 249 / 0.62);
+      clip-path: polygon(0 8%, 4% 0, 8% 10%, 12% 0, 88% 0, 92% 10%, 96% 0, 100% 8%, 100% 92%, 96% 100%, 92% 90%, 88% 100%, 12% 100%, 8% 90%, 4% 100%, 0 92%);
+    }
+
+    .post__photo {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border: 4px solid #fff;
+      border-radius: 2px;
+      box-shadow: 0 3px 8px rgb(27 23 20 / 0.22);
+    }
+
+    .post__placeholder {
+      background-color: #fff;
+      fill: rgb(27 23 20 / 0.2);
+    }
+
+    .post__caption {
+      margin-block-start: 0.55rem;
+      overflow: hidden;
+      font-family: var(--font-hand);
+      font-size: clamp(1.15rem, 0.9rem + 0.8vw, 1.4rem);
+      font-weight: 500;
+      line-height: 1.1;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .post:hover,
+    .post:focus-within {
+      z-index: 1;
+      rotate: 0deg;
+      scale: 1.04;
+    }
+
+    .post__link:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .post__link:focus-visible .post__note {
+      outline: 3px solid var(--color-ink);
+      outline-offset: 4px;
+    }
+
+    .social-grid__follow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-block-start: var(--space-xl);
+    }
+
+    .social-grid__handle {
+      margin: 0;
+      color: var(--color-ink-muted);
+    }
+
+    @media (min-width: 45rem) {
+      .social-grid__posts {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2.2rem 1.6rem;
+      }
+    }
+
+    @media (min-width: 68.75rem) {
+      .social-grid__posts {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 2rem 1.4rem;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.social_grid.name",
+  "class": "social-grid-section",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.shared.eyebrow",
+      "default": "Share the sweetness"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.shared.heading",
+      "info": "t:sections.shared.heading_info",
+      "default": "Cake tastes better <em>shared.</em>"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:sections.shared.text",
+      "default": "Follow along for new bakes and behind-the-scenes kitchen chaos."
+    },
+    {
+      "type": "text",
+      "id": "handle",
+      "label": "t:sections.social_grid.handle",
+      "info": "t:sections.social_grid.handle_info"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.social_grid.button_label",
+      "info": "t:sections.social_grid.button_info",
+      "default": "Follow us"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "post",
+      "name": "t:sections.social_grid.post",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.social_grid.image"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "t:sections.social_grid.caption",
+          "info": "t:sections.social_grid.caption_info",
+          "default": "Fresh today"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.social_grid.link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.social_grid.name",
+      "blocks": [
+        {
+          "type": "post",
+          "settings": {
+            "caption": "Birthday wishes"
+          }
+        },
+        {
+          "type": "post",
+          "settings": {
+            "caption": "Cupcake Friday"
+          }
+        },
+        {
+          "type": "post",
+          "settings": {
+            "caption": "Fresh today"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
