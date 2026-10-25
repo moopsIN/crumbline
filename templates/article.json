@@ -10,8 +10,12 @@
 {
   "sections": {
     "main": {
-      "type": "article",
-      "settings": {}
+      "type": "main-article",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "padding": "1",
+        "show_author": true
+      }
     }
   },
   "order": [

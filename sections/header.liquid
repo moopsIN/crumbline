@@ -109,7 +109,7 @@
 
     <div class="site-header__actions">
       {%- if section.settings.show_search -%}
-        <a href="{{ routes.search_url }}" class="site-header__icon-button">
+        <a href="{{ routes.search_url }}" class="site-header__icon-button" {% if settings.predictive_search %}data-search-open{% endif %}>
           {% render 'icon', name: 'search' %}
           <span class="visually-hidden">{{ 'sections.header.search' | t }}</span>
         </a>

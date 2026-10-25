@@ -1,0 +1,79 @@
+{% comment %}
+  A standard page: the page title as h1 and its content at a readable width.
+{% endcomment %}
+
+<div class="main-page full-width page-pad" {% render 'section-attributes' %}>
+  <div class="page-width main-page__inner">
+    <h1 class="main-page__title">{{ page.title | escape }}</h1>
+    {%- if page.content != blank -%}
+      <div class="rte main-page__content">{{ page.content }}</div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .main-page__inner {
+      display: grid;
+      gap: var(--space-m);
+      max-inline-size: 48rem;
+    }
+
+    .main-page__title {
+      font-size: var(--step-3);
+    }
+
+    .main-page__content {
+      max-inline-size: 65ch;
+      font-size: 1.05rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.main_page.name",
+  "class": "main-page-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "enabled_on": {
+    "templates": [
+      "page"
+    ]
+  }
+}
+{% endschema %}

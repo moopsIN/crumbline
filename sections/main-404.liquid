@@ -1,0 +1,111 @@
+{% comment %}
+  404: a typographic "lost" message with the stamp badge, a search form and
+  a way back to the cakes (Q-07: typographic, no illustration).
+{% endcomment %}
+
+<div class="main-404 full-width page-pad" {% render 'section-attributes' %}>
+  <div class="page-width main-404__inner">
+    {%- assign stamp_text = 'not_found.stamp' | t -%}
+    {% render 'stamp-badge', text: stamp_text, id: section.id, icon: 'search', class: 'main-404__stamp' %}
+    <p class="main-404__code mono">404</p>
+    <h1 class="main-404__title">{{ 'not_found.title' | t }}</h1>
+    <p class="main-404__text">{{ 'not_found.text' | t }}</p>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="main-404__form">
+      <label class="visually-hidden" for="NotFoundSearch">{{ 'search.label' | t }}</label>
+      <div class="form-field main-404__field">
+        <input id="NotFoundSearch" type="search" name="q" placeholder="{{ 'search.placeholder' | t }}">
+      </div>
+      {%- assign submit_label = 'search.submit' | t -%}
+      {% render 'button', label: submit_label, type: 'submit', style: 'secondary' %}
+    </form>
+    {%- assign back_label = 'not_found.cta' | t -%}
+    {% render 'button', label: back_label, url: routes.all_products_collection_url, icon: 'arrow-right' %}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .main-404__inner {
+      display: grid;
+      justify-items: center;
+      gap: var(--space-s);
+      text-align: center;
+    }
+
+    .main-404__code {
+      margin: 0;
+      color: var(--color-ink-muted);
+    }
+
+    .main-404__title {
+      font-size: var(--step-3);
+    }
+
+    .main-404__text {
+      max-inline-size: 40ch;
+      margin: 0;
+      color: var(--color-ink-muted);
+      font-size: var(--step-1);
+    }
+
+    .main-404__form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.6rem;
+      inline-size: min(100%, 30rem);
+    }
+
+    .main-404__field {
+      flex: 1 1 12rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.main_404.name",
+  "class": "main-404-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "enabled_on": {
+    "templates": [
+      "404"
+    ]
+  }
+}
+{% endschema %}

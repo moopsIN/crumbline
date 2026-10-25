@@ -508,5 +508,17 @@
         "default": true
       }
     ]
+  },
+  {
+    "name": "t:settings.search.name",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "predictive_search",
+        "label": "t:settings.search.predictive",
+        "info": "t:settings.search.predictive_info",
+        "default": true
+      }
+    ]
   }
 ]

@@ -1,0 +1,133 @@
+{% comment %}
+  Blog listing: the blog title as h1, tag filter chips, a grid of article
+  cards and pagination.
+{% endcomment %}
+
+<div class="main-blog full-width page-pad" {% render 'section-attributes' %}>
+  <div class="page-width main-blog__inner">
+    <h1 class="main-blog__title">{{ blog.title | escape }}</h1>
+    {%- if blog.all_tags.size > 0 -%}
+      <nav class="main-blog__tags" aria-label="{{ 'blog.tags' | t }}">
+        <ul role="list">
+          <li><a href="{{ blog.url }}" class="main-blog__tag" {% unless current_tags %}aria-current="page"{% endunless %}>{{ 'blog.all' | t }}</a></li>
+          {%- for tag in blog.all_tags -%}
+            <li>
+              <a href="{{ blog.url }}/tagged/{{ tag | handleize }}" class="main-blog__tag" {% if current_tags contains tag %}aria-current="page"{% endif %}>{{ tag | escape }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+    {%- paginate blog.articles by 12 -%}
+      {%- if blog.articles.size > 0 -%}
+        <ul class="main-blog__grid" role="list">
+          {%- for article in blog.articles -%}
+            <li data-reveal>{% render 'article-card', article: article, index: forloop.index %}</li>
+          {%- endfor -%}
+        </ul>
+        {% render 'pagination', paginate: paginate %}
+      {%- else -%}
+        {%- assign empty_title = 'blog.empty' | t -%}
+        {% render 'empty-state', title: empty_title %}
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .main-blog__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+      gap: clamp(0.9rem, 0.6rem + 1vw, 1.4rem);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .main-blog__inner {
+      display: grid;
+      gap: var(--space-m);
+    }
+
+    .main-blog__title {
+      font-size: var(--step-3);
+    }
+
+    .main-blog__tags ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .main-blog__tag {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: 44px;
+      padding: 0.45rem 1rem;
+      border: var(--border-width) solid var(--color-border-control);
+      border-radius: var(--radius-pill);
+      background-color: var(--color-surface-alt);
+      font-weight: var(--font-body-weight-bold);
+      text-decoration: none;
+    }
+
+    .main-blog__tag[aria-current='page'] {
+      border-color: var(--color-ink);
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+      box-shadow: var(--shadow-hard);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.main_blog.name",
+  "class": "main-blog-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "enabled_on": {
+    "templates": [
+      "blog"
+    ]
+  }
+}
+{% endschema %}

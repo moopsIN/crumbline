@@ -1,0 +1,159 @@
+{% doc %}
+  Search dialog with predictive results (Theme settings → Search). The header
+  search link opens it; without JS that link simply goes to the search page.
+  The input is an ARIA combobox: arrow keys move through the results,
+  Enter opens the highlighted one (or searches), Escape closes the dialog.
+  Results come from `/search/suggest` rendered by sections/predictive-search.
+
+  @example
+  {% render 'search-modal' %}
+{% enddoc %}
+
+<search-modal class="search-modal">
+  <dialog class="search-modal__dialog" aria-label="{{ 'search.title' | t }}">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-modal__form">
+      <label class="visually-hidden" for="SearchModalInput">{{ 'search.label' | t }}</label>
+      <div class="form-field search-modal__field">
+        <input
+          id="SearchModalInput"
+          type="search"
+          name="q"
+          placeholder="{{ 'search.placeholder' | t }}"
+          autocomplete="off"
+          role="combobox"
+          aria-expanded="false"
+          aria-controls="PredictiveSearchResults"
+          aria-autocomplete="list"
+        >
+      </div>
+      <button type="button" class="search-modal__close" data-close>
+        {% render 'icon', name: 'close' %}
+        <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+      </button>
+    </form>
+    <div class="search-modal__results" data-results aria-live="polite"></div>
+  </dialog>
+</search-modal>
+
+{% stylesheet %}
+  @layer components {
+    .search-modal__dialog {
+      inline-size: min(100% - 2rem, 40rem);
+      max-block-size: min(80dvh, 40rem);
+      margin: 10vh auto auto;
+      padding: 1.25rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-bg);
+      color: var(--color-ink);
+      box-shadow: var(--shadow-hard), var(--shadow-soft);
+      overflow-y: auto;
+    }
+
+    .search-modal__dialog::backdrop {
+      background-color: rgb(27 23 20 / 0.45);
+    }
+
+    .search-modal__form {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .search-modal__field {
+      flex: 1;
+    }
+
+    .search-modal__close {
+      display: grid;
+      flex: none;
+      place-items: center;
+      inline-size: 44px;
+      block-size: 44px;
+      border: var(--border-ink);
+      border-radius: 50%;
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+    }
+
+    .search-modal__results:not(:empty) {
+      margin-block-start: 1rem;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('search-modal')) {
+    customElements.define(
+      'search-modal',
+      class extends HTMLElement {
+        #timer = 0;
+        #controller = null;
+        #active = -1;
+
+        connectedCallback() {
+          this.dialog = this.querySelector('dialog');
+          this.input = this.querySelector('input');
+          this.results = this.querySelector('[data-results]');
+          this.querySelector('[data-close]').addEventListener('click', () => this.dialog.close());
+          this.dialog.addEventListener('click', (event) => {
+            if (event.target === this.dialog) this.dialog.close();
+          });
+          document.addEventListener('click', (event) => {
+            const trigger = event.target.closest('[data-search-open]');
+            if (!trigger || event.metaKey || event.ctrlKey) return;
+            event.preventDefault();
+            this.dialog.showModal();
+            this.input.focus();
+          });
+          this.input.addEventListener('input', () => {
+            clearTimeout(this.#timer);
+            this.#timer = setTimeout(() => this.#search(), 250);
+          });
+          this.input.addEventListener('keydown', (event) => this.#onKey(event));
+        }
+
+        async #search() {
+          const terms = this.input.value.trim();
+          if (!terms) {
+            this.results.replaceChildren();
+            this.input.setAttribute('aria-expanded', 'false');
+            return;
+          }
+          this.#controller?.abort();
+          this.#controller = new AbortController();
+          const root = window.Shopify?.routes?.root ?? '/';
+          const url = `${root}search/suggest?q=${encodeURIComponent(terms)}&resources[type]=product,collection,page,article&resources[limit]=5&section_id=predictive-search`;
+          try {
+            const response = await fetch(url, { signal: this.#controller.signal });
+            const html = new DOMParser().parseFromString(await response.text(), 'text/html');
+            const fresh = html.querySelector('.predictive-results');
+            if (!fresh) return;
+            this.results.replaceChildren(fresh);
+            this.#active = -1;
+            this.input.setAttribute('aria-expanded', String(Boolean(fresh.querySelector('[role="option"]'))));
+            this.input.removeAttribute('aria-activedescendant');
+          } catch (error) {
+            if (error.name !== 'AbortError') this.results.replaceChildren();
+          }
+        }
+
+        #onKey(event) {
+          const options = [...this.results.querySelectorAll('[role="option"]')];
+          if (!options.length) return;
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            const step = event.key === 'ArrowDown' ? 1 : -1;
+            this.#active = (this.#active + step + options.length) % options.length;
+            options.forEach((option, i) => option.setAttribute('aria-selected', String(i === this.#active)));
+            this.input.setAttribute('aria-activedescendant', options[this.#active].id);
+            options[this.#active].scrollIntoView({ block: 'nearest' });
+          } else if (event.key === 'Enter' && this.#active >= 0) {
+            event.preventDefault();
+            options[this.#active].querySelector('a').click();
+          }
+        }
+      }
+    );
+  }
+{% endjavascript %}

@@ -1,0 +1,157 @@
+{% comment %}
+  Search results: a search form, the result count, product cards first,
+  then pages and articles, pagination and an empty state.
+{% endcomment %}
+
+<div class="main-search full-width page-pad" {% render 'section-attributes' %}>
+  <div class="page-width main-search__inner">
+    <h1 class="main-search__title">{{ 'search.title' | t }}</h1>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="main-search__form">
+      <label class="visually-hidden" for="SearchPage">{{ 'search.label' | t }}</label>
+      <div class="form-field main-search__field">
+        <input id="SearchPage" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'search.placeholder' | t }}" autocomplete="off">
+      </div>
+      {%- assign submit_label = 'search.submit' | t -%}
+      {% render 'button', label: submit_label, type: 'submit', icon: 'search' %}
+    </form>
+
+    {%- if search.performed -%}
+      {%- paginate search.results by 24 -%}
+        <p class="main-search__count mono" role="status">{{ 'search.results_count' | t: count: search.results_count, terms: search.terms }}</p>
+        {%- if search.results_count > 0 -%}
+          <ul class="main-search__grid" role="list">
+            {%- for item in search.results -%}
+              <li>
+                {%- case item.object_type -%}
+                  {%- when 'product' -%}
+                    {% render 'product-card', product: item, index: forloop.index, heading_level: 'h2', sizes: '(min-width: 900px) 30vw, 50vw' %}
+                  {%- when 'article' -%}
+                    {% render 'article-card', article: item, index: forloop.index %}
+                  {%- else -%}
+                    <article class="main-search__page">
+                      <p class="mono">{{ 'search.page' | t }}</p>
+                      <h2><a href="{{ item.url }}">{{ item.title | escape }}</a></h2>
+                      <p>{{ item.content | strip_html | truncatewords: 24 }}</p>
+                    </article>
+                {%- endcase -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+          {% render 'pagination', paginate: paginate %}
+        {%- else -%}
+          {%- liquid
+            assign empty_title = 'search.empty_title' | t
+            assign empty_text = 'search.empty_text' | t
+            assign empty_cta = 'collections.empty.cta' | t
+          -%}
+          {% render 'empty-state', title: empty_title, text: empty_text, button_label: empty_cta, button_url: routes.all_products_collection_url, button_style: 'secondary' %}
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .main-search__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+      gap: clamp(0.9rem, 0.6rem + 1vw, 1.4rem);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .main-search__inner {
+      display: grid;
+      gap: var(--space-m);
+    }
+
+    .main-search__title {
+      font-size: var(--step-3);
+    }
+
+    .main-search__form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      max-inline-size: 40rem;
+    }
+
+    .main-search__field {
+      flex: 1 1 14rem;
+    }
+
+    .main-search__count {
+      margin: 0;
+      color: var(--color-ink-muted);
+    }
+
+    .main-search__page {
+      display: grid;
+      gap: 0.5rem;
+      block-size: 100%;
+      padding: 1.25rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-surface);
+    }
+
+    .main-search__page h2 {
+      font-size: var(--step-1);
+    }
+
+    .main-search__page p {
+      margin: 0;
+      color: var(--color-ink-muted);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.main_search.name",
+  "class": "main-search-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "enabled_on": {
+    "templates": [
+      "search"
+    ]
+  }
+}
+{% endschema %}

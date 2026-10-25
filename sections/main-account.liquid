@@ -1,0 +1,199 @@
+{% comment %}
+  Account overview: greeting, sign out, order history and the default
+  address with a link to manage addresses.
+{% endcomment %}
+
+<div class="main-account full-width page-pad" {% render 'section-attributes' %}>
+  <div class="page-width customer customer--wide">
+    <div class="customer__head">
+      <h1 class="customer__title">{{ 'customers.account.title' | t }}</h1>
+      {%- assign greeting_name = customer.first_name | default: customer.email -%}
+      <p>{{ 'customers.account.hello' | t: name: greeting_name }}</p>
+      <a href="{{ routes.account_logout_url }}" class="customer__logout">{{ 'customers.account.logout' | t }}</a>
+    </div>
+
+    <div class="customer__grid">
+      <section aria-labelledby="OrdersHeading">
+        <h2 id="OrdersHeading" class="customer__subtitle">{{ 'customers.account.orders' | t }}</h2>
+        {%- paginate customer.orders by 20 -%}
+          {%- if customer.orders.size > 0 -%}
+            <table class="customer__table">
+              <thead>
+                <tr>
+                  <th scope="col">{{ 'customers.order.number' | t }}</th>
+                  <th scope="col">{{ 'customers.order.date' | t }}</th>
+                  <th scope="col">{{ 'customers.order.status' | t }}</th>
+                  <th scope="col">{{ 'customers.order.total' | t }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  <tr>
+                    <td><a href="{{ order.customer_url }}">{{ order.name }}</a></td>
+                    <td>{{ order.created_at | time_tag: format: 'date' }}</td>
+                    <td>{{ order.fulfillment_status_label }}</td>
+                    <td>{{ order.total_price | money_with_currency }}</td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+            {% render 'pagination', paginate: paginate %}
+          {%- else -%}
+            <p>{{ 'customers.account.no_orders' | t }}</p>
+          {%- endif -%}
+        {%- endpaginate -%}
+      </section>
+
+      <section aria-labelledby="AddressHeading" class="customer__card">
+        <h2 id="AddressHeading" class="customer__subtitle">{{ 'customers.account.address' | t }}</h2>
+        {%- if customer.default_address -%}
+          <address>{{ customer.default_address | format_address }}</address>
+        {%- endif -%}
+        <a href="{{ routes.account_addresses_url }}">{{ 'customers.account.manage_addresses' | t: count: customer.addresses_count }}</a>
+      </section>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .customer {
+      display: grid;
+      gap: var(--space-m);
+    }
+
+    .customer__title {
+      font-size: var(--step-3);
+      text-align: center;
+    }
+
+    .customer__links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .customer__links a {
+      text-decoration: underline 1px;
+      text-underline-offset: 4px;
+    }
+
+    .customer__subtitle {
+      font-size: var(--step-1);
+    }
+
+    .customer--wide .customer__title {
+      text-align: start;
+    }
+
+    .customer__head {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .customer__head p {
+      margin: 0;
+      color: var(--color-ink-muted);
+    }
+
+    .customer__logout {
+      justify-self: start;
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .customer__grid {
+      display: grid;
+      gap: var(--space-l);
+    }
+
+    .customer__card {
+      display: grid;
+      align-content: start;
+      gap: 0.6rem;
+      padding: 1.25rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-surface);
+    }
+
+    .customer__card address {
+      font-style: normal;
+    }
+
+    .customer__table {
+      inline-size: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .customer__table :is(th, td) {
+      padding: 0.75rem 0.5rem;
+      border-block-end: var(--border-divider);
+      text-align: start;
+    }
+
+    .customer__table th {
+      font-family: var(--font-mono);
+      font-size: var(--text-micro);
+      font-weight: var(--font-mono-weight-medium);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--color-ink-muted);
+    }
+
+    @media (min-width: 56.25rem) {
+      .customer__grid {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelector('[data-focus-on-load]')?.focus();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.main_account.name",
+  "class": "customer-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ]
+}
+{% endschema %}

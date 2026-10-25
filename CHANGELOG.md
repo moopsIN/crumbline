@@ -4,6 +4,19 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-10-25
+
+Phase 9: remaining templates.
+
+### Added
+- Search results page and a search box with suggestions as you type (products, collections, pages, posts).
+- Blog and blog post pages with tags, previous/next links and comments.
+- Page, 404, password (with pre-launch email sign-up) and gift card pages.
+- Customer account pages for stores using classic customer accounts: sign in, register, account, order, addresses, activation and password reset.
+
+### Removed
+- The last Skeleton sections and the Skeleton image snippet.
+
 ## [0.8.0] — 2026-10-25
 
 Phase 8: custom cake enquiries.

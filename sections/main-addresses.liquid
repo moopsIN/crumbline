@@ -1,0 +1,286 @@
+{% comment %}
+  Address book: each address with edit and delete, and a form to add one.
+  Edit forms open in <details> (no JS needed). Country and province selects
+  use Shopify's CountryProvinceSelector from shopify_common.js.
+{% endcomment %}
+
+<div class="main-addresses full-width page-pad" {% render 'section-attributes' %}>
+  <div class="page-width customer customer--wide">
+    <div class="customer__head">
+      <a href="{{ routes.account_url }}" class="customer__logout">{{ 'customers.order.back' | t }}</a>
+      <h1 class="customer__title">{{ 'customers.addresses.title' | t }}</h1>
+    </div>
+
+    <details class="customer__add" {% if customer.addresses_count == 0 %}open{% endif %}>
+      <summary class="customer__summary">{% render 'icon', name: 'plus' %}{{ 'customers.addresses.add' | t }}</summary>
+      {%- form 'customer_address', customer.new_address, class: 'form-card customer__form' -%}
+        {%- assign suffix = 'New' -%}
+      {%- if form.errors -%}
+        <div class="form-status form-status--error" role="alert" tabindex="-1" data-focus-on-load>{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+          <div class="customer__row">
+            <div class="form-field"><label for="AddressFirst{{ suffix }}">{{ 'customers.first_name' | t }}</label><input id="AddressFirst{{ suffix }}" type="text" name="address[first_name]" value="{{ form.first_name }}" autocomplete="given-name"></div>
+            <div class="form-field"><label for="AddressLast{{ suffix }}">{{ 'customers.last_name' | t }}</label><input id="AddressLast{{ suffix }}" type="text" name="address[last_name]" value="{{ form.last_name }}" autocomplete="family-name"></div>
+          </div>
+          <div class="form-field"><label for="AddressCompany{{ suffix }}">{{ 'customers.addresses.company' | t }}</label><input id="AddressCompany{{ suffix }}" type="text" name="address[company]" value="{{ form.company }}" autocomplete="organization"></div>
+          <div class="form-field"><label for="AddressOne{{ suffix }}">{{ 'customers.addresses.address1' | t }}</label><input id="AddressOne{{ suffix }}" type="text" name="address[address1]" value="{{ form.address1 }}" autocomplete="address-line1"></div>
+          <div class="form-field"><label for="AddressTwo{{ suffix }}">{{ 'customers.addresses.address2' | t }}</label><input id="AddressTwo{{ suffix }}" type="text" name="address[address2]" value="{{ form.address2 }}" autocomplete="address-line2"></div>
+          <div class="customer__row">
+            <div class="form-field"><label for="AddressCity{{ suffix }}">{{ 'customers.addresses.city' | t }}</label><input id="AddressCity{{ suffix }}" type="text" name="address[city]" value="{{ form.city }}" autocomplete="address-level2"></div>
+            <div class="form-field"><label for="AddressZip{{ suffix }}">{{ 'customers.addresses.zip' | t }}</label><input id="AddressZip{{ suffix }}" type="text" name="address[zip]" value="{{ form.zip }}" autocomplete="postal-code"></div>
+          </div>
+          <div class="customer__row">
+            <div class="form-field">
+              <label for="AddressCountry{{ suffix }}">{{ 'customers.addresses.country' | t }}</label>
+              <select id="AddressCountry{{ suffix }}" name="address[country]" data-default="{{ form.country }}" autocomplete="country" data-country-select data-province-id="AddressProvince{{ suffix }}" data-province-wrap="AddressProvinceWrap{{ suffix }}">{{ all_country_option_tags }}</select>
+            </div>
+            <div class="form-field" id="AddressProvinceWrap{{ suffix }}">
+              <label for="AddressProvince{{ suffix }}">{{ 'customers.addresses.province' | t }}</label>
+              <select id="AddressProvince{{ suffix }}" name="address[province]" data-default="{{ form.province }}" autocomplete="address-level1"></select>
+            </div>
+          </div>
+          <div class="form-field"><label for="AddressPhone{{ suffix }}">{{ 'forms.phone' | t }}</label><input id="AddressPhone{{ suffix }}" type="tel" name="address[phone]" value="{{ form.phone }}" autocomplete="tel"></div>
+          <label class="customer__check"><input type="checkbox" name="address[default]" value="1" {% if form.set_as_default_checkbox %}checked{% endif %}> {{ 'customers.addresses.default' | t }}</label>
+
+        {%- assign save_label = 'customers.addresses.save' | t -%}
+        {% render 'button', label: save_label, type: 'submit' %}
+      {%- endform -%}
+    </details>
+
+    {%- paginate customer.addresses by 10 -%}
+      <ul class="customer__addresses" role="list">
+        {%- for address in customer.addresses -%}
+          <li class="customer__card">
+            {%- if address == customer.default_address -%}{%- assign default_label = 'customers.addresses.default_label' | t -%}{% render 'chip', label: default_label, style: 'badge' %}{%- endif -%}
+            <address>{{ address | format_address }}</address>
+            <details>
+              <summary class="customer__summary">{{ 'customers.addresses.edit' | t }}</summary>
+              {%- form 'customer_address', address, class: 'customer__form' -%}
+                {%- assign suffix = address.id -%}
+      {%- if form.errors -%}
+        <div class="form-status form-status--error" role="alert" tabindex="-1" data-focus-on-load>{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+          <div class="customer__row">
+            <div class="form-field"><label for="AddressFirst{{ suffix }}">{{ 'customers.first_name' | t }}</label><input id="AddressFirst{{ suffix }}" type="text" name="address[first_name]" value="{{ form.first_name }}" autocomplete="given-name"></div>
+            <div class="form-field"><label for="AddressLast{{ suffix }}">{{ 'customers.last_name' | t }}</label><input id="AddressLast{{ suffix }}" type="text" name="address[last_name]" value="{{ form.last_name }}" autocomplete="family-name"></div>
+          </div>
+          <div class="form-field"><label for="AddressCompany{{ suffix }}">{{ 'customers.addresses.company' | t }}</label><input id="AddressCompany{{ suffix }}" type="text" name="address[company]" value="{{ form.company }}" autocomplete="organization"></div>
+          <div class="form-field"><label for="AddressOne{{ suffix }}">{{ 'customers.addresses.address1' | t }}</label><input id="AddressOne{{ suffix }}" type="text" name="address[address1]" value="{{ form.address1 }}" autocomplete="address-line1"></div>
+          <div class="form-field"><label for="AddressTwo{{ suffix }}">{{ 'customers.addresses.address2' | t }}</label><input id="AddressTwo{{ suffix }}" type="text" name="address[address2]" value="{{ form.address2 }}" autocomplete="address-line2"></div>
+          <div class="customer__row">
+            <div class="form-field"><label for="AddressCity{{ suffix }}">{{ 'customers.addresses.city' | t }}</label><input id="AddressCity{{ suffix }}" type="text" name="address[city]" value="{{ form.city }}" autocomplete="address-level2"></div>
+            <div class="form-field"><label for="AddressZip{{ suffix }}">{{ 'customers.addresses.zip' | t }}</label><input id="AddressZip{{ suffix }}" type="text" name="address[zip]" value="{{ form.zip }}" autocomplete="postal-code"></div>
+          </div>
+          <div class="customer__row">
+            <div class="form-field">
+              <label for="AddressCountry{{ suffix }}">{{ 'customers.addresses.country' | t }}</label>
+              <select id="AddressCountry{{ suffix }}" name="address[country]" data-default="{{ form.country }}" autocomplete="country" data-country-select data-province-id="AddressProvince{{ suffix }}" data-province-wrap="AddressProvinceWrap{{ suffix }}">{{ all_country_option_tags }}</select>
+            </div>
+            <div class="form-field" id="AddressProvinceWrap{{ suffix }}">
+              <label for="AddressProvince{{ suffix }}">{{ 'customers.addresses.province' | t }}</label>
+              <select id="AddressProvince{{ suffix }}" name="address[province]" data-default="{{ form.province }}" autocomplete="address-level1"></select>
+            </div>
+          </div>
+          <div class="form-field"><label for="AddressPhone{{ suffix }}">{{ 'forms.phone' | t }}</label><input id="AddressPhone{{ suffix }}" type="tel" name="address[phone]" value="{{ form.phone }}" autocomplete="tel"></div>
+          <label class="customer__check"><input type="checkbox" name="address[default]" value="1" {% if form.set_as_default_checkbox %}checked{% endif %}> {{ 'customers.addresses.default' | t }}</label>
+
+                {%- assign save_label = 'customers.addresses.save' | t -%}
+                {% render 'button', label: save_label, type: 'submit' %}
+              {%- endform -%}
+            </details>
+            <form method="post" action="{{ routes.account_addresses_url }}/{{ address.id }}" class="customer__delete" data-confirm="{{ 'customers.addresses.confirm_delete' | t }}">
+              <input type="hidden" name="_method" value="delete">
+              <button type="submit" class="customer__delete-button">{{ 'customers.addresses.delete' | t }}</button>
+            </form>
+          </li>
+        {%- endfor -%}
+      </ul>
+      {% render 'pagination', paginate: paginate %}
+    {%- endpaginate -%}
+  </div>
+</div>
+
+<script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
+
+{% stylesheet %}
+  @layer components {
+    .customer {
+      display: grid;
+      gap: var(--space-m);
+    }
+
+    .customer__title {
+      font-size: var(--step-3);
+      text-align: center;
+    }
+
+    .customer__links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .customer__links a {
+      text-decoration: underline 1px;
+      text-underline-offset: 4px;
+    }
+
+    .customer__subtitle {
+      font-size: var(--step-1);
+    }
+
+    .customer--wide .customer__title {
+      text-align: start;
+    }
+
+    .customer__head {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .customer__logout {
+      justify-self: start;
+      font-weight: var(--font-body-weight-bold);
+    }
+
+    .customer__summary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-block-size: 44px;
+      font-weight: var(--font-body-weight-bold);
+      cursor: pointer;
+    }
+
+    .customer__summary .icon {
+      inline-size: 1.1rem;
+      block-size: 1.1rem;
+    }
+
+    .customer__form {
+      display: grid;
+      gap: var(--space-s);
+      margin-block-start: 1rem;
+    }
+
+    .customer__add .form-card {
+      margin-inline: 0;
+      inline-size: min(100%, 40rem);
+    }
+
+    .customer__row {
+      display: grid;
+      gap: var(--space-s);
+    }
+
+    .customer__check {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-block-size: 44px;
+    }
+
+    .customer__addresses {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .customer__card {
+      display: grid;
+      align-content: start;
+      gap: 0.6rem;
+      padding: 1.25rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-surface);
+    }
+
+    .customer__card address {
+      font-style: normal;
+    }
+
+    .customer__delete-button {
+      min-block-size: 44px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--color-error);
+      font-weight: var(--font-body-weight-bold);
+      text-decoration: underline 1px;
+      text-underline-offset: 4px;
+      cursor: pointer;
+    }
+
+    @media (min-width: 40rem) {
+      .customer__row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelector('[data-focus-on-load]')?.focus();
+
+  /* Country → province selects (Shopify's helper from shopify_common.js). */
+  window.addEventListener('load', () => {
+    document.querySelectorAll('[data-country-select]').forEach((select) => {
+      if (!window.Shopify?.CountryProvinceSelector) return;
+      new window.Shopify.CountryProvinceSelector(select.id, select.dataset.provinceId, { hideElement: select.dataset.provinceWrap });
+    });
+  });
+
+  document.addEventListener('submit', (event) => {
+    const form = event.target.closest('[data-confirm]');
+    if (form && !window.confirm(form.dataset.confirm)) event.preventDefault();
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.main_addresses.name",
+  "class": "customer-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.shared.style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.shared.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:sections.shared.padding",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.shared.padding_none"
+        },
+        {
+          "value": "0.5",
+          "label": "t:sections.shared.padding_small"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.shared.padding_default"
+        },
+        {
+          "value": "1.5",
+          "label": "t:sections.shared.padding_large"
+        }
+      ],
+      "default": "1"
+    }
+  ]
+}
+{% endschema %}
