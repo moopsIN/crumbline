@@ -1,0 +1,69 @@
+{% doc %}
+  Renders one image in a plain or awning frame, with an optional crop ratio
+  and focal point so tall cakes keep their top tier.
+
+  @example
+  {% content_for 'block', type: 'image', id: 'image' %}
+{% enddoc %}
+
+{%- liquid
+  assign aspect = block.settings.aspect_ratio
+  if aspect == 'natural'
+    assign aspect = blank
+  endif
+-%}
+
+<div class="image-block" {{ block.shopify_attributes }}>
+  {% render 'media-frame',
+    image: block.settings.image,
+    style: block.settings.frame,
+    sunburst: block.settings.sunburst,
+    aspect_ratio: aspect,
+    focus: block.settings.focus,
+    sizes: '(min-width: 900px) 50vw, 100vw'
+  %}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.image.name",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:blocks.image.image"
+    },
+    {
+      "type": "select",
+      "id": "frame",
+      "label": "t:blocks.image.frame",
+      "options": [{"value": "plain", "label": "t:blocks.image.frame_plain"}, {"value": "awning", "label": "t:blocks.image.frame_awning"}],
+      "default": "plain"
+    },
+    {
+      "type": "checkbox",
+      "id": "sunburst",
+      "label": "t:blocks.image.sunburst",
+      "default": true,
+      "visible_if": "{{ block.settings.frame == 'awning' }}"
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "t:blocks.image.aspect_ratio",
+      "options": [{"value": "natural", "label": "t:blocks.image.aspect_natural"}, {"value": "1 / 1", "label": "t:blocks.image.aspect_square"}, {"value": "4 / 5", "label": "t:blocks.image.aspect_portrait"}, {"value": "3 / 4", "label": "t:blocks.image.aspect_tall"}, {"value": "4 / 3", "label": "t:blocks.image.aspect_landscape"}],
+      "default": "natural",
+      "visible_if": "{{ block.settings.frame == 'plain' }}"
+    },
+    {
+      "type": "select",
+      "id": "focus",
+      "label": "t:blocks.image.focus",
+      "info": "t:blocks.image.focus_info",
+      "options": [{"value": "center top", "label": "t:blocks.image.focus_top"}, {"value": "center 20%", "label": "t:blocks.image.focus_upper"}, {"value": "center", "label": "t:blocks.image.focus_center"}, {"value": "center bottom", "label": "t:blocks.image.focus_bottom"}],
+      "default": "center 20%"
+    }
+  ],
+  "presets": [{ "name": "t:blocks.image.name" }]
+}
+{% endschema %}

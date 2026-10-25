@@ -1,0 +1,103 @@
+{% doc %}
+  Renders the rotating circular stamp badge: an ink disc, an accent core with
+  an icon, and a mono text ring that spins slowly. The ring text is stretched
+  to fill the circle, so any length up to 40 characters fits.
+
+  The SVG is decorative; the text is exposed once to assistive technology
+  through a visually hidden span. The ring only spins when the visitor
+  hasn't asked for reduced motion. Use one badge per page at most.
+
+  @param {string} text - Ring text, up to 40 characters
+  @param {string} id - Unique id for this instance, e.g. `section.id`
+  @param {string} [icon] - Centre icon name from the icon snippet (default `cake`)
+  @param {string} [class] - Extra classes, e.g. for positioning
+
+  @example
+  {% render 'stamp-badge', text: 'Baked fresh every morning', id: section.id %}
+{% enddoc %}
+
+{%- liquid
+  assign ring_text = text | strip | truncate: 40, '' | upcase
+  assign path_id = 'stamp-ring-' | append: id
+  assign center_icon = icon | default: 'cake'
+-%}
+
+{%- if ring_text != blank -%}
+  <div class="stamp-badge {{ class }}">
+    <svg class="stamp-badge__svg" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+      <circle class="stamp-badge__disc" cx="60" cy="60" r="60"/>
+      <g class="stamp-badge__ring">
+        <path id="{{ path_id }}" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" fill="none"/>
+        <text class="stamp-badge__text">
+          <textPath href="#{{ path_id }}" textLength="272" lengthAdjust="spacing">{{ ring_text | escape }} ✦</textPath>
+        </text>
+      </g>
+      <circle class="stamp-badge__core" cx="60" cy="60" r="27"/>
+    </svg>
+    <span class="stamp-badge__icon">{% render 'icon', name: center_icon %}</span>
+    <span class="visually-hidden">{{ text | strip | truncate: 40, "" | escape }}</span>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .stamp-badge {
+      position: relative;
+      inline-size: clamp(92px, 26cqi, 124px);
+      aspect-ratio: 1;
+      rotate: 12deg;
+    }
+
+    .stamp-badge__svg {
+      inline-size: 100%;
+      block-size: 100%;
+      overflow: visible;
+    }
+
+    .stamp-badge__disc {
+      fill: var(--color-ink);
+    }
+
+    .stamp-badge__core {
+      fill: var(--color-accent);
+      stroke: var(--color-bg);
+      stroke-width: 2;
+    }
+
+    .stamp-badge__text {
+      fill: var(--color-bg);
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      letter-spacing: 1.6px;
+    }
+
+    .stamp-badge__ring {
+      transform-origin: 60px 60px;
+    }
+
+    .stamp-badge__icon {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: var(--color-on-highlight);
+    }
+
+    .stamp-badge__icon .icon {
+      inline-size: 28%;
+      block-size: 28%;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .stamp-badge__ring {
+        animation: stamp-spin 14s linear infinite;
+      }
+    }
+
+    @keyframes stamp-spin {
+      to {
+        rotate: 1turn;
+      }
+    }
+  }
+{% endstylesheet %}

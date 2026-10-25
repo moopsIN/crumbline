@@ -1,0 +1,151 @@
+{% doc %}
+  Wraps one image in a frame: `plain` (rounded, ink border) or `awning`
+  (the Cute market-stall window with a striped, scalloped awning and an
+  optional sunburst). Every decoration is CSS; no raster images.
+
+  Renders a placeholder when no image is set, so sections still look right
+  on a fresh install.
+
+  @param {image} [image] - The image to frame
+  @param {string} [style] - `plain` (default) or `awning`
+  @param {boolean} [sunburst] - Awning only: draw the sunburst behind the image
+  @param {string} [fit] - `cover` (default, photos) or `contain` (cut-outs)
+  @param {string} [aspect_ratio] - Plain only: crop to a ratio such as `4 / 5`; natural ratio when blank
+  @param {string} [focus] - CSS `object-position` for cropped images (default `center 20%`)
+  @param {string} [sizes] - The `sizes` attribute for the layout slot
+  @param {boolean} [priority] - Mark as the LCP image: eager loading and high fetch priority
+  @param {string} [class] - Extra classes
+
+  @example
+  {% render 'media-frame', image: section.settings.image, style: 'awning', sunburst: true, sizes: '(min-width: 900px) 470px, 90vw', priority: true %}
+{% enddoc %}
+
+{%- liquid
+  assign style = style | default: 'plain'
+  assign fit = fit | default: 'cover'
+  assign sizes = sizes | default: '100vw'
+  assign loading = 'lazy'
+  assign fetchpriority = 'auto'
+  if priority
+    assign loading = 'eager'
+    assign fetchpriority = 'high'
+  endif
+-%}
+
+<div
+  class="media-frame media-frame--{{ style }}{% if aspect_ratio != blank %} media-frame--cropped{% endif %} {{ class }}"
+  style="--media-fit: {{ fit }}; --media-focus: {{ focus | default: 'center 20%' }};{% if aspect_ratio != blank %} --media-aspect: {{ aspect_ratio }};{% endif %}"
+>
+  {%- if style == 'awning' -%}
+    <div class="media-frame__awning" aria-hidden="true"></div>
+  {%- endif -%}
+  <div class="media-frame__window{% if style == 'awning' and sunburst %} media-frame__window--sunburst{% endif %}">
+    {%- if image != blank -%}
+      {{
+        image
+        | image_url: width: 1600
+        | image_tag:
+          widths: '360, 540, 720, 900, 1200, 1600',
+          sizes: sizes,
+          loading: loading,
+          fetchpriority: fetchpriority,
+          class: 'media-frame__image'
+      }}
+    {%- else -%}
+      {{ 'image' | placeholder_svg_tag: 'media-frame__image media-frame__placeholder' }}
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .media-frame {
+      position: relative;
+      inline-size: 100%;
+    }
+
+    .media-frame__window {
+      position: relative;
+      overflow: hidden;
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-surface);
+      isolation: isolate;
+    }
+
+    .media-frame__image {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+    }
+
+    .media-frame--cropped .media-frame__window {
+      aspect-ratio: var(--media-aspect);
+    }
+
+    .media-frame--cropped .media-frame__image {
+      block-size: 100%;
+      object-fit: var(--media-fit, cover);
+      object-position: var(--media-focus);
+    }
+
+    .media-frame__placeholder {
+      aspect-ratio: 4 / 3;
+      background-color: var(--color-accent-soft);
+      fill: color-mix(in oklch, var(--color-ink) 30%, transparent);
+    }
+
+    /* Side padding holds the awning's overhang, so it never widens the page. */
+    .media-frame--awning {
+      inline-size: min(100%, 500px);
+      margin-inline: auto;
+      padding-block-start: 52px;
+      padding-inline: 6%;
+    }
+
+    .media-frame--awning .media-frame__placeholder {
+      background-color: transparent;
+    }
+
+    .media-frame--awning .media-frame__window {
+      aspect-ratio: 1 / 1.12;
+      border-radius: 6px 6px var(--radius-l) var(--radius-l);
+      background-color: var(--color-highlight);
+      box-shadow: var(--shadow-hard-lg);
+    }
+
+    .media-frame--awning .media-frame__image {
+      position: absolute;
+      inset: 0;
+      block-size: 100%;
+      object-fit: var(--media-fit, cover);
+      object-position: var(--media-focus);
+    }
+
+    .media-frame__window--sunburst::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(closest-side, rgb(255 253 249 / 0.85), transparent 70%),
+        repeating-conic-gradient(from 0deg at 50% 60%, var(--color-highlight) 0 10deg, var(--color-sunburst) 10deg 20deg);
+    }
+
+    /* Striped awning with a scalloped hem cut by a mask (Cute .stall-awning). */
+    .media-frame__awning {
+      position: absolute;
+      z-index: 1;
+      inset-block-start: 0;
+      inset-inline: 0;
+      block-size: 74px;
+      border: var(--border-ink);
+      border-block-end: 0;
+      border-radius: 14px 14px 0 0;
+      background: repeating-linear-gradient(90deg, var(--color-highlight-2) 0 34px, var(--color-awning-light) 34px 68px);
+      mask:
+        radial-gradient(circle at 17px 0, #000 16px, transparent 17px) 0 100% / 34px 17px repeat-x,
+        linear-gradient(#000, #000) 0 0 / 100% calc(100% - 17px) no-repeat;
+    }
+  }
+{% endstylesheet %}

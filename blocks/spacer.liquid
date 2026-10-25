@@ -1,0 +1,37 @@
+{% doc %}
+  Adds vertical space between blocks.
+
+  @example
+  {% content_for 'block', type: 'spacer', id: 'spacer' %}
+{% enddoc %}
+
+<div
+  class="spacer-block"
+  style="--spacer-size: var(--space-{{ block.settings.size }});"
+  aria-hidden="true"
+  {{ block.shopify_attributes }}
+></div>
+
+{% stylesheet %}
+  @layer components {
+    .spacer-block {
+      block-size: var(--spacer-size);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:blocks.spacer.name",
+  "settings": [
+    {
+      "type": "select",
+      "id": "size",
+      "label": "t:blocks.spacer.size",
+      "options": [{"value": "xs", "label": "t:blocks.spacer.size_xs"}, {"value": "s", "label": "t:blocks.spacer.size_s"}, {"value": "m", "label": "t:blocks.spacer.size_m"}, {"value": "l", "label": "t:blocks.spacer.size_l"}, {"value": "xl", "label": "t:blocks.spacer.size_xl"}, {"value": "2xl", "label": "t:blocks.spacer.size_2xl"}],
+      "default": "m"
+    }
+  ],
+  "presets": [{ "name": "t:blocks.spacer.name" }]
+}
+{% endschema %}

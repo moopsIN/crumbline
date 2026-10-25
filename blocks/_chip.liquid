@@ -1,0 +1,55 @@
+{% doc %}
+  Renders one chip inside a chip row. Private block: only chip rows can
+  add it.
+
+  @example
+  {% content_for 'block', type: '_chip', id: 'chip' %}
+{% enddoc %}
+
+{%- liquid
+  assign icon = block.settings.icon
+  if icon == 'none'
+    assign icon = blank
+  endif
+  capture attrs
+    echo block.shopify_attributes
+  endcapture
+-%}
+
+{%- if block.settings.label != blank -%}
+  {% render 'chip',
+    label: block.settings.label,
+    style: block.settings.style,
+    icon: icon,
+    attributes: attrs
+  %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:blocks.chip.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "t:blocks.chip.label",
+      "default": "Baked to order"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "t:blocks.chip.style",
+      "options": [{"value": "label", "label": "t:blocks.chip.style_label"}, {"value": "badge", "label": "t:blocks.chip.style_badge"}, {"value": "solid", "label": "t:blocks.chip.style_solid"}],
+      "default": "label"
+    },
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "t:blocks.chip.icon",
+      "options": [{"value": "none", "label": "t:blocks.chip.icon_none"}, {"value": "cake", "label": "t:blocks.chip.icon_cake"}, {"value": "shop", "label": "t:blocks.chip.icon_shop"}, {"value": "basket", "label": "t:blocks.chip.icon_basket"}, {"value": "pin", "label": "t:blocks.chip.icon_pin"}, {"value": "calendar", "label": "t:blocks.chip.icon_calendar"}, {"value": "check", "label": "t:blocks.chip.icon_check"}, {"value": "home", "label": "t:blocks.chip.icon_home"}, {"value": "whatsapp", "label": "t:blocks.chip.icon_whatsapp"}, {"value": "instagram", "label": "t:blocks.chip.icon_instagram"}],
+      "default": "none"
+    }
+  ],
+  "presets": [{ "name": "t:blocks.chip.name" }]
+}
+{% endschema %}

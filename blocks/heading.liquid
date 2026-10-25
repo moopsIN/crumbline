@@ -1,0 +1,105 @@
+{% doc %}
+  Renders a display heading with an optional eyebrow label above it.
+  Italic words (`<em>`) in the heading get the accent-text colour, the
+  "& Sons" treatment from the Cute mockup.
+
+  @example
+  {% content_for 'block', type: 'heading', id: 'heading' %}
+{% enddoc %}
+
+{%- liquid
+  assign level = block.settings.level | default: 'h2'
+-%}
+
+<div
+  class="heading-block heading-block--{{ block.settings.size }}"
+  style="--text-align: {{ block.settings.alignment }};"
+  {{ block.shopify_attributes }}
+>
+  {%- if block.settings.eyebrow != blank -%}
+    <p class="heading-block__eyebrow mono">{{ block.settings.eyebrow | escape }}</p>
+  {%- endif -%}
+  <{{ level }} class="heading-block__title">{{ block.settings.heading }}</{{ level }}>
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .heading-block {
+      text-align: var(--text-align);
+    }
+
+    .heading-block__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-block-end: 1rem;
+      color: var(--color-ink-muted);
+    }
+
+    .heading-block__eyebrow::before {
+      content: '';
+      inline-size: 11px;
+      block-size: 11px;
+      border: var(--border-ink);
+      border-radius: 50%;
+      background-color: var(--color-accent);
+    }
+
+    .heading-block--medium .heading-block__title {
+      font-size: var(--step-2);
+    }
+
+    .heading-block--large .heading-block__title {
+      font-size: var(--step-3);
+    }
+
+    .heading-block--hero .heading-block__title {
+      font-size: var(--step-4);
+      line-height: 0.88;
+      letter-spacing: -0.045em;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:blocks.heading.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:blocks.heading.eyebrow",
+      "info": "t:blocks.heading.eyebrow_info"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:blocks.heading.heading",
+      "info": "t:blocks.heading.heading_info",
+      "default": "Baked fresh, <em>just for you</em>"
+    },
+    {
+      "type": "select",
+      "id": "level",
+      "label": "t:blocks.heading.level",
+      "info": "t:blocks.heading.level_info",
+      "options": [{"value": "h1", "label": "t:blocks.heading.level_h1"}, {"value": "h2", "label": "t:blocks.heading.level_h2"}, {"value": "h3", "label": "t:blocks.heading.level_h3"}],
+      "default": "h2"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "t:blocks.heading.size",
+      "options": [{"value": "medium", "label": "t:blocks.heading.size_medium"}, {"value": "large", "label": "t:blocks.heading.size_large"}, {"value": "hero", "label": "t:blocks.heading.size_hero"}],
+      "default": "large"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:blocks.shared.alignment",
+      "default": "left"
+    }
+  ],
+  "presets": [{ "name": "t:blocks.heading.name" }]
+}
+{% endschema %}

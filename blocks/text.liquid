@@ -1,59 +1,78 @@
 {% doc %}
-  Renders a text block.
+  Renders a block of rich text in one of three styles: body, lead (larger
+  intro text) or micro (mono uppercase label).
 
   @example
-  {% content_for 'block', type: 'text', id: 'text' %}
+  {% content_for 'block', type: 'text', id: 'intro' %}
 {% enddoc %}
 
 <div
-  class="text {{ block.settings.text_style }}"
-  style="--text-align: {{ block.settings.alignment }}"
+  class="text-block text-block--{{ block.settings.style }} text-block--align-{{ block.settings.alignment }}"
+  style="--text-align: {{ block.settings.alignment }};"
   {{ block.shopify_attributes }}
 >
   {{ block.settings.text }}
 </div>
 
 {% stylesheet %}
-  .text {
-    text-align: var(--text-align);
-  }
-  .text--title {
-    font-size: 2rem;
-    font-weight: 700;
-  }
-  .text--subtitle {
-    font-size: 1.5rem;
+  @layer components {
+    .text-block {
+      max-inline-size: 65ch;
+      text-align: var(--text-align);
+    }
+
+    .text-block--align-center {
+      margin-inline: auto;
+    }
+
+    .text-block--align-right {
+      margin-inline-start: auto;
+    }
+
+    .text-block > * + * {
+      margin-block-start: 0.75em;
+    }
+
+    .text-block--lead {
+      color: var(--color-ink-muted);
+      font-size: var(--step-1);
+      line-height: 1.45;
+    }
+
+    .text-block--micro {
+      color: var(--color-ink-muted);
+      font-family: var(--font-mono);
+      font-size: max(0.8em, var(--text-micro));
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.text",
+  "name": "t:blocks.text.name",
   "settings": [
     {
-      "type": "text",
+      "type": "richtext",
       "id": "text",
-      "label": "t:labels.text",
-      "default": "Text"
+      "label": "t:blocks.text.text",
+      "default": "<p>Tell people what makes your bakes special.</p>"
     },
     {
       "type": "select",
-      "id": "text_style",
-      "label": "t:labels.text_style",
-      "options": [
-        { "value": "text--title", "label": "t:options.text_style.title" },
-        { "value": "text--subtitle", "label": "t:options.text_style.subtitle" },
-        { "value": "text--normal", "label": "t:options.text_style.normal" }
-      ],
-      "default": "text--title"
+      "id": "style",
+      "label": "t:blocks.text.style",
+      "options": [{"value": "body", "label": "t:blocks.text.style_body"}, {"value": "lead", "label": "t:blocks.text.style_lead"}, {"value": "micro", "label": "t:blocks.text.style_micro"}],
+      "default": "body"
     },
     {
       "type": "text_alignment",
       "id": "alignment",
-      "label": "t:labels.alignment",
+      "label": "t:blocks.shared.alignment",
       "default": "left"
     }
   ],
-  "presets": [{ "name": "t:general.text" }]
+  "presets": [{ "name": "t:blocks.text.name" }]
 }
 {% endschema %}

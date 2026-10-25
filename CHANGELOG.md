@@ -4,6 +4,29 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-10-25
+
+Phase 1: design tokens and foundation.
+
+### Added
+- Theme settings: Branding (favicon), Colours (two colour schemes: cream and ink band), Typography (Fraunces, DM Sans, IBM Plex Mono and Caveat by default, plus text size), Layout, Buttons and Decorations (off by default).
+- Design tokens from the Cute direction: fluid type and spacing scales, radii, hard offset shadows, spring easings, a paper-grain page texture and an accessible focus ring.
+- Snippets: inline SVG icon set (23 icons), button, chip, plain and awning media frame, rotating stamp badge, speech bubble, and shared section attributes (colour scheme and spacing).
+- Theme blocks: text, heading, button, image, chip row, spacer and group.
+- Skip link and `main` landmark; the display font is preloaded.
+- Product metafield guide in `docs/metafields.md`.
+
+### Changed
+- `critical.css` rewritten with layered CSS (`reset, tokens, base, components, utilities`).
+- The custom section gains colour scheme and spacing settings and accepts app blocks.
+
+### Removed
+- Skeleton's account and cart SVG assets (replaced by the icon snippet) and unused Skeleton locale strings.
+
+## [0.0.1] — 2026-10-25
+
+Phase 0: repository setup and housekeeping.
+
 ### Added
 - `CHANGELOG.md` and Crumbline's own contributing guide.
 - Public `docs/` folder for merchant and developer guides.

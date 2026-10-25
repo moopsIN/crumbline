@@ -1,0 +1,37 @@
+{% doc %}
+  Renders a row of chips, e.g. "Baked to order · Local pickup".
+
+  @example
+  {% content_for 'block', type: 'chip-row', id: 'chips' %}
+{% enddoc %}
+
+{% comment %} A div, not a list: Shopify wraps each child block in its own div. {% endcomment %}
+<div class="chip-row" {{ block.shopify_attributes }}>
+  {% content_for 'blocks' %}
+</div>
+
+{% stylesheet %}
+  @layer components {
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:blocks.chip_row.name",
+  "blocks": [{ "type": "_chip" }],
+  "presets": [
+    {
+      "name": "t:blocks.chip_row.name",
+      "blocks": [
+        { "type": "_chip", "settings": { "label": "Baked to order", "icon": "cake" } },
+        { "type": "_chip", "settings": { "label": "Local pickup", "icon": "pin" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

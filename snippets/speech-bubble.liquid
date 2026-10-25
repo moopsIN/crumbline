@@ -1,0 +1,92 @@
+{% doc %}
+  Renders a speech-bubble sticker ("Fresh out the oven!").
+
+  Decorative extra: it renders nothing unless the global Decorations setting
+  is on (off by default). The handwriting variant loads the hand font's face
+  here, so pages without bubbles never download it.
+
+  @param {string} text - Bubble text; keep it short
+  @param {boolean} [hand] - Use the handwriting font
+  @param {string} [tail] - Tail side: `start` (default) or `end`
+  @param {string} [class] - Extra classes, e.g. for positioning
+
+  @example
+  {% render 'speech-bubble', text: block.settings.text, hand: true, tail: 'end' %}
+{% enddoc %}
+
+{%- if settings.decorations_enabled and text != blank -%}
+  {%- if hand -%}
+    {% style %}
+      {{ settings.type_hand_font | font_face: font_display: 'swap' }}
+    {% endstyle %}
+  {%- endif -%}
+  <p class="speech-bubble speech-bubble--tail-{{ tail | default: 'start' }}{% if hand %} speech-bubble--hand{% endif %} {{ class }}">
+    {{- text | escape -}}
+  </p>
+{%- endif -%}
+
+{% stylesheet %}
+  @layer components {
+    .speech-bubble {
+      --tail: 14px;
+
+      position: relative;
+      display: inline-block;
+      max-inline-size: 16rem;
+      margin: 0;
+      padding: 0.6rem 1rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-m);
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+      font-weight: var(--font-body-weight-bold);
+      font-size: 0.9rem;
+      line-height: 1.3;
+      box-shadow: var(--shadow-hard);
+    }
+
+    .speech-bubble--hand {
+      font-family: var(--font-hand);
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+
+    /* Tail: an ink triangle with a surface triangle inset to draw the border. */
+    .speech-bubble::before,
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      inset-block-start: 100%;
+      inline-size: var(--tail);
+      block-size: var(--tail);
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+
+    .speech-bubble::before {
+      inset-inline-start: 1.25rem;
+      background-color: var(--color-ink);
+    }
+
+    .speech-bubble::after {
+      inset-inline-start: calc(1.25rem + var(--border-width));
+      margin-block-start: calc(var(--border-width) * -1);
+      inline-size: calc(var(--tail) - var(--border-width) * 2.4);
+      block-size: calc(var(--tail) - var(--border-width) * 2.4);
+      background-color: var(--color-surface);
+    }
+
+    .speech-bubble--tail-end::before,
+    .speech-bubble--tail-end::after {
+      inset-inline-start: auto;
+      clip-path: polygon(0 0, 100% 0, 100% 100%);
+    }
+
+    .speech-bubble--tail-end::before {
+      inset-inline-end: 1.25rem;
+    }
+
+    .speech-bubble--tail-end::after {
+      inset-inline-end: calc(1.25rem + var(--border-width));
+    }
+  }
+{% endstylesheet %}

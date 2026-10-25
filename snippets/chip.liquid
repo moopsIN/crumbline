@@ -1,0 +1,144 @@
+{% doc %}
+  Renders a chip: a small pill for micro-labels, badges, allergens or filters.
+
+  Informational chips render as `<span>` (or `<li>` when `tag` is `li`, for
+  lists such as allergens). Filter chips render as a `<button>` with
+  `aria-pressed`, so screen readers announce the toggle state.
+
+  @param {string} label - Chip text
+  @param {string} [style] - `label` (default, dashed mono), `badge`, `solid`, `allergen`, `allergen-warn` or `filter`
+  @param {string} [icon] - Leading icon name from the icon snippet
+  @param {string} [tag] - `span` (default) or `li`; ignored for filter chips
+  @param {boolean} [pressed] - Filter chips only: the pressed state
+  @param {string} [class] - Extra classes
+  @param {string} [attributes] - Extra raw attributes, e.g. `data-filter="birthday"`
+
+  @example
+  {% render 'chip', label: 'Baked to order', icon: 'cake' %}
+  {% render 'chip', label: 'Bestseller', style: 'badge' %}
+  {% render 'chip', label: 'Nuts', style: 'allergen-warn', tag: 'li' %}
+  {% render 'chip', label: 'Birthday', style: 'filter', pressed: true %}
+{% enddoc %}
+
+{%- liquid
+  assign style = style | default: 'label'
+  assign classes = 'chip chip--' | append: style
+  if class != blank
+    assign classes = classes | append: ' ' | append: class
+  endif
+
+  if style == 'filter'
+    assign element = 'button'
+  elsif tag == 'li'
+    assign element = 'li'
+  else
+    assign element = 'span'
+  endif
+-%}
+
+<{{ element }}
+  class="{{ classes }}"
+  {% if style == 'filter' %}
+    type="button" aria-pressed="{% if pressed %}true{% else %}false{% endif %}"
+  {% endif %}
+  {{ attributes }}
+>
+  {%- if icon != blank -%}
+    {% render 'icon', name: icon, class: 'chip__icon' %}
+  {%- endif -%}
+  {{- label -}}
+</{{ element }}>
+
+{% stylesheet %}
+  @layer components {
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.8rem;
+      border: var(--border-dashed);
+      border-radius: var(--radius-pill);
+      color: var(--color-ink-muted);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      line-height: 1.3;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      list-style: none;
+    }
+
+    .chip__icon {
+      inline-size: 1rem;
+      block-size: 1rem;
+    }
+
+    .chip--badge,
+    .chip--solid {
+      padding: 0.2rem 0.65rem;
+      border: var(--border-ink-thin);
+      font-size: var(--text-micro);
+    }
+
+    .chip--badge {
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+    }
+
+    .chip--solid {
+      background-color: var(--color-ink);
+      color: var(--color-bg);
+    }
+
+    .chip--allergen,
+    .chip--allergen-warn {
+      padding: 0.15rem 0.55rem;
+      border: 0;
+      font-size: var(--text-micro);
+    }
+
+    .chip--allergen {
+      background-color: var(--color-bg);
+      color: var(--color-ink-muted);
+    }
+
+    .chip--allergen-warn {
+      background-color: var(--color-allergen-warn-bg);
+      color: var(--color-allergen-warn-fg);
+      font-weight: var(--font-mono-weight-medium);
+    }
+
+    .chip--filter {
+      min-block-size: 44px;
+      padding: 0.5rem 1rem;
+      border: var(--border-width) solid var(--color-border-control);
+      border-radius: var(--radius-m);
+      background-color: var(--color-surface-alt);
+      color: var(--color-ink);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: var(--font-body-weight-bold);
+      letter-spacing: normal;
+      text-transform: none;
+      transition:
+        translate 450ms var(--ease-bounce),
+        border-color var(--dur-base),
+        background-color var(--dur-base),
+        box-shadow var(--dur-base);
+    }
+
+    @media (hover: hover) {
+      .chip--filter:hover {
+        border-color: var(--color-ink);
+        translate: 0 -2px;
+      }
+    }
+
+    .chip--filter[aria-pressed='true'] {
+      border-color: var(--color-ink);
+      background-color: var(--color-highlight);
+      color: var(--color-on-highlight);
+      box-shadow: var(--shadow-hard);
+      translate: -2px -2px;
+    }
+  }
+{% endstylesheet %}

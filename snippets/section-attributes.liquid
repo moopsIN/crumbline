@@ -1,0 +1,18 @@
+{% doc %}
+  Outputs the shared attributes for a section's root element: the chosen
+  colour scheme as `data-scheme` and the padding multiplier as
+  `--section-pad`. Pair it with the shared Style settings (`color_scheme`,
+  `padding`) in the section schema and use
+  `padding-block: calc(var(--section-padding-block) * var(--section-pad))`.
+
+  Reads the `section` object of the section that renders it.
+
+  @example
+  <div class="my-section full-width" {% render 'section-attributes' %}>
+{% enddoc %}
+
+{%- liquid
+  assign scheme = section.settings.color_scheme
+  assign pad = section.settings.padding | default: '1'
+-%}
+{% if scheme %}data-scheme="{{ scheme.id }}"{% endif %} style="--section-pad: {{ pad }};"
