@@ -55,7 +55,7 @@ Crumbline puts those steps into the storefront. It runs on Shopify's **Basic pla
 - Vanilla JavaScript custom elements, no framework and no build step
 - Progressive enhancement: every form works without JavaScript
 - Targets: WCAG 2.2 AA, Lighthouse mobile performance 90 or higher, under 60 KB of JavaScript per page
-- Fully translatable: English, with Spanish on the way
+- Fully translatable: ships in English and Spanish, storefront and theme editor
 
 ## Getting started
 
@@ -101,6 +101,16 @@ Crumbline works without any setup and gets better with a few product metafields.
 
 No metafields? You can use tags instead, for example `occasion:birthday` or `allergen:nuts`. Full guides will live in [`docs/`](./docs/) and ship by v1.0.0.
 
+## Languages
+
+Crumbline ships with English and Spanish for both the storefront and the theme editor. To offer Spanish, add it in **Settings → Languages** and publish it.
+
+Theme strings such as buttons, labels and messages are translated by the theme. Content you type yourself, such as headings, menu names, bottom navigation labels, product titles and descriptions, is translated with Shopify's free [Translate & Adapt](https://apps.shopify.com/translate-and-adapt) app. It's made by Shopify, so it doesn't break the no-paid-apps promise.
+
+Keep bottom navigation labels short (one word, about 10 letters), because five of them share a phone-width bar.
+
+Order notes such as the pickup date and the cake message use the shopper's language for their labels, so a Spanish order shows *Fecha* where an English one shows *Date*.
+
 ## Project structure
 
 ```
@@ -120,17 +130,17 @@ No metafields? You can use tags instead, for example `occasion:birthday` or `all
 
 Crumbline is built in phases, and each one ends with a tagged pre-release (`v0.N.0`):
 
-- [ ] Phase 0: repository setup and housekeeping *(in progress)*
-- [ ] Phase 1: design tokens and foundation
-- [ ] Phase 2: header, footer and mobile bottom navigation
-- [ ] Phase 3: product card and collection pages
-- [ ] Phase 4: product page with cake facts, option pills and pickup/delivery date
-- [ ] Phase 5: cart page and cart drawer
-- [ ] Phase 6: homepage sections
-- [ ] Phase 7: cake builder
-- [ ] Phase 8: custom order form and WhatsApp hand-off
-- [ ] Phase 9: search, blog, pages, customer accounts, 404, password and gift card
-- [ ] Phase 10: localisation (Spanish)
+- [x] Phase 0: repository setup and housekeeping
+- [x] Phase 1: design tokens and foundation
+- [x] Phase 2: header, footer and mobile bottom navigation
+- [x] Phase 3: product card and collection pages
+- [x] Phase 4: product page with cake facts, option pills and pickup/delivery date
+- [x] Phase 5: cart page and cart drawer
+- [x] Phase 6: homepage sections
+- [x] Phase 7: cake builder
+- [x] Phase 8: custom order form and WhatsApp hand-off
+- [x] Phase 9: search, blog, pages, customer accounts, 404, password and gift card
+- [x] Phase 10: localisation (Spanish)
 - [ ] Phase 11: performance and accessibility hardening
 - [ ] Phase 12: demo store content and documentation
 - [ ] Phase 13: v1.0.0 release
