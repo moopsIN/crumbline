@@ -423,6 +423,22 @@
       margin: 0.25rem 0 0;
       font-weight: 400;
     }
+  
+    /* Windows high contrast removes backgrounds; redraw the step bars in system colours. */
+    @media (forced-colors: active) {
+      .commission-form__pip::before {
+        forced-color-adjust: none;
+        background-color: GrayText;
+      }
+
+      .commission-form__pip.is-done::before {
+        background-color: CanvasText;
+      }
+
+      .commission-form__pip[aria-current='step']::before {
+        background-color: Highlight;
+      }
+    }
   }
 {% endstylesheet %}
 

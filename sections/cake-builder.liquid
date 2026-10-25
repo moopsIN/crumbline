@@ -473,6 +473,22 @@
         rotate: 0deg;
       }
     }
+  
+    /* Windows high contrast removes backgrounds; redraw the step bars in system colours. */
+    @media (forced-colors: active) {
+      .cake-builder__pip::before {
+        forced-color-adjust: none;
+        background-color: GrayText;
+      }
+
+      .cake-builder__pip.is-done::before {
+        background-color: CanvasText;
+      }
+
+      .cake-builder__pip[aria-current='step']::before {
+        background-color: Highlight;
+      }
+    }
   }
 {% endstylesheet %}
 

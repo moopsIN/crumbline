@@ -395,6 +395,15 @@
       translate: -2px -2px;
     }
 
+    @media (forced-colors: active) {
+      .option-pill:has(input:checked) > span {
+        forced-color-adjust: none;
+        border-color: Highlight;
+        background-color: Highlight;
+        color: HighlightText;
+      }
+    }
+
     .option-pill:has(input:checked) small {
       color: inherit;
     }
