@@ -336,7 +336,8 @@
       "country": "Country",
       "language": "Language",
       "update": "Update",
-      "back_to_top": "Back to top ↑"
+      "back_to_top": "Back to top ↑",
+      "theme_credit_html": "Theme designed by {{ link }}"
     },
     "occasions": {
       "all": "Everything",

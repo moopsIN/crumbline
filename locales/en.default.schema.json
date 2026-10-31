@@ -237,7 +237,9 @@
       "address": "Address",
       "phone": "Phone",
       "email": "Email",
-      "social_info": "Uses the links in Theme settings → Social media."
+      "social_info": "Uses the links in Theme settings → Social media.",
+      "show_theme_credit": "Show theme credit",
+      "show_theme_credit_info": "Adds \"Theme designed by Moops\" to the bottom line. Thank you for keeping it on; it helps keep Crumbline free."
     },
     "collection_banner": {
       "name": "Collection banner",

@@ -13,6 +13,7 @@ First public release: everything from the 0.x pre-releases below, plus these cha
 - "What's the occasion?" is centred by default (with a left/centre setting), with larger chips spaced evenly on wide screens, a swipeable strip with soft edges on phones, a pill that marks the selected occasion and a sparkle icon for "Everything".
 
 ### Added
+- A "Theme designed by Moops" credit in the footer's bottom line, linking to moops.in. Merchants can turn it off in the footer settings.
 - Automated releases: pushing a version tag builds the theme zip and publishes a GitHub release with notes from this changelog.
 - More hero settings: image focal point and frame shape, image on the left or right, image first on phones, stamp icon, a price toggle for the "Today's bake" ticket and a handwritten or plain style for each speech bubble.
 
