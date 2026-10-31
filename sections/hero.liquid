@@ -3,16 +3,21 @@
   other a single photo in a plain or market-stall awning frame (the LCP
   image), with an optional rotating stamp badge, a "Today's bake" ticket
   linking to a product, and two speech bubbles (shown only when Theme
-  settings → Decorations is on).
+  settings → Decorations is on). Image side, focus, frame shape and phone
+  order are section settings.
 {% endcomment %}
 
 {%- liquid
   assign product = section.settings.ticket_product
   assign bubble_1 = section.settings.bubble_1
   assign bubble_2 = section.settings.bubble_2
+  assign aspect_ratio = section.settings.aspect_ratio
+  if aspect_ratio == 'natural'
+    assign aspect_ratio = ''
+  endif
 -%}
 
-<div class="hero full-width" {% render 'section-attributes' %}>
+<div class="hero hero--image-{{ section.settings.image_position }} hero--phone-{{ section.settings.mobile_order }}-first full-width" {% render 'section-attributes' %}>
   <div class="hero__inner">
     <div class="hero__copy">
       {% content_for 'blocks' %}
@@ -31,25 +36,28 @@
         style: section.settings.media_style,
         sunburst: section.settings.sunburst,
         fit: section.settings.image_fit,
-        focus: 'center',
+        focus: section.settings.image_focus,
+        aspect_ratio: aspect_ratio,
         sizes: '(min-width: 900px) 500px, 92vw',
         priority: is_first
       %}
 
       {%- if section.settings.stamp_text != blank -%}
-        {% render 'stamp-badge', text: section.settings.stamp_text, id: section.id, class: 'hero__stamp' %}
+        {% render 'stamp-badge', text: section.settings.stamp_text, icon: section.settings.stamp_icon, id: section.id, class: 'hero__stamp' %}
       {%- endif -%}
 
       {%- if product != blank -%}
         <a href="{{ product.url }}" class="hero__ticket">
           <span class="hero__ticket-kicker mono">{{ section.settings.ticket_label | escape }}</span>
           <strong class="hero__ticket-title">{{ product.title | escape }}</strong>
-          <span class="hero__ticket-price mono">{{ product.price | money }} <span aria-hidden="true">→</span></span>
+          {%- if section.settings.ticket_show_price -%}
+            <span class="hero__ticket-price mono">{{ product.price | money }} <span aria-hidden="true">→</span></span>
+          {%- endif -%}
         </a>
       {%- endif -%}
 
-      {% render 'speech-bubble', text: bubble_1, hand: true, class: 'hero__bubble hero__bubble--one' %}
-      {% render 'speech-bubble', text: bubble_2, tail: 'end', class: 'hero__bubble hero__bubble--two' %}
+      {% render 'speech-bubble', text: bubble_1, hand: section.settings.bubble_1_hand, class: 'hero__bubble hero__bubble--one' %}
+      {% render 'speech-bubble', text: bubble_2, hand: section.settings.bubble_2_hand, tail: 'end', class: 'hero__bubble hero__bubble--two' %}
     </div>
   </div>
 </div>
@@ -146,9 +154,23 @@
       rotate: 4deg;
     }
 
+    @media (max-width: 56.24rem) {
+      .hero--phone-image-first .hero__media {
+        order: -1;
+      }
+    }
+
     @media (min-width: 56.25rem) {
       .hero__inner {
         grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      }
+
+      .hero--image-left .hero__inner {
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      }
+
+      .hero--image-left .hero__media {
+        order: -1;
       }
     }
   }
@@ -217,11 +239,147 @@
       "default": "cover"
     },
     {
+      "type": "select",
+      "id": "image_focus",
+      "label": "t:blocks.image.focus",
+      "info": "t:blocks.image.focus_info",
+      "options": [
+        {
+          "value": "center top",
+          "label": "t:blocks.image.focus_top"
+        },
+        {
+          "value": "center 20%",
+          "label": "t:blocks.image.focus_upper"
+        },
+        {
+          "value": "center",
+          "label": "t:blocks.image.focus_center"
+        },
+        {
+          "value": "center bottom",
+          "label": "t:blocks.image.focus_bottom"
+        }
+      ],
+      "default": "center",
+      "visible_if": "{{ section.settings.image_fit == 'cover' }}"
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "t:blocks.image.aspect_ratio",
+      "options": [
+        {
+          "value": "natural",
+          "label": "t:blocks.image.aspect_natural"
+        },
+        {
+          "value": "1 / 1",
+          "label": "t:blocks.image.aspect_square"
+        },
+        {
+          "value": "4 / 5",
+          "label": "t:blocks.image.aspect_portrait"
+        },
+        {
+          "value": "3 / 4",
+          "label": "t:blocks.image.aspect_tall"
+        },
+        {
+          "value": "4 / 3",
+          "label": "t:blocks.image.aspect_landscape"
+        }
+      ],
+      "default": "natural",
+      "visible_if": "{{ section.settings.media_style == 'plain' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.shared.layout"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "t:sections.image_with_text.position",
+      "options": [
+        {
+          "value": "right",
+          "label": "t:sections.image_with_text.right"
+        },
+        {
+          "value": "left",
+          "label": "t:sections.image_with_text.left"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "select",
+      "id": "mobile_order",
+      "label": "t:sections.hero.mobile_order",
+      "options": [
+        {
+          "value": "text",
+          "label": "t:sections.hero.mobile_text_first"
+        },
+        {
+          "value": "image",
+          "label": "t:sections.hero.mobile_image_first"
+        }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.hero.stamp_header"
+    },
+    {
       "type": "text",
       "id": "stamp_text",
       "label": "t:sections.hero.stamp_text",
       "info": "t:sections.hero.stamp_text_info",
       "default": "Baked fresh to order"
+    },
+    {
+      "type": "select",
+      "id": "stamp_icon",
+      "label": "t:blocks.chip.icon",
+      "options": [
+        {
+          "value": "cake",
+          "label": "t:blocks.chip.icon_cake"
+        },
+        {
+          "value": "shop",
+          "label": "t:blocks.chip.icon_shop"
+        },
+        {
+          "value": "basket",
+          "label": "t:blocks.chip.icon_basket"
+        },
+        {
+          "value": "pin",
+          "label": "t:blocks.chip.icon_pin"
+        },
+        {
+          "value": "calendar",
+          "label": "t:blocks.chip.icon_calendar"
+        },
+        {
+          "value": "check",
+          "label": "t:blocks.chip.icon_check"
+        },
+        {
+          "value": "home",
+          "label": "t:blocks.chip.icon_home"
+        }
+      ],
+      "default": "cake",
+      "visible_if": "{{ section.settings.stamp_text != blank }}"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.hero.ticket_header"
     },
     {
       "type": "product",
@@ -233,19 +391,45 @@
       "type": "text",
       "id": "ticket_label",
       "label": "t:sections.hero.ticket_label",
-      "default": "Today's bake"
+      "default": "Today's bake",
+      "visible_if": "{{ section.settings.ticket_product != blank }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "ticket_show_price",
+      "label": "t:sections.hero.ticket_show_price",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.hero.bubbles_header"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:sections.hero.bubble_info"
     },
     {
       "type": "text",
       "id": "bubble_1",
       "label": "t:sections.hero.bubble_1",
-      "info": "t:sections.hero.bubble_info",
       "default": "Fresh out of the oven!"
+    },
+    {
+      "type": "checkbox",
+      "id": "bubble_1_hand",
+      "label": "t:sections.hero.bubble_hand",
+      "default": true
     },
     {
       "type": "text",
       "id": "bubble_2",
       "label": "t:sections.hero.bubble_2"
+    },
+    {
+      "type": "checkbox",
+      "id": "bubble_2_hand",
+      "label": "t:sections.hero.bubble_hand",
+      "default": false
     },
     {
       "type": "header",

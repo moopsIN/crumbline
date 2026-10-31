@@ -313,7 +313,15 @@
       "ticket_label": "Etiqueta del tique",
       "bubble_1": "Bocadillo 1",
       "bubble_2": "Bocadillo 2",
-      "bubble_info": "Solo se muestra si Configuración del tema → Decoraciones está activado."
+      "bubble_info": "Solo se muestra si Configuración del tema → Decoraciones está activado.",
+      "mobile_order": "En teléfonos",
+      "mobile_text_first": "Texto primero",
+      "mobile_image_first": "Imagen primero",
+      "stamp_header": "Sello",
+      "ticket_header": "Tique «del día»",
+      "ticket_show_price": "Mostrar precio",
+      "bubbles_header": "Bocadillos",
+      "bubble_hand": "Estilo manuscrito"
     },
     "hero_collage": {
       "name": "Portada collage",
