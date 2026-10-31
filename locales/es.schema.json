@@ -237,7 +237,9 @@
       "address": "Dirección",
       "phone": "Teléfono",
       "email": "Correo electrónico",
-      "social_info": "Usa los enlaces de Configuración del tema → Redes sociales."
+      "social_info": "Usa los enlaces de Configuración del tema → Redes sociales.",
+      "show_theme_credit": "Mostrar crédito del tema",
+      "show_theme_credit_info": "Añade «Tema diseñado por Moops» a la línea inferior. Gracias por mantenerlo; ayuda a que Crumbline siga siendo gratuito."
     },
     "collection_banner": {
       "name": "Cabecera de colección",

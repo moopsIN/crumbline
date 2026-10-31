@@ -206,6 +206,7 @@
 
       <p class="site-footer__legal mono">
         &copy; {{ 'now' | date: '%Y' }} {{ shop.name | link_to: routes.root_url }} · {{ powered_by_link }}
+        {%- if section.settings.show_theme_credit %} · {{ 'sections.footer.theme_credit_html' | t: link: '<a href="https://moops.in">Moops</a>' }}{% endif -%}
       </p>
       <a href="#main" class="site-footer__top mono">
         {{- 'sections.footer.back_to_top' | t -}}
@@ -658,6 +659,13 @@
       "default": true
     },
     {
+      "type": "checkbox",
+      "id": "show_theme_credit",
+      "label": "t:sections.footer.show_theme_credit",
+      "info": "t:sections.footer.show_theme_credit_info",
+      "default": true
+    },
+    {
       "type": "header",
       "content": "t:sections.shared.style"
     },
@@ -673,48 +681,153 @@
       "type": "text",
       "name": "t:sections.footer.block_text",
       "settings": [
-        { "type": "select", "id": "icon", "label": "t:sections.footer.icon", "options": [
-          { "value": "none", "label": "t:sections.footer.icon_none" },
-          { "value": "cake", "label": "t:sections.footer.icon_cake" },
-          { "value": "pin", "label": "t:sections.footer.icon_pin" },
-          { "value": "phone", "label": "t:sections.footer.icon_phone" },
-          { "value": "mail", "label": "t:sections.footer.icon_mail" },
-          { "value": "calendar", "label": "t:sections.footer.icon_calendar" },
-          { "value": "basket", "label": "t:sections.footer.icon_basket" }
-        ], "default": "cake" },
-        { "type": "text", "id": "title", "label": "t:sections.footer.title", "default": "About us" },
-        { "type": "richtext", "id": "text", "label": "t:sections.footer.text", "default": "<p>Small-batch cakes, baked to order.</p>" }
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:sections.footer.icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "t:sections.footer.icon_none"
+            },
+            {
+              "value": "cake",
+              "label": "t:sections.footer.icon_cake"
+            },
+            {
+              "value": "pin",
+              "label": "t:sections.footer.icon_pin"
+            },
+            {
+              "value": "phone",
+              "label": "t:sections.footer.icon_phone"
+            },
+            {
+              "value": "mail",
+              "label": "t:sections.footer.icon_mail"
+            },
+            {
+              "value": "calendar",
+              "label": "t:sections.footer.icon_calendar"
+            },
+            {
+              "value": "basket",
+              "label": "t:sections.footer.icon_basket"
+            }
+          ],
+          "default": "cake"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.footer.title",
+          "default": "About us"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.footer.text",
+          "default": "<p>Small-batch cakes, baked to order.</p>"
+        }
       ]
     },
     {
       "type": "menu",
       "name": "t:sections.footer.block_menu",
       "settings": [
-        { "type": "select", "id": "icon", "label": "t:sections.footer.icon", "options": [
-          { "value": "none", "label": "t:sections.footer.icon_none" },
-          { "value": "shop", "label": "t:sections.footer.icon_shop" },
-          { "value": "cake", "label": "t:sections.footer.icon_cake" },
-          { "value": "basket", "label": "t:sections.footer.icon_basket" }
-        ], "default": "shop" },
-        { "type": "text", "id": "title", "label": "t:sections.footer.title", "default": "Shop" },
-        { "type": "link_list", "id": "menu", "label": "t:sections.footer.menu", "default": "footer" }
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:sections.footer.icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "t:sections.footer.icon_none"
+            },
+            {
+              "value": "shop",
+              "label": "t:sections.footer.icon_shop"
+            },
+            {
+              "value": "cake",
+              "label": "t:sections.footer.icon_cake"
+            },
+            {
+              "value": "basket",
+              "label": "t:sections.footer.icon_basket"
+            }
+          ],
+          "default": "shop"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.footer.title",
+          "default": "Shop"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "t:sections.footer.menu",
+          "default": "footer"
+        }
       ]
     },
     {
       "type": "contact",
       "name": "t:sections.footer.block_contact",
       "settings": [
-        { "type": "select", "id": "icon", "label": "t:sections.footer.icon", "options": [
-          { "value": "none", "label": "t:sections.footer.icon_none" },
-          { "value": "pin", "label": "t:sections.footer.icon_pin" },
-          { "value": "phone", "label": "t:sections.footer.icon_phone" },
-          { "value": "mail", "label": "t:sections.footer.icon_mail" }
-        ], "default": "pin" },
-        { "type": "text", "id": "title", "label": "t:sections.footer.title", "default": "Visit" },
-        { "type": "textarea", "id": "address", "label": "t:sections.footer.address" },
-        { "type": "text", "id": "phone", "label": "t:sections.footer.phone" },
-        { "type": "text", "id": "email", "label": "t:sections.footer.email" },
-        { "type": "checkbox", "id": "show_whatsapp", "label": "t:sections.footer.show_whatsapp", "default": true }
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:sections.footer.icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "t:sections.footer.icon_none"
+            },
+            {
+              "value": "pin",
+              "label": "t:sections.footer.icon_pin"
+            },
+            {
+              "value": "phone",
+              "label": "t:sections.footer.icon_phone"
+            },
+            {
+              "value": "mail",
+              "label": "t:sections.footer.icon_mail"
+            }
+          ],
+          "default": "pin"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.footer.title",
+          "default": "Visit"
+        },
+        {
+          "type": "textarea",
+          "id": "address",
+          "label": "t:sections.footer.address"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "t:sections.footer.phone"
+        },
+        {
+          "type": "text",
+          "id": "email",
+          "label": "t:sections.footer.email"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_whatsapp",
+          "label": "t:sections.footer.show_whatsapp",
+          "default": true
+        }
       ]
     },
     {
@@ -722,13 +835,36 @@
       "name": "t:sections.footer.block_social",
       "limit": 1,
       "settings": [
-        { "type": "paragraph", "content": "t:sections.footer.social_info" },
-        { "type": "select", "id": "icon", "label": "t:sections.footer.icon", "options": [
-          { "value": "none", "label": "t:sections.footer.icon_none" },
-          { "value": "instagram", "label": "t:sections.footer.icon_instagram" },
-          { "value": "mail", "label": "t:sections.footer.icon_mail" }
-        ], "default": "instagram" },
-        { "type": "text", "id": "title", "label": "t:sections.footer.title", "default": "Follow" }
+        {
+          "type": "paragraph",
+          "content": "t:sections.footer.social_info"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:sections.footer.icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "t:sections.footer.icon_none"
+            },
+            {
+              "value": "instagram",
+              "label": "t:sections.footer.icon_instagram"
+            },
+            {
+              "value": "mail",
+              "label": "t:sections.footer.icon_mail"
+            }
+          ],
+          "default": "instagram"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.footer.title",
+          "default": "Follow"
+        }
       ]
     },
     {
@@ -736,26 +872,58 @@
       "name": "t:sections.footer.block_newsletter",
       "limit": 1,
       "settings": [
-        { "type": "select", "id": "icon", "label": "t:sections.footer.icon", "options": [
-          { "value": "none", "label": "t:sections.footer.icon_none" },
-          { "value": "mail", "label": "t:sections.footer.icon_mail" }
-        ], "default": "mail" },
-        { "type": "text", "id": "title", "label": "t:sections.footer.title", "default": "Bake news" },
-        { "type": "richtext", "id": "text", "label": "t:sections.footer.text", "default": "<p>New bakes and holiday dates, now and then.</p>" }
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:sections.footer.icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "t:sections.footer.icon_none"
+            },
+            {
+              "value": "mail",
+              "label": "t:sections.footer.icon_mail"
+            }
+          ],
+          "default": "mail"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.footer.title",
+          "default": "Bake news"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.footer.text",
+          "default": "<p>New bakes and holiday dates, now and then.</p>"
+        }
       ]
     }
   ],
   "enabled_on": {
-    "groups": ["footer"]
+    "groups": [
+      "footer"
+    ]
   },
   "presets": [
     {
       "name": "t:sections.footer.name",
       "blocks": [
-        { "type": "contact" },
-        { "type": "menu" },
-        { "type": "social" },
-        { "type": "newsletter" }
+        {
+          "type": "contact"
+        },
+        {
+          "type": "menu"
+        },
+        {
+          "type": "social"
+        },
+        {
+          "type": "newsletter"
+        }
       ]
     }
   ]
