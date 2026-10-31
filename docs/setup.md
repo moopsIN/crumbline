@@ -93,7 +93,7 @@ In the theme editor, open the Custom cakes page and select the form to set **Fla
 
 The homepage is built from sections you can add, remove and reorder in the theme editor: hero, scrolling text, occasions, featured collection, where to find us, your story, reviews, photo wall and newsletter, plus rich text, image with text, FAQ and call-to-action sections.
 
-- **Hero:** use a tall photo of your best cake. Set *Fit* to *Whole image* for a cut-out PNG.
+- **Hero:** use a tall photo of your best cake. Set *Fit* to *Whole image* for a cut-out PNG. You can also choose the focal point and frame shape, put the image on the left or right, show it first on phones, change the stamp's text and icon, pick a product for the "Today's bake" ticket (with or without its price) and edit the speech bubbles. The heading, text, buttons and the small pills under them are blocks inside the hero: click one to edit it, drag to reorder, or add and remove them.
 - **Occasions:** each chip needs an occasion key that matches your products' *Occasions* metafield or `occasion:` tags, for example `birthday`. Put a **Featured collection** section straight underneath and the chips filter it in place.
 - **Photo wall:** add up to six photos with short captions. It's a set of your own images, not a live Instagram feed.
 

@@ -313,7 +313,15 @@
       "ticket_label": "Ticket label",
       "bubble_1": "Speech bubble 1",
       "bubble_2": "Speech bubble 2",
-      "bubble_info": "Shown only when Theme settings → Decorations is on."
+      "bubble_info": "Shown only when Theme settings → Decorations is on.",
+      "mobile_order": "On phones",
+      "mobile_text_first": "Text first",
+      "mobile_image_first": "Image first",
+      "stamp_header": "Stamp",
+      "ticket_header": "\"Today's bake\" ticket",
+      "ticket_show_price": "Show price",
+      "bubbles_header": "Speech bubbles",
+      "bubble_hand": "Handwritten style"
     },
     "hero_collage": {
       "name": "Hero collage",

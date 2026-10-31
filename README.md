@@ -26,7 +26,7 @@
 </p>
 
 <p align="center">
-  <strong>See it live:</strong> <a href="https://crumbline-6gtfwmtt.myshopify.com/?preview_theme_id=198963069094">Crumbline Bakery demo store</a>. The store is password-protected; email <a href="mailto:info@moops.in">info@moops.in</a> for the password.<br>
+  <strong>See it live:</strong> <a href="https://crumbline-6gtfwmtt.myshopify.com">Crumbline Bakery demo store</a>. The store is password-protected; email <a href="mailto:info@moops.in">info@moops.in</a> for the password.<br>
   <sub>Crumbline Bakery is a fictional shop. Demo photos are from <a href="https://www.pexels.com">Pexels</a>.</sub>
 </p>
 
