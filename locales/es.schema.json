@@ -586,7 +586,8 @@
       "icon_check": "Visto",
       "icon_home": "Inicio",
       "icon_whatsapp": "WhatsApp",
-      "icon_instagram": "Instagram"
+      "icon_instagram": "Instagram",
+      "icon_sparkle": "Destello"
     },
     "spacer": {
       "name": "Espaciador",

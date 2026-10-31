@@ -6,22 +6,23 @@
   their collection instead.
 {% endcomment %}
 
+{%- assign align = section.settings.alignment | default: 'center' -%}
 {%- assign filter_mode = false -%}
 {%- if section.settings.mode == 'filter' -%}{%- assign filter_mode = true -%}{%- endif -%}
 
 <occasion-chips
-  class="occasions full-width"
+  class="occasions occasions--{{ align }} full-width"
   data-mode="{{ section.settings.mode }}"
   data-count-label="{{ 'sections.occasions.count' | t: number: '__COUNT__' }}"
   {% render 'section-attributes' %}
 >
   <div class="occasions__inner">
-    {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
+    {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text, align: align %}
     <ul class="occasions__list" role="list">
       {%- if filter_mode -%}
         <li>
           <a href="{{ routes.all_products_collection_url }}" class="occasion" data-occasion="" data-selected>
-            <span class="occasion__face" style="--face: var(--color-highlight);">{% render 'icon', name: 'cake' %}</span>
+            <span class="occasion__face" style="--face: var(--color-highlight);">{% render 'icon', name: 'sparkle' %}</span>
             <span class="occasion__label">{{ 'sections.occasions.all' | t }}</span>
           </a>
         </li>
@@ -71,30 +72,47 @@
     }
 
     .occasions__list {
+      --face-size: clamp(4rem, 3.4rem + 1.8vw, 5.5rem);
+
       display: flex;
-      gap: 0.6rem;
-      margin: 0 calc(var(--gutter) * -1) 1rem;
-      padding: 0.5rem var(--gutter) 1rem;
+      gap: clamp(0.5rem, 0.2rem + 1.2vw, 1.5rem);
+      margin: 0 calc(var(--gutter) * -1) 0.5rem;
+      padding: 0.75rem var(--gutter) 1.25rem;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
       scrollbar-width: none;
       list-style: none;
+      /* Soft edges hint that the strip scrolls on phones. */
+      mask-image: linear-gradient(to right, transparent, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent);
     }
 
     .occasions__list::-webkit-scrollbar {
       display: none;
     }
 
+    /* Centred when the chips fit; still scrolls from the first chip when they don't. */
+    .occasions--center .occasions__list > li:first-child {
+      margin-inline-start: auto;
+    }
+
+    .occasions--center .occasions__list > li:last-child {
+      margin-inline-end: auto;
+    }
+
     .occasion {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.55rem;
-      min-inline-size: 76px;
+      gap: 0.6rem;
+      flex: 0 0 auto;
+      /* Equal widths keep the faces evenly spaced; narrower on phones so the next chip peeks in. */
+      inline-size: calc(var(--face-size) + clamp(2rem, 0.25rem + 3.5vw, 4.5rem));
       padding: 0.4rem;
       color: var(--color-ink-muted);
       font-size: 0.88rem;
       font-weight: var(--font-body-weight-bold);
+      text-align: center;
       text-decoration: none;
       scroll-snap-align: start;
     }
@@ -102,8 +120,8 @@
     .occasion__face {
       display: grid;
       place-items: center;
-      inline-size: 68px;
-      block-size: 68px;
+      inline-size: var(--face-size);
+      block-size: var(--face-size);
       overflow: hidden;
       border: var(--border-width) solid transparent;
       border-radius: 50% 50% 50% 14%;
@@ -115,9 +133,41 @@
         box-shadow var(--dur-base);
     }
 
+    .occasion__label {
+      padding: 0.2rem 0.7rem;
+      border-radius: var(--radius-pill);
+      line-height: 1.25;
+      transition:
+        background-color var(--dur-base),
+        color var(--dur-base);
+    }
+
+    .occasion:is([aria-pressed='true'], [data-selected]:not([aria-pressed])) .occasion__label {
+      background-color: var(--color-button);
+      color: var(--color-button-label);
+    }
+
+    @media (min-width: 48rem) {
+      .occasions__list {
+        flex-wrap: wrap;
+        margin-inline: 0;
+        padding-inline: 0;
+        overflow: visible;
+        mask-image: none;
+      }
+
+      .occasions--center .occasions__list {
+        justify-content: center;
+      }
+
+      .occasions--center .occasions__list > li:is(:first-child, :last-child) {
+        margin-inline: 0;
+      }
+    }
+
     .occasion__face .icon {
-      inline-size: 1.8rem;
-      block-size: 1.8rem;
+      inline-size: 42%;
+      block-size: 42%;
     }
 
     .occasion__face img {
@@ -128,10 +178,6 @@
 
     .occasion:hover .occasion__face {
       transform: translateY(-4px) rotate(-8deg);
-    }
-
-    .occasion:is([aria-pressed='true'], [data-selected]:not([aria-pressed])) {
-      color: var(--color-ink);
     }
 
     .occasion:is([aria-pressed='true'], [data-selected]:not([aria-pressed])) .occasion__face {
@@ -227,6 +273,22 @@
       "id": "text",
       "label": "t:sections.shared.text",
       "default": "Pick a moment and we'll show you the right bakes."
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "t:blocks.shared.alignment",
+      "options": [
+        {
+          "value": "center",
+          "label": "t:blocks.shared.align_center"
+        },
+        {
+          "value": "start",
+          "label": "t:blocks.shared.align_start"
+        }
+      ],
+      "default": "center"
     },
     {
       "type": "select",
@@ -327,6 +389,10 @@
             {
               "value": "check",
               "label": "t:blocks.chip.icon_check"
+            },
+            {
+              "value": "sparkle",
+              "label": "t:blocks.chip.icon_sparkle"
             }
           ],
           "default": "cake"

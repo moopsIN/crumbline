@@ -4,6 +4,9 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+### Changed
+- "What's the occasion?" is centred by default (with a left/centre setting), with larger chips spaced evenly on wide screens, a swipeable strip with soft edges on phones, a pill that marks the selected occasion and a sparkle icon for "Everything".
+
 ### Added
 - More hero settings: image focal point and frame shape, image on the left or right, image first on phones, stamp icon, a price toggle for the "Today's bake" ticket and a handwritten or plain style for each speech bubble.
 

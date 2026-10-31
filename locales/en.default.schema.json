@@ -586,7 +586,8 @@
       "icon_check": "Tick",
       "icon_home": "Home",
       "icon_whatsapp": "WhatsApp",
-      "icon_instagram": "Instagram"
+      "icon_instagram": "Instagram",
+      "icon_sparkle": "Sparkle"
     },
     "spacer": {
       "name": "Spacer",
