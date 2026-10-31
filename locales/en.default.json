@@ -401,6 +401,11 @@
       "whatsapp_hint": "Prefer chatting? Send the same details on WhatsApp.",
       "whatsapp_cta": "Send on WhatsApp",
       "whatsapp_intro": "Hi {{ shop }}! I'd like a custom cake:"
+    },
+    "reviews": {
+      "previous": "Previous review",
+      "next": "Next review",
+      "position": "{{ current }} / {{ total }}"
     }
   }
 }
