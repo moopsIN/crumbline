@@ -401,6 +401,11 @@
       "whatsapp_hint": "¿Prefiere chatear? Envíe los mismos datos por WhatsApp.",
       "whatsapp_cta": "Enviar por WhatsApp",
       "whatsapp_intro": "¡Hola, {{ shop }}! Quisiera un pastel personalizado:"
+    },
+    "reviews": {
+      "previous": "Opinión anterior",
+      "next": "Opinión siguiente",
+      "position": "{{ current }} / {{ total }}"
     }
   }
 }

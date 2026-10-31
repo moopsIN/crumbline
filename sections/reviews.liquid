@@ -1,40 +1,95 @@
 {% comment %}
-  Customer reviews as the Cute chat window: speech-bubble messages with an
-  initial avatar, name and context; a review can be marked as the shop's
-  reply (right-aligned ink bubble). Review apps can be added as app blocks.
-  No star ratings are faked.
+  Customer reviews as chat cards: each review is a speech bubble with an
+  initial avatar, name and context, and a review marked as the shop's reply
+  joins the card above it as a right-aligned ink bubble. Cards flow in two or
+  three masonry columns on wider screens; on phones they become a one-at-a-time
+  slider with equal-height slides and previous/next buttons (swipe-only
+  without JavaScript).
+  Review apps can be added as app blocks. No star ratings are faked.
 {% endcomment %}
 
-<div class="reviews full-width" {% render 'section-attributes' %}>
+{%- liquid
+  assign align = section.settings.alignment | default: 'center'
+  assign wall_label = section.settings.chat_title | default: section.settings.heading | strip_html
+
+  # Group blocks into cards: a review plus any replies right after it. App blocks stand alone ("a" prefix).
+  assign groups = ''
+  assign last_kind = ''
+  for block in section.blocks
+    assign i = forloop.index0 | append: ''
+    if block.type == '@app'
+      assign groups = groups | append: '|a' | append: i
+      assign last_kind = 'app'
+    elsif block.settings.reply and last_kind == 'review'
+      assign groups = groups | append: ',' | append: i
+    else
+      assign groups = groups | append: '|' | append: i
+      assign last_kind = 'review'
+    endif
+  endfor
+  assign groups = groups | remove_first: '|' | split: '|'
+-%}
+
+<div class="reviews reviews--{{ align }} full-width" {% render 'section-attributes' %}>
   <div class="reviews__inner">
-    {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text %}
-    <div class="reviews__chat" data-reveal>
-      {%- if section.settings.chat_title != blank -%}
-        <p class="reviews__head mono">{{ section.settings.chat_title | escape }}</p>
-      {%- endif -%}
+    {% render 'section-heading', eyebrow: section.settings.eyebrow, heading: section.settings.heading, text: section.settings.text, align: align %}
+    {%- if section.settings.chat_title != blank -%}
+      <p class="reviews__head mono" aria-hidden="true"><span class="reviews__dot"></span>{{ section.settings.chat_title | escape }}</p>
+    {%- endif -%}
+    {%- comment -%} The row scrolls sideways on phones, so it can take keyboard focus. {%- endcomment -%}
+    <reviews-slider class="reviews__slider" data-position-label="{{ 'sections.reviews.position' | t: current: '__CURRENT__', total: '__TOTAL__' }}">
+    <div class="reviews__wall" role="region" aria-label="{{ wall_label | escape }}" tabindex="0" data-reveal data-slider-track>
       <ul class="reviews__list" role="list">
-        {%- for block in section.blocks -%}
-          {%- case block.type -%}
-            {%- when '@app' -%}
-              <li>{% render block %}</li>
-            {%- when 'review' -%}
-              {%- assign avatar = forloop.index0 | modulo: 4 | plus: 1 -%}
-              <li class="review{% if block.settings.reply %} review--reply{% endif %}" {{ block.shopify_attributes }}>
-                {%- unless block.settings.reply -%}
-                  <span class="review__avatar" style="--avatar: var(--color-pastel-{{ avatar }});" aria-hidden="true">{{ block.settings.name | slice: 0 | upcase }}</span>
-                {%- endunless -%}
-                <figure class="review__bubble">
-                  <blockquote class="review__quote">{{ block.settings.quote | escape }}</blockquote>
-                  <figcaption class="review__meta mono">
-                    {{- block.settings.name | escape -}}
-                    {%- if block.settings.context != blank %} · {{ block.settings.context | escape }}{% endif -%}
-                  </figcaption>
-                </figure>
-              </li>
-          {%- endcase -%}
+        {%- for group in groups -%}
+          {%- assign first_char = group | slice: 0 -%}
+          {%- if first_char == 'a' -%}
+            {%- assign app_index = group | remove_first: 'a' | plus: 0 -%}
+            {%- assign app_block = section.blocks[app_index] -%}
+            <li class="reviews__app">{% render app_block %}</li>
+          {%- else -%}
+            {%- assign avatar = forloop.index0 | modulo: 4 | plus: 1 -%}
+            {%- assign indexes = group | split: ',' -%}
+            <li class="review-card">
+              {%- for index in indexes -%}
+                {%- assign n = index | plus: 0 -%}
+                {%- assign review = section.blocks[n] -%}
+                {%- if review.settings.reply -%}
+                  <figure class="review review--reply" {{ review.shopify_attributes }}>
+                    <blockquote class="review__quote">{{ review.settings.quote | escape }}</blockquote>
+                    <figcaption class="review__meta mono">{{ review.settings.name | escape }}</figcaption>
+                  </figure>
+                {%- else -%}
+                  <figure class="review" {{ review.shopify_attributes }}>
+                    <blockquote class="review__quote">{{ review.settings.quote | escape }}</blockquote>
+                    <figcaption class="review__author">
+                      <span class="review__avatar" style="--avatar: var(--color-pastel-{{ avatar }});" aria-hidden="true">{{ review.settings.name | slice: 0 | upcase }}</span>
+                      <span class="review__who">
+                        <span class="review__name">{{ review.settings.name | escape }}</span>
+                        {%- if review.settings.context != blank -%}
+                          <span class="review__context mono">{{ review.settings.context | escape }}</span>
+                        {%- endif -%}
+                      </span>
+                    </figcaption>
+                  </figure>
+                {%- endif -%}
+              {%- endfor -%}
+            </li>
+          {%- endif -%}
         {%- endfor -%}
       </ul>
     </div>
+    {%- if groups.size > 1 -%}
+      <div class="reviews__controls js-only">
+        <button type="button" class="reviews__arrow" data-slider-prev aria-label="{{ 'sections.reviews.previous' | t }}" disabled>
+          {%- render 'icon', name: 'arrow-left' -%}
+        </button>
+        <p class="reviews__position mono" data-slider-position>{{ 'sections.reviews.position' | t: current: 1, total: groups.size }}</p>
+        <button type="button" class="reviews__arrow" data-slider-next aria-label="{{ 'sections.reviews.next' | t }}">
+          {%- render 'icon', name: 'arrow-right' -%}
+        </button>
+      </div>
+    {%- endif -%}
+    </reviews-slider>
   </div>
 </div>
 
@@ -42,6 +97,7 @@
   @layer components {
     .reviews {
       padding-block: calc(var(--section-padding-block) * var(--section-pad, 1));
+      overflow-x: clip;
     }
 
     .reviews__inner {
@@ -50,38 +106,149 @@
       padding-inline: var(--gutter);
     }
 
-    .reviews__chat {
-      display: grid;
-      gap: 0.9rem;
-      max-inline-size: 40rem;
-      padding: clamp(1.1rem, 1rem + 1vw, 1.75rem);
-      border: var(--border-ink);
-      border-radius: var(--radius-l);
-      background-color: var(--color-surface);
-      box-shadow: var(--shadow-soft);
-      rotate: 1deg;
+    .reviews__head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: calc(clamp(2rem, 1.5rem + 2vw, 3.5rem) * -0.5) 0 1.25rem;
+      color: var(--color-ink-muted);
     }
 
-    .reviews__head {
-      margin: 0;
-      padding-block-end: 0.8rem;
-      border-block-end: var(--border-divider);
-      color: var(--color-ink-muted);
+    .reviews--center .reviews__head {
+      justify-content: center;
+    }
+
+    .reviews__dot {
+      inline-size: 8px;
+      block-size: 8px;
+      border-radius: 50%;
+      background-color: var(--color-success);
+    }
+
+    /* Phones: one review at a time, every slide the same height. */
+    .reviews__slider {
+      display: block;
+    }
+
+    .reviews__wall {
+      margin-inline: calc(var(--gutter) * -1);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .reviews__wall::-webkit-scrollbar {
+      display: none;
+    }
+
+    .reviews__wall:focus-visible {
+      outline: 3px solid var(--color-ink);
+      outline-offset: -3px;
     }
 
     .reviews__list {
       display: grid;
-      gap: 0.9rem;
+      grid-auto-columns: 100%;
+      grid-auto-flow: column;
+      gap: calc(var(--gutter) * 2); /* neighbours sit fully off-screen */
       margin: 0;
-      padding: 0;
+      padding: 0.25rem var(--gutter) 0.75rem;
       list-style: none;
     }
 
-    .review {
+    .review-card,
+    .reviews__app {
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+    }
+
+    /* Slides share the tallest height; shorter reviews sit in the middle. A hard
+       shadow keeps neighbouring slides from bleeding into view. */
+    .review-card {
       display: flex;
-      align-items: flex-end;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      border: var(--border-ink);
+      border-radius: var(--radius-l);
+      background-color: var(--color-surface);
+      box-shadow: var(--shadow-hard);
+    }
+
+    .reviews__controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-block-start: 0.5rem;
+    }
+
+    .reviews__arrow {
+      display: grid;
+      place-items: center;
+      inline-size: 44px;
+      block-size: 44px;
+      padding: 0;
+      border: var(--border-ink);
+      border-radius: 50%;
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+      box-shadow: var(--shadow-hard);
+      cursor: pointer;
+    }
+
+    .reviews__arrow:disabled {
+      border-color: var(--color-border-control);
+      color: var(--color-ink-muted);
+      box-shadow: none;
+      cursor: default;
+    }
+
+    .reviews__arrow .icon {
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+    }
+
+    .reviews__position {
+      min-inline-size: 4.5rem;
+      margin: 0;
+      color: var(--color-ink-muted);
+      text-align: center;
+    }
+
+    .review {
+      display: grid;
+      gap: 0.7rem;
+      margin: 0;
+    }
+
+    .review__quote {
+      position: relative;
+      margin: 0;
+      padding: 0.85rem 1rem 0.85rem 2.1rem;
+      border-radius: 20px 20px 20px 6px;
+      background-color: var(--color-bg);
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    .review__quote::before {
+      content: '\201C';
+      position: absolute;
+      inset-block-start: 0.35rem;
+      inset-inline-start: 0.7rem;
+      color: var(--color-accent-text);
+      font-family: var(--font-display);
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .review__author {
+      display: flex;
+      align-items: center;
       gap: 0.6rem;
-      max-inline-size: 90%;
     }
 
     .review__avatar {
@@ -94,49 +261,152 @@
       border-radius: 50%;
       background-color: var(--avatar);
       color: var(--color-on-highlight);
-      font-weight: 700;
+      font-weight: var(--font-body-weight-bold);
       font-size: 0.85rem;
     }
 
-    .review__bubble {
-      margin: 0;
-      padding: 0.75rem 1rem;
-      border-radius: 20px 20px 20px 6px;
-      background-color: var(--color-bg);
+    .review__who {
+      display: grid;
+      line-height: 1.25;
     }
 
-    .review__quote {
-      margin: 0;
-      font-size: 0.96rem;
-      line-height: 1.45;
+    .review__name {
+      font-weight: var(--font-body-weight-bold);
     }
 
+    .review__context,
     .review__meta {
-      margin-block-start: 0.3rem;
       color: var(--color-ink-muted);
     }
 
+    /* The shop's reply: a right-aligned ink bubble inside the same card. */
     .review--reply {
       justify-self: end;
+      max-inline-size: 88%;
+      gap: 0.3rem;
     }
 
-    .review--reply .review__bubble {
+    .review--reply .review__quote {
+      padding-inline-start: 1rem;
       border-radius: 20px 20px 6px 20px;
       background-color: var(--color-ink);
       color: var(--color-bg);
     }
 
+    .review--reply .review__quote::before {
+      content: none;
+    }
+
     .review--reply .review__meta {
-      color: color-mix(in oklch, var(--color-bg) 80%, transparent);
+      justify-self: end;
+    }
+
+    /* Wider screens: every card on show, in balanced columns. */
+    @media (min-width: 48rem) {
+      .reviews__wall {
+        margin-inline: 0;
+        overflow: visible;
+      }
+
+      .reviews__controls {
+        display: none;
+      }
+
+      .review-card {
+        display: grid;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .reviews__list {
+        display: block;
+        columns: 2;
+        column-gap: clamp(1rem, 0.5rem + 1.5vw, 1.75rem);
+        padding: 0;
+      }
+
+      .review-card,
+      .reviews__app {
+        break-inside: avoid;
+        margin-block-end: clamp(1rem, 0.5rem + 1.5vw, 1.75rem);
+      }
+
+      .review-card:nth-child(odd) {
+        rotate: -0.6deg;
+      }
+
+      .review-card:nth-child(even) {
+        rotate: 0.6deg;
+      }
+    }
+
+    @media (min-width: 64rem) {
+      .reviews__list {
+        columns: 3;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .reviews__chat {
+      .review-card:is(:nth-child(odd), :nth-child(even)) {
         rotate: 0deg;
       }
     }
   }
 {% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('reviews-slider')) {
+    customElements.define(
+      'reviews-slider',
+      class extends HTMLElement {
+        connectedCallback() {
+          this.track = this.querySelector('[data-slider-track]');
+          this.prev = this.querySelector('[data-slider-prev]');
+          this.next = this.querySelector('[data-slider-next]');
+          if (!this.track || !this.prev || !this.next) return;
+          this.slides = [...this.track.querySelectorAll(':scope > ul > li')];
+          this.prev.addEventListener('click', () => this.#go(-1));
+          this.next.addEventListener('click', () => this.#go(1));
+          this.track.addEventListener('scroll', () => {
+            cancelAnimationFrame(this.frame);
+            this.frame = requestAnimationFrame(() => this.#update());
+          }, { passive: true });
+          this.#update();
+        }
+
+        /* The slide whose centre is closest to the track's centre. */
+        #index() {
+          const middle = this.track.getBoundingClientRect().left + this.track.clientWidth / 2;
+          let best = 0;
+          let distance = Infinity;
+          this.slides.forEach((slide, i) => {
+            const box = slide.getBoundingClientRect();
+            const d = Math.abs(box.left + box.width / 2 - middle);
+            if (d < distance) {
+              distance = d;
+              best = i;
+            }
+          });
+          return best;
+        }
+
+        #go(step) {
+          const target = this.slides[Math.min(this.slides.length - 1, Math.max(0, this.#index() + step))];
+          const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+          target.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'nearest', inline: 'center' });
+        }
+
+        #update() {
+          const i = this.#index();
+          this.prev.disabled = i === 0;
+          this.next.disabled = i === this.slides.length - 1;
+          this.querySelector('[data-slider-position]').textContent = this.dataset.positionLabel
+            .replace('__CURRENT__', i + 1)
+            .replace('__TOTAL__', this.slides.length);
+        }
+      }
+    );
+  }
+{% endjavascript %}
 
 {% schema %}
 {
@@ -166,10 +436,27 @@
       "label": "t:sections.shared.text"
     },
     {
+      "type": "select",
+      "id": "alignment",
+      "label": "t:blocks.shared.alignment",
+      "options": [
+        {
+          "value": "center",
+          "label": "t:blocks.shared.align_center"
+        },
+        {
+          "value": "start",
+          "label": "t:blocks.shared.align_start"
+        }
+      ],
+      "default": "center"
+    },
+    {
       "type": "text",
       "id": "chat_title",
       "label": "t:sections.reviews.chat_title",
-      "default": "Messages from customers"
+      "default": "Messages from customers",
+      "info": "t:sections.reviews.chat_title_info"
     },
     {
       "type": "header",

@@ -398,14 +398,15 @@
     },
     "reviews": {
       "name": "Reviews",
-      "chat_title": "Chat window title",
+      "chat_title": "Label",
       "review": "Review",
       "quote": "Quote",
       "author": "Name",
       "context": "Context",
       "context_info": "E.g. \"Birthday order\".",
       "reply": "This is our reply",
-      "reply_info": "Shows on the right as the shop's message."
+      "reply_info": "Shows on the right as the shop's message.",
+      "chat_title_info": "Small label above the reviews, also used to name the review list for screen readers. Leave blank to hide."
     },
     "social_grid": {
       "name": "Social photo wall",
@@ -586,7 +587,8 @@
       "icon_check": "Tick",
       "icon_home": "Home",
       "icon_whatsapp": "WhatsApp",
-      "icon_instagram": "Instagram"
+      "icon_instagram": "Instagram",
+      "icon_sparkle": "Sparkle"
     },
     "spacer": {
       "name": "Spacer",
