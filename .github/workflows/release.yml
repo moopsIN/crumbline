@@ -1,0 +1,109 @@
+# Builds the theme zip and publishes a GitHub release when a version tag is pushed.
+#
+#   git tag v1.0.0 && git push origin v1.0.0         -> release "Crumbline 1.0.0"
+#   git tag v1.1.0-rc.1 && git push origin v1.1.0-rc.1 -> pre-release
+#
+# The tag (without "v" and any pre-release suffix) must match theme_version in
+# config/settings_schema.json. Release notes come from the matching CHANGELOG.md
+# section; pre-releases without their own section use [Unreleased].
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      SHOPIFY_CLI_NO_ANALYTICS: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Shopify CLI
+        run: npm install --global @shopify/cli@4.9.4
+
+      - name: Read versions
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          base="${tag%%-*}"
+          theme_version="$(jq -r '.[] | select(.name == "theme_info") | .theme_version' config/settings_schema.json)"
+          echo "Tag: $tag  Base: $base  theme_version: $theme_version"
+          if [ "$base" != "$theme_version" ]; then
+            echo "::error::Tag v$tag does not match theme_version $theme_version in config/settings_schema.json"
+            exit 1
+          fi
+          prerelease=false
+          if [ "$tag" != "$base" ]; then prerelease=true; fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$prerelease" >> "$GITHUB_OUTPUT"
+
+      - name: Theme check
+        run: shopify theme check --fail-level error
+
+      - name: Package theme
+        run: |
+          shopify theme package
+          zip="$(ls Crumbline-*.zip)"
+          mv "$zip" "crumbline-${{ steps.version.outputs.tag }}.zip"
+          cp "crumbline-${{ steps.version.outputs.tag }}.zip" crumbline.zip
+
+      - name: Check package contents
+        run: |
+          allowed='^(assets|blocks|config|layout|locales|sections|snippets|templates)/'
+          unexpected="$(unzip -Z1 crumbline.zip | grep -Ev "$allowed" || true)"
+          if [ -n "$unexpected" ]; then
+            echo "::error::Unexpected files in the package:"
+            echo "$unexpected"
+            exit 1
+          fi
+          unzip -Z1 crumbline.zip | cut -d/ -f1 | sort | uniq -c
+
+      - name: Release notes
+        run: |
+          section() {
+            awk -v v="$1" '
+              $0 ~ "^## \\[" v "\\]" { found = 1; next }
+              found && /^## \[/ { exit }
+              found { print }
+            ' CHANGELOG.md
+          }
+          notes="$(section "${{ steps.version.outputs.tag }}")"
+          if [ -z "$(echo "$notes" | tr -d '[:space:]')" ] && [ "${{ steps.version.outputs.prerelease }}" = "true" ]; then
+            notes="$(section "Unreleased")"
+          fi
+          if [ -z "$(echo "$notes" | tr -d '[:space:]')" ]; then
+            echo "::error::No CHANGELOG.md section for ${{ steps.version.outputs.tag }}"
+            exit 1
+          fi
+          {
+            echo "$notes"
+            echo
+            echo "## Install"
+            echo
+            echo "Download **crumbline.zip** below, then in Shopify admin go to **Online Store → Themes → Add theme → Upload zip file**. The [setup guide](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/docs/setup.md) walks through the rest."
+            echo
+            echo "Crumbline's own code is MIT-licensed (\`LICENSE\`); the parts from Shopify's Skeleton theme are covered by Shopify's licence (\`LICENSE.md\`). Both files are attached to this release."
+          } > release-notes.md
+          cat release-notes.md
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          flags=""
+          if [ "${{ steps.version.outputs.prerelease }}" = "true" ]; then flags="--prerelease"; else flags="--latest"; fi
+          gh release create "$GITHUB_REF_NAME" \
+            "crumbline-${{ steps.version.outputs.tag }}.zip" crumbline.zip LICENSE LICENSE.md \
+            --title "Crumbline ${{ steps.version.outputs.tag }}" \
+            --notes-file release-notes.md \
+            $flags
