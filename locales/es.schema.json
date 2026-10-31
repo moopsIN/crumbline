@@ -398,14 +398,15 @@
     },
     "reviews": {
       "name": "Opiniones",
-      "chat_title": "Título de la ventana de chat",
+      "chat_title": "Etiqueta",
       "review": "Opinión",
       "quote": "Cita",
       "author": "Nombre",
       "context": "Contexto",
       "context_info": "P. ej., «Pedido de cumpleaños».",
       "reply": "Es nuestra respuesta",
-      "reply_info": "Se muestra a la derecha como mensaje de la tienda."
+      "reply_info": "Se muestra a la derecha como mensaje de la tienda.",
+      "chat_title_info": "Etiqueta pequeña sobre las opiniones; también nombra la lista para lectores de pantalla. Déjela vacía para ocultarla."
     },
     "social_grid": {
       "name": "Muro de fotos sociales",

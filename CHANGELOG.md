@@ -5,6 +5,7 @@ All notable changes to Crumbline are recorded here. The format follows [Keep a C
 ## [Unreleased]
 
 ### Changed
+- "What people are saying" shows reviews as chat cards: up to three masonry columns on wide screens and a swipeable row on phones, with the shop's reply threaded under the review it answers. The heading is centred by default (with a left/centre setting).
 - "What's the occasion?" is centred by default (with a left/centre setting), with larger chips spaced evenly on wide screens, a swipeable strip with soft edges on phones, a pill that marks the selected occasion and a sparkle icon for "Everything".
 
 ### Added
