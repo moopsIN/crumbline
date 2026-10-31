@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/licence-MIT%20%2B%20Shopify%20Skeleton-green.svg" alt="Licence: MIT, with Shopify Skeleton portions"></a>
-  <img src="https://img.shields.io/badge/status-pre--release-orange.svg" alt="Status: pre-release">
+  <img src="https://img.shields.io/badge/status-stable-green.svg" alt="Status: stable">
   <img src="https://img.shields.io/badge/Shopify-Basic%20plan%20ready-95BF47.svg" alt="Works on the Shopify Basic plan">
 </p>
 
@@ -40,7 +40,7 @@ Crumbline puts those steps into the storefront. It runs on Shopify's **Basic pla
 
 ## Features
 
-> Everything below is built and included in the current pre-release. v1.0.0 follows a final round of manual testing.
+> Everything below ships in v1.0.0.
 
 **Ordering cakes**
 - Option pills for size, tiers and flavour, with "Serves N" shown next to each size
@@ -76,9 +76,7 @@ Crumbline puts those steps into the storefront. It runs on Shopify's **Basic pla
 
 ### For merchants
 
-Crumbline v1.0.0 isn't out yet. Once it is:
-
-1. Download `crumbline.zip` from the [Releases](https://github.com/moopsIN/crumbline/releases) page.
+1. Download [`crumbline.zip`](https://github.com/moopsIN/crumbline/releases/latest/download/crumbline.zip) from the [latest release](https://github.com/moopsIN/crumbline/releases/latest).
 2. In Shopify admin, go to **Online Store → Themes → Add theme → Upload zip file**.
 3. Open **Customize** to set your colours, fonts, lead time, closed days and WhatsApp number.
 4. Optional: add the product metafields below to show servings, allergens and image focus.
